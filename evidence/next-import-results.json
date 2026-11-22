@@ -1,0 +1,28 @@
+{
+  "recordedAt": "2026-11-22T16:11:23.734Z",
+  "url": "https://github.com/vercel/nextjs-postgres-nextauth-tailwindcss-template",
+  "network": "Actual public GitHub API; imported code is never executed",
+  "observed": "pass",
+  "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+  "files": 37,
+  "coverage": {
+    "total": 46,
+    "eligible": 37,
+    "indexed": 37,
+    "partial": false,
+    "skipped": []
+  },
+  "concepts": [
+    "modules",
+    "requests",
+    "auth",
+    "data",
+    "interface"
+  ],
+  "edges": 48,
+  "validCitations": 11,
+  "checkpoints": 7,
+  "lessonMode": "source-template",
+  "lessonSteps": 4,
+  "ms": 4135
+}

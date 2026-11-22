@@ -24,11 +24,13 @@ In the product, a configurable OpenAI-compatible tutor adapter retrieves bounded
 
 ## 4. How can people access and use the project, and what results does it achieve?
 
-Public code: intended new repository `https://github.com/pranav-pokkula/synapse` — verify publication before using this link in the submission.
+Public code: [pranav-pokkula/synapse](https://github.com/pranav-pokkula/synapse), published and verified public. The default branch is `main`; automated quality checks run in [GitHub Actions](https://github.com/pranav-pokkula/synapse/actions).
 
 Run locally with Node 22: `npm ci`, copy `.env.example` to `.env.local`, then `npm run dev`; open `http://127.0.0.1:3000`. The sample and public imports do not require paid APIs. No verified public deployment is available yet.
 
-Executed verification includes 68 unit/integration/security tests and 11 browser checks. Three public JS libraries imported successfully; a repeated import reused the exact commit snapshot. Invalid-host and nonexistent-repository failures produced corrective errors. The small development retrieval set improved from 4/5 to 5/5 expected-source hits after a disclosed fix, and prerequisite ordering reduced two alphabetical inversions to zero. These results do not establish model accuracy or improved learner outcomes. The primary same-model LLM baseline has not run.
+Executed verification includes 68 unit/integration/security tests and 12 production-browser checks. Three public JS libraries and a 37-file Next.js dashboard imported successfully; a repeated import reused the exact commit snapshot. The Next.js case produced 48 static module relationships and 11 citations matching source. Invalid-host and nonexistent-repository failures produced corrective errors. The small development retrieval set improved from 4/5 to 5/5 expected-source hits after a disclosed fix, and prerequisite ordering reduced two alphabetical inversions to zero. These results do not establish model accuracy or improved learner outcomes. The primary same-model LLM baseline has not run.
+
+A 2:44 captioned recording of the actual app is saved locally as `evidence/synapse-demo.mp4`. It is silent and has not been uploaded; a public video link remains required.
 
 Evidence: [evaluation report](EVALUATION_REPORT.md), [live import results](../evidence/live-import-results.json), and browser screenshots in `evidence/`.
 
@@ -44,7 +46,7 @@ Checked November 22 against the [rules](https://global-ai-builders-challenge.dev
 
 ## Submission checklist
 
-- [ ] Verify public repository URL and final commit.
+- [x] Publish and verify the public source repository; final handoff identifies the commit.
 - [ ] Upload and verify the actual 2–4 minute demo; replace local artifact with its public video link.
 - [ ] Configure/test live product AI or retain the explicit limitation and adjust award selections.
 - [ ] Complete actual human review and record its findings.

@@ -6,7 +6,7 @@
 
 | Capability | Status |
 |---|---|
-| Public JS/TS GitHub import, real blobs, exact SHA | Implemented; three real repositories verified |
+| Public JS/TS GitHub import, real blobs, exact SHA | Implemented; three JS libraries and a 37-file Next.js dashboard verified |
 | Bounded batches, saved cursor, retry, partial coverage | Implemented; controlled failure/recovery tested |
 | Source index, relative import graph, dependency detection | Implemented; static-analysis limits disclosed |
 | Prioritized concepts, prerequisites, practice-gap recommendation | Implemented; deterministic ranking tested |
@@ -21,18 +21,20 @@
 | Learner-data deletion | Implemented; browser verified; does not delete auth account |
 | Light/dark and four viewport sizes | Browser screenshots inspected; no page overflow; scanned axe checks pass |
 | LLM baseline evaluation | Harness ready; not run because model selection was deferred |
-| Public code / demo / Devpost | Materials prepared; publication and recording results tracked below |
+| Public code / demo / Devpost | Public GitHub repository verified; local 2:44 captioned video complete; Devpost not submitted |
 
 ## Executed quality gates
 
 - TypeScript strict checking passed.
 - ESLint passed; final unused import removed.
 - Vitest: 68 passed across four files.
-- Playwright: 11 passed in installed Chrome, including source inspection, real packet movement, native narration callbacks, persistence, two-session isolation, recovery, data deletion, and safe text rendering.
+- Playwright: 12 passed against the compiled production build in installed Chrome, including answer-type rejection, source inspection, real packet movement, native narration callbacks, persistence, two-session isolation, recovery, data deletion, and safe text rendering.
 - Production build passed using webpack. Turbopack failed in the CSS worker even after permitted retry; no failure is hidden.
 - npm dependency audit: zero reported vulnerabilities.
-- Initial tracked-file secret-pattern scan: zero findings; `.env.local` and `.synapse/` excluded. Pattern scanning is not a guarantee against all secrets.
+- Final tracked/candidate-file secret-pattern scan: zero findings across 90 files; no server credential configuration identifiers found in 32 production client chunks. `.env.local` and `.synapse/` are excluded from Git. See `evidence/secret-scan-results.json`; pattern scanning is not a guarantee against all secrets.
 - PostgreSQL RLS verified in PGlite using the actual migration and a stub `auth.uid()`; this is not an end-to-end Supabase authentication result.
+- Public repository: [pranav-pokkula/synapse](https://github.com/pranav-pokkula/synapse). The [first hosted CI run](https://github.com/pranav-pokkula/synapse/actions/runs/45041176859) passed all gates on `c4a2f36`; consult Actions for checks on later commits.
+- Local demo: `evidence/synapse-demo.mp4`, H.264, 1440 × 1000, 163.84 seconds, 2,532,447 bytes. Actual application capture with captions; silent, not publicly uploaded or submitted.
 
 ## Release risks and evidence
 
@@ -40,7 +42,7 @@
 |---|---|---|
 | A: incorrect explanations | Exact citation validation, unknown behavior, invalid model-output rejection; `core`/`security` tests | Semantic accuracy not established by text matching; real LLM quality unmeasured |
 | B: import failures | Real imports and 404/400 handling; mocked 429/timeouts and resumable failures | GitHub quotas still apply; no private repos |
-| C: repository overload | Size, type, file, byte, stream, and tree bounds; partial flag tests | Selection can omit important modules; only small real repos checked so far |
+| C: repository overload | Size, type, file, byte, stream, and tree bounds; partial flag tests; 37-file Next.js import over seven checkpoints | Selection can omit important modules; large monorepos and arbitrary aliases remain unverified |
 | D: audio/animation failure | Movement observed; native speech start/end; captions/transcript remain usable | Browser voices vary; no human listening review |
 | E: provider failure | Mocked timeout, 429, invalid JSON, excessive output, fabricated citations | No live provider configured; model-assisted lesson/short-answer generation incomplete |
 | F: serverless limits | Six-file checkpoints, bounded source requests, persisted jobs | Local process locks are not distributed locks; multi-instance conflicts need testing |
@@ -52,7 +54,7 @@
 1. Choose and configure a provider, verify model availability, set a hard spending cap, and run the baseline experiment with independent human scoring.
 2. Supply a new Supabase project within authorized free capacity. Apply the migration and verify real anonymous/email auth, cross-account isolation, session refresh, quota RPCs, deletion, and reconnect behavior.
 3. Add distributed checkpoint/progress concurrency protections and deployment-wide abuse limits before public cloud use with a paid provider.
-4. Validate at least one substantial Next.js app and held-out repositories. Current real samples are small JS libraries.
+4. Expand independent review and held-out evaluation beyond the fixture, three libraries, and one Next.js dashboard. Large monorepos remain unverified.
 5. Human-review source claims, generated contributions, audio, and the submission video; complete team roster/contact forms. The official human-review rubric item is not satisfied by Codex checking itself.
 6. Verify a Vercel deployment only after durable storage is configured. No live deployed URL is claimed.
 

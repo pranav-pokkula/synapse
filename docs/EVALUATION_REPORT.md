@@ -5,7 +5,7 @@ Measured on 2026-11-22. Reproduce with `npm ci`, `npm test`, `npm run evaluate`,
 | Check | Observed result | Evidence |
 |---|---|---|
 | Unit / integration / security | 68 passed | `tests/*.test.ts`; Vitest execution |
-| Browser journeys | 11 passed in installed Chrome | `evidence/playwright-results.json` |
+| Browser journeys | 12 passed against the production build in installed Chrome | `evidence/playwright-results.json` |
 | Viewports | 390, 768, 1366, 1920 px; no document overflow | `evidence/overview-*.png`, `lesson-*.png` |
 | Accessibility | No axe WCAG A/AA violations in scanned overview, light lesson, dark lesson | Browser accessibility check; not a full accessibility certification |
 | Native narration | 180 available voices; observed native start and end callbacks | `evidence/narration-results.json`; audible quality not human-reviewed |
@@ -23,10 +23,11 @@ No imported code was executed. All calls used the public GitHub REST API. Times 
 | `sindresorhus/is-plain-obj` | `666df7c10035f7e26f27ec214fe5ae3173435f34` | 6 | 4/4 | Complete, 710 ms |
 | Repeat first repository | Same exact snapshot | 4 | 2/2 | Cache reused, 81 ms |
 | `lukeed/clsx` | `925494cf31bcd97d3337aacd34e659e80cae7fe2` | 10 | 6/6 | Complete over multiple batches, 931 ms |
+| `vercel/nextjs-postgres-nextauth-tailwindcss-template` | `fe026711c19ac3ee4589c86a738f59b84e611559` | 37 | 11/11 | Complete over seven checkpoints; import, lesson, and browser verification in 4,135 ms |
 | Invalid fetch host | — | — | — | 400 with corrective message |
 | Nonexistent repository | — | — | — | 404 with corrective message |
 
-Raw results: [`live-import-results.json`](../evidence/live-import-results.json). Screenshots: [`live import`](../evidence/live-import-desktop.png), [`live lesson`](../evidence/live-lesson-desktop.png). The more demanding case is larger than the ordinary examples, but these remain small libraries; this does not validate arbitrary large Next.js monorepos.
+Raw results: [`live-import-results.json`](../evidence/live-import-results.json), [`next-import-results.json`](../evidence/next-import-results.json). Screenshots: [`live import`](../evidence/live-import-desktop.png), [`live lesson`](../evidence/live-lesson-desktop.png), [`Next.js dashboard`](../evidence/next-import-desktop.png). The Next.js case indexed all 37 eligible files from 46 total files, produced five concepts and 48 import edges, and generated a four-step source-template lesson. Reproduce with `npx tsx scripts/verify-next.ts` while the app is running. This broadens coverage beyond small libraries but does not validate arbitrary large monorepos or the imported application's runtime correctness.
 
 ## Retrieval and ordering
 

@@ -285,6 +285,7 @@ export function Studio({ sample }: { sample: Snapshot }) {
     localStorage.setItem("synapse-theme", next ? "dark" : "light");
   }
   async function loadProject(id: string) {
+    setNotice("");
     setBusy(true);
     setError("");
     try {

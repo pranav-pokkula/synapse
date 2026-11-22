@@ -38,13 +38,28 @@ export async function POST(request: Request) {
     const concept = snapshot.concepts.find((c) => c.id === b.conceptId);
     const q = concept && questions(concept).find((q) => q.id === b.questionId);
     if (!q) throw new AppError("Question not found.", 404);
-    if (q.kind === "short" && typeof b.answer === "string")
-      return NextResponse.json({
+    if (q.kind === "short" && typeof b.answer !== "string")
+      throw new AppError("Write a technical explanation for this question.");
+    if (q.kind === "short" && typeof b.answer === "string") {
+      const feedback = {
         ...scoreShort(q, b.answer),
         explanation: q.explanation,
         ungraded: true,
+      };
+      await putRecord(user, "attempt", crypto.randomUUID(), {
+        projectId: snapshot.id,
+        conceptId: concept!.id,
+        questionId: q.id,
+        kind: "short",
+        answer: b.answer,
+        feedback,
+        at: new Date().toISOString(),
       });
+      return NextResponse.json(feedback);
+    }
     if (typeof b.answer !== "number") throw new AppError("Choose one answer.");
+    if (b.answer >= (q.options?.length ?? 0))
+      throw new AppError("Choose an available answer.");
     const score = scoreChoice(q, b.answer);
     return await serialized(`${user.id}:progress:${b.projectId}`, async () => {
       const progress =

@@ -9,6 +9,7 @@ Codex created the new Next.js application, design system, teaching fixture, boun
 - Typecheck, lint, unit/integration/security tests, PostgreSQL policy execution in PGlite, production build, npm audit.
 - Browser journeys at four viewports; direct screenshot inspection; axe scans; native speech callbacks and actual CSS packet motion.
 - Real public GitHub imports, a repeat import, and two distinct live failure responses.
+- A separate 37-file Next.js dashboard import, lesson generation, and screenshot inspection; 12 final production-browser checks and successful hosted CI on the published implementation commit.
 - Fixed origin handling, contrast, compiler-version incompatibility, retrieval weighting, mobile diagram readability, session-initialization ordering, and repeated-answer mastery inflation prevention.
 - Saved initial retrieval failures and the subsequent development-set results without portraying them as a held-out benchmark.
 

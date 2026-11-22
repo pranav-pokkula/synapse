@@ -2,6 +2,8 @@
 
 Use the actual running app, with a real public import and the clearly labeled teaching fixture. The automated recorder is `scripts/record-demo.ts`; it produces a silent captioned screen capture, not a narrated or submitted Devpost video. Human review and a public upload are still required.
 
+Completed artifact: `evidence/synapse-demo.mp4`, 163.84 seconds (2:44), H.264, 1440 × 1000. The full sequence completed; opening and animation frames were inspected. Metadata is in `evidence/demo-recording.json`; preview frames are `evidence/demo-opening.png` and `evidence/demo-animation.png`. Video binaries are local and excluded from Git. No public video URL or upload is claimed.
+
 | Time | On screen | Message |
 |---|---|---|
 | 0:00–0:20 | Landing, connect dialog | “You built it. Now understand it.” Students can learn from their own implementation. |

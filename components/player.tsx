@@ -35,6 +35,7 @@ export function Player({
     [voice, setVoice] = useState(false),
     [captions, setCaptions] = useState(true),
     [speechStatus, setSpeechStatus] = useState("");
+  const [replayToken, setReplayToken] = useState(0);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const generation = useRef(0);
   const scene = lesson.board.steps[step];
@@ -96,7 +97,15 @@ export function Player({
       if (timer.current) clearTimeout(timer.current);
       speech?.cancel();
     };
-  }, [playing, step, speed, voice, scene.caption, lesson.board.steps.length]);
+  }, [
+    playing,
+    step,
+    speed,
+    voice,
+    scene.caption,
+    lesson.board.steps.length,
+    replayToken,
+  ]);
   function move(next: number) {
     setPlaying(false);
     setStep(Math.max(0, Math.min(lesson.board.steps.length - 1, next)));
@@ -284,6 +293,7 @@ export function Player({
             className="icon-button"
             aria-label="Replay lesson"
             onClick={() => {
+              setReplayToken((token) => token + 1);
               setStep(0);
               setPlaying(true);
             }}

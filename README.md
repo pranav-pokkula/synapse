@@ -43,10 +43,16 @@ npm run build
 # With the app running and Chrome available:
 npm run test:e2e
 npm run verify:live
+# Broader live Next.js import (additional GitHub API quota):
+npx tsx scripts/verify-next.ts
 npm run evaluate
 npm audit
 ```
 
 Browser tests use installed Google Chrome by default. CI installs Chromium and selects it through `PLAYWRIGHT_CHROMIUM=1`. Live verification contacts public GitHub repositories and consumes API quota. The LLM benchmark is explicitly skipped unless configured and enabled with `RUN_LLM_EVAL=1`; it does not silently spend credits.
+
+Executed locally: 68 unit/integration/security tests, 12 production-browser checks, typecheck, lint, production build, and a dependency audit with zero reported vulnerabilities. Live examples include three JS libraries and a 37-file Next.js dashboard. [GitHub Actions](https://github.com/pranav-pokkula/synapse/actions) runs the automated checks on every push.
+
+The local captioned demo is `evidence/synapse-demo.mp4` (2:44, excluded from Git). Recreate the capture with `npx tsx scripts/record-demo.ts` while the app is running; see [demo notes](docs/DEMO_SCRIPT.md). Public video upload and human review remain pending.
 
 See [release audit](docs/RELEASE_AUDIT.md), [evaluation report](docs/EVALUATION_REPORT.md), and [architecture](docs/ARCHITECTURE.md) for measured status and limitations. This is a working local release candidate, not a declaration of production readiness.

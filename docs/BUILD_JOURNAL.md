@@ -27,3 +27,11 @@ The first real demo recording uncovered a persistent `?connect=1` deep link that
 ## Production verification and demonstration
 
 The corrected production build passed all 11 Chrome checks. A transient contrast failure during theme color interpolation was eliminated by removing the background-color transition; both settled and changing themes retain legibility. Typecheck, lint, 68 unit/integration/security checks, and webpack build passed. The corrected real demo recorder completed its full sequence, including import, animation, feedback, and progress after reload. It is a silent captioned capture; no public video upload or Devpost submission has occurred.
+
+## Publication and final local verification
+
+Commit `c4a2f36` published the implementation and measured evidence to the new public `pranav-pokkula/synapse` repository. Its GitHub Actions run `45041176859` passed. No existing repository was modified.
+
+Final fixes reject invalid assessment answer types and nonexistent choice indexes, persist ungraded short-answer practice separately, restart replay even when the first step is already playing, and clear stale import notices when changing projects. The compiled production build passed 12 browser checks; strict checking, lint, and all 68 Vitest checks also passed. The corrected captioned demo is 163.84 seconds; it has no captured narration or public upload.
+
+Added and executed a separate real Next.js import check against Vercel's public dashboard template at `fe026711c19ac3ee4589c86a738f59b84e611559`. Seven saved checkpoints indexed 37 eligible files, discovered 48 import edges and five concepts, validated 11 citations, and returned an intermediate four-step lesson. Inspected the actual imported-project screenshot. This does not establish correctness of that application's auth/database runtime or generalize to all monorepos.

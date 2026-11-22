@@ -1,7 +1,15 @@
 {
-  "recordedAt": "2026-11-22T15:55:59.915Z",
+  "recordedAt": "2026-11-22T16:01:57.140Z",
   "complete": true,
-  "durationSeconds": 166,
+  "durationSeconds": 165,
+  "encodedVideo": {
+    "file": "synapse-demo.mp4",
+    "durationSeconds": 163.84,
+    "bytes": 2532447,
+    "codec": "H.264",
+    "width": 1440,
+    "height": 1000
+  },
   "audio": "Silent screen capture with explanatory captions; no recorded narration",
   "source": "Actual local application and live public GitHub import; sample fixture explicitly labeled",
   "scenes": [

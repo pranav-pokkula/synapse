@@ -1,6 +1,34 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { writeFile } from "node:fs/promises";
+test("assessment API rejects wrong answer types without changing mastery", async ({
+  page,
+}) => {
+  await page.goto("/learn");
+  await page.request.get("/api/session");
+  const short = await page.request.post("/api/assessment", {
+    data: {
+      projectId: "sample",
+      conceptId: "modules",
+      questionId: "modules-explain",
+      answer: 0,
+    },
+  });
+  expect(short.status()).toBe(400);
+  const invalid = await page.request.post("/api/assessment", {
+    data: {
+      projectId: "sample",
+      conceptId: "modules",
+      questionId: "modules-foundation",
+      answer: 3,
+    },
+  });
+  expect(invalid.status()).toBe(400);
+  expect(
+    (await (await page.request.get("/api/progress?projectId=sample")).json())
+      .attempts,
+  ).toEqual([]);
+});
 test("the connect deep link is consumed once and does not reopen after reload", async ({
   page,
 }) => {
