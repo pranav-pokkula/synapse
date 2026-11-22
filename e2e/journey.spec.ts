@@ -1,5 +1,19 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { writeFile } from "node:fs/promises";
+test("the connect deep link is consumed once and does not reopen after reload", async ({
+  page,
+}) => {
+  await page.goto("/learn?connect=1");
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.getByRole("button", { name: "Close dialog" }).click();
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "Let’s make it click." }),
+  ).toBeVisible();
+  await expect(page.getByRole("dialog")).not.toBeVisible();
+  expect(page.url()).not.toContain("connect=1");
+});
 test("sample: explore, animate, inspect source, tutor, practice, persist", async ({
   page,
 }) => {
@@ -162,6 +176,25 @@ test("keyboard dialog, themes, and accessibility scan", async ({ page }) => {
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();
   expect(result.violations).toEqual([]);
+  await page
+    .getByRole("button", { name: "Start learning", exact: true })
+    .click();
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+  await page.getByRole("button", { name: "Use dark theme" }).click();
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+  await page.screenshot({ path: "evidence/lesson-dark.png", fullPage: true });
 });
 test("cross-session projects and progress stay isolated", async ({
   browser,
@@ -187,4 +220,113 @@ test("cross-session projects and progress stay isolated", async ({
   expect(cross.status()).toBe(404);
   await a.close();
   await b.close();
+});
+
+test("actual packet movement and real browser speech callbacks", async ({
+  page,
+}) => {
+  await page.goto("/learn");
+  await page
+    .getByRole("button", { name: "Start learning", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Next step", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Play animation", exact: true })
+    .click();
+  const packet = page.locator(".request-packet");
+  await expect(packet).toBeVisible();
+  const first = await packet.evaluate((el) => getComputedStyle(el).transform);
+  await page.waitForTimeout(450);
+  expect(
+    await packet.evaluate((el) => getComputedStyle(el).transform),
+  ).not.toBe(first);
+  await page.getByRole("button", { name: "Pause animation" }).click();
+  // Observe native speech callbacks; the original speak implementation still runs.
+  await page.evaluate(() => {
+    const observed: string[] = [];
+    (window as unknown as { speechEvents: string[] }).speechEvents = observed;
+    const original = speechSynthesis.speak.bind(speechSynthesis);
+    speechSynthesis.speak = (u) => {
+      observed.push("speak called");
+      u.addEventListener("start", () => observed.push("native start"));
+      u.addEventListener("end", () => observed.push("native end"));
+      u.addEventListener("error", (e) =>
+        observed.push("native error: " + e.error),
+      );
+      original(u);
+    };
+  });
+  await page.getByRole("button", { name: "Toggle narration" }).click();
+  await page
+    .getByRole("button", { name: "Play animation", exact: true })
+    .click();
+  await page.waitForTimeout(7000);
+  const events = await page.evaluate(
+    () => (window as unknown as { speechEvents: string[] }).speechEvents,
+  );
+  expect(events).toContain("speak called");
+  const voices = await page.evaluate(() => speechSynthesis.getVoices().length);
+  await writeFile(
+    "evidence/narration-results.json",
+    JSON.stringify(
+      {
+        events,
+        voices,
+        note: "Native browser speech callbacks observed. Audible output has not been reviewed by a human.",
+      },
+      null,
+      2,
+    ),
+  );
+  if (events.some((e) => e.startsWith("native error")))
+    await expect(page.locator(".lesson-player .inline-notice")).toContainText(
+      "Voice is unavailable",
+    );
+  else if (voices === 0)
+    await expect(page.locator(".lesson-player .inline-notice")).toContainText(
+      "Captions and playback remain available",
+    );
+  else
+    expect(
+      events.some(
+        (e) => e.startsWith("native start") || e.startsWith("native end"),
+      ),
+    ).toBe(true);
+});
+
+test("untrusted tutor output stays text, and account deletion clears local progress", async ({
+  page,
+}) => {
+  await page.goto("/learn");
+  await page
+    .getByRole("button", { name: "Start learning", exact: true })
+    .click();
+  await page.route("**/api/tutor", (route) =>
+    route.fulfill({
+      json: {
+        answer: "<script>window.injectionExecuted=true</script>",
+        claims: [],
+        insufficientEvidence: true,
+        mode: "live-model",
+        model: "security-test-stub",
+      },
+    }),
+  );
+  await page
+    .getByRole("button", { name: "Give me a real-life analogy" })
+    .click();
+  await expect(page.locator(".assistant-message")).toContainText("<script>");
+  expect(
+    await page.evaluate(
+      () =>
+        (window as unknown as { injectionExecuted?: boolean })
+          .injectionExecuted,
+    ),
+  ).toBeUndefined();
+  await page.getByRole("button", { name: "Account and settings" }).click();
+  await page.getByRole("button", { name: "Delete my learning data" }).click();
+  await page.getByRole("button", { name: "Confirm deletion" }).click();
+  await expect(page.getByRole("status")).toContainText("deleted");
+  const response = await page.request.get("/api/progress?projectId=sample");
+  expect((await response.json()).visited).toEqual([]);
 });

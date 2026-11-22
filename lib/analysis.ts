@@ -1,6 +1,8 @@
+import { rankConcepts } from "./ranking";
+export { rankConcepts } from "./ranking";
 import ts from "typescript";
 import path from "node:path";
-import type { Citation, Concept, Snapshot, SourceFile } from "./types";
+import type { Citation, Snapshot, SourceFile } from "./types";
 
 export const LIMITS = {
   files: 48,
@@ -249,31 +251,6 @@ const definitions = [
     pattern: /\bit\(|\btest\(|\bexpect\(/,
   },
 ];
-export function rankConcepts(
-  concepts: Concept[],
-  gaps: Record<string, number> = {},
-) {
-  const remaining = [...concepts],
-    ordered: Concept[] = [];
-  while (remaining.length) {
-    const ready = remaining.filter((c) =>
-      c.prerequisites.every((p) => !remaining.some((r) => r.id === p)),
-    );
-    const choices = ready.length ? ready : remaining;
-    choices.sort(
-      (a, b) =>
-        b.importance +
-          (gaps[b.id] ?? 0) * 20 -
-          b.difficulty * 2 -
-          (a.importance + (gaps[a.id] ?? 0) * 20 - a.difficulty * 2) ||
-        a.id.localeCompare(b.id),
-    );
-    const c = choices[0];
-    ordered.push(c);
-    remaining.splice(remaining.indexOf(c), 1);
-  }
-  return ordered;
-}
 export function analyze(
   input: Omit<Snapshot, "dependencies" | "frameworks" | "concepts" | "edges">,
 ): Snapshot {
@@ -375,22 +352,71 @@ export function analyze(
   };
 }
 export function retrieve(snapshot: Snapshot, query: string, limit = 4) {
-  const stop = new Set(['the','and','what','where','does','how','which','this','that','with','from','into','are','its','for','when','can','use','before']);
-  const stem = (word:string) => word.replace(/(ation|ated|ating)$/,'').replace(/s$/,'');
-  const tokens = (text:string) => (text.replace(/([a-z])([A-Z])/g,'$1 $2').toLowerCase().match(/[a-z][a-z0-9_]{2,}/g)??[]).filter(t=>!stop.has(t)).map(stem);
+  const stop = new Set([
+    "the",
+    "and",
+    "what",
+    "where",
+    "does",
+    "how",
+    "which",
+    "this",
+    "that",
+    "with",
+    "from",
+    "into",
+    "are",
+    "its",
+    "for",
+    "when",
+    "can",
+    "use",
+    "before",
+  ]);
+  const stem = (word: string) =>
+    word.replace(/(ation|ated|ating)$/, "").replace(/s$/, "");
+  const tokens = (text: string) =>
+    (
+      text
+        .replace(/([a-z])([A-Z])/g, "$1 $2")
+        .toLowerCase()
+        .match(/[a-z][a-z0-9_]{2,}/g) ?? []
+    )
+      .filter((t) => !stop.has(t))
+      .map(stem);
   const terms = [...new Set(tokens(query))];
-  const indexed=snapshot.files.map(file=>({file,pathTerms:new Set(tokens(file.path)),contentTerms:new Set(tokens(file.content))}));
-  const weights=new Map(terms.map(t=>[t,Math.log(1+indexed.length/(1+indexed.filter(f=>f.pathTerms.has(t)||f.contentTerms.has(t)).length))]));
+  const indexed = snapshot.files.map((file) => ({
+    file,
+    pathTerms: new Set(tokens(file.path)),
+    contentTerms: new Set(tokens(file.content)),
+  }));
+  const weights = new Map(
+    terms.map((t) => [
+      t,
+      Math.log(
+        1 +
+          indexed.length /
+            (1 +
+              indexed.filter((f) => f.pathTerms.has(t) || f.contentTerms.has(t))
+                .length),
+      ),
+    ]),
+  );
   return indexed
-    .map(({file,pathTerms,contentTerms}) => ({
+    .map(({ file, pathTerms, contentTerms }) => ({
       file,
-      score: terms.reduce(
-        (score, t) =>
-          score +
-          ((pathTerms.has(t) ? 5 : 0) +
-          (contentTerms.has(t) ? 1 : 0)) * (weights.get(t)??1),
-        0,
-      ) * (file.category === 'test' && !/test|spec|assert/.test(query.toLowerCase()) ? 0.75 : 1),
+      score:
+        terms.reduce(
+          (score, t) =>
+            score +
+            ((pathTerms.has(t) ? 5 : 0) + (contentTerms.has(t) ? 1 : 0)) *
+              (weights.get(t) ?? 1),
+          0,
+        ) *
+        (file.category === "test" &&
+        !/test|spec|assert/.test(query.toLowerCase())
+          ? 0.75
+          : 1),
     }))
     .filter((x) => x.score > 0)
     .sort((a, b) => b.score - a.score || a.file.path.localeCompare(b.file.path))

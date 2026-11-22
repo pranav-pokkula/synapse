@@ -16,7 +16,7 @@ export default defineConfig({
     screenshot: "only-on-failure",
     video: "retain-on-failure",
     ...devices["Desktop Chrome"],
-    channel: process.env.PLAYWRIGHT_CHROMIUM ? 'chromium' : 'chrome',
+    channel: process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "chrome",
   },
   projects: [{ name: "chromium" }],
 });

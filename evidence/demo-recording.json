@@ -1,0 +1,69 @@
+{
+  "recordedAt": "2026-11-22T15:55:59.915Z",
+  "complete": true,
+  "durationSeconds": 166,
+  "audio": "Silent screen capture with explanatory captions; no recorded narration",
+  "source": "Actual local application and live public GitHub import; sample fixture explicitly labeled",
+  "scenes": [
+    {
+      "title": "You built it. Now understand it.",
+      "seconds": 12
+    },
+    {
+      "title": "Start with a real public repository",
+      "seconds": 8
+    },
+    {
+      "title": "Pinned to an exact commit",
+      "seconds": 12
+    },
+    {
+      "title": "Architecture from source relationships",
+      "seconds": 12
+    },
+    {
+      "title": "Every reference has a source trail",
+      "seconds": 10
+    },
+    {
+      "title": "A clearly labeled teaching fixture",
+      "seconds": 10
+    },
+    {
+      "title": "The foundations first",
+      "seconds": 10
+    },
+    {
+      "title": "One idea, three ways to learn",
+      "seconds": 10
+    },
+    {
+      "title": "A real animation, not a static diagram",
+      "seconds": 15
+    },
+    {
+      "title": "Adjust the explanation depth",
+      "seconds": 10
+    },
+    {
+      "title": "Helpful without pretending",
+      "seconds": 10
+    },
+    {
+      "title": "Check understanding against the idea",
+      "seconds": 8
+    },
+    {
+      "title": "Feedback, then a next step",
+      "seconds": 10
+    },
+    {
+      "title": "Progress that survives a return",
+      "seconds": 10
+    },
+    {
+      "title": "Built to be inspected",
+      "seconds": 12
+    }
+  ]
+}

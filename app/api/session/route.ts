@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { identity, listRecords } from "@/lib/store";
+import { identity, listRecords, getRecord, putRecord } from "@/lib/store";
 import { cloudConfigured } from "@/lib/supabase";
 import { providerConfigured } from "@/lib/provider";
 import { failure } from "@/lib/http";
@@ -7,6 +7,11 @@ import type { Snapshot } from "@/lib/types";
 export async function GET() {
   try {
     const user = await identity();
+    if (!(await getRecord(user, "profile", "learner")))
+      await putRecord(user, "profile", "learner", {
+        createdAt: new Date().toISOString(),
+        defaultLevel: "beginner",
+      });
     const snapshots = await listRecords<Snapshot>(user, "snapshot");
     return NextResponse.json(
       {

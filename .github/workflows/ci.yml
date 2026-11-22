@@ -1,0 +1,39 @@
+name: Verify SYNAPSE
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run evaluate
+      - run: npm run build
+      - run: npm audit --audit-level=high
+      - run: npx playwright install --with-deps chromium
+      - name: Verify production browser journeys
+        run: |
+          npm start > /tmp/synapse-server.log 2>&1 &
+          for attempt in $(seq 1 30); do curl -fsS http://127.0.0.1:3000 >/dev/null && break || sleep 1; done
+          npm run test:e2e
+        env:
+          PLAYWRIGHT_CHROMIUM: '1'
+          APP_ORIGIN: http://127.0.0.1:3000
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: verification-evidence
+          path: |
+            playwright-report/
+            evidence/

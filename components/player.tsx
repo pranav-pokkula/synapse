@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   Captions,
   ChevronLeft,
@@ -15,6 +15,13 @@ import {
   VolumeX,
 } from "lucide-react";
 import type { Lesson } from "@/lib/types";
+const subscribeNarrow = (listener: () => void) => {
+  const query = window.matchMedia("(max-width:560px)");
+  query.addEventListener("change", listener);
+  return () => query.removeEventListener("change", listener);
+};
+const readNarrow = () => window.matchMedia("(max-width:560px)").matches;
+const serverNarrow = () => false;
 export function Player({
   lesson,
   onStep,
@@ -31,6 +38,11 @@ export function Player({
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const generation = useRef(0);
   const scene = lesson.board.steps[step];
+  const narrow = useSyncExternalStore(
+    subscribeNarrow,
+    readNarrow,
+    serverNarrow,
+  );
   useEffect(() => {
     onStep(step);
   }, [step, onStep]);
@@ -65,7 +77,13 @@ export function Player({
       };
       speech.speak(utterance);
       timer.current = setTimeout(
-        next,
+        () => {
+          if (generation.current === token)
+            setSpeechStatus(
+              "Narration did not finish in this browser. Captions and playback remain available.",
+            );
+          next();
+        },
         Math.max(8000, (scene.caption.split(" ").length * 700) / speed),
       );
     } else
@@ -99,14 +117,14 @@ export function Player({
         <span>Conceptual model · source-linked</span>
       </div>
       <div
-        className={`animation-stage ${playing ? "is-playing" : ""}`}
+        className={`animation-stage ${playing ? "is-playing" : ""} ${narrow ? "vertical-scene" : ""}`}
         data-testid="animation-stage"
         data-step={step}
         data-state={scene.state}
       >
         <svg
           className="scene-svg"
-          viewBox="0 0 760 220"
+          viewBox={narrow ? "0 0 360 430" : "0 0 760 220"}
           role="img"
           aria-label={`${scene.title}: ${scene.caption}`}
         >
@@ -129,7 +147,11 @@ export function Player({
           {lesson.board.nodes.slice(1).map((node, i) => (
             <g key={node.id}>
               <path
-                d={`M${182 + i * 250} 106H${278 + i * 250}`}
+                d={
+                  narrow
+                    ? `M180 ${114 + i * 145}V${154 + i * 145}`
+                    : `M${182 + i * 250} 106H${278 + i * 250}`
+                }
                 stroke="var(--scene-line)"
                 strokeWidth="2"
                 strokeDasharray="4 6"
@@ -141,16 +163,16 @@ export function Player({
                   style={{ animationDuration: `${1.7 / speed}s` }}
                 >
                   <circle
-                    cx={190 + i * 250}
-                    cy="106"
+                    cx={narrow ? 180 : 190 + i * 250}
+                    cy={narrow ? 118 + i * 145 : 106}
                     r="8"
                     fill="var(--mint)"
                     opacity=".25"
                     filter="url(#glow)"
                   />
                   <circle
-                    cx={190 + i * 250}
-                    cy="106"
+                    cx={narrow ? 180 : 190 + i * 250}
+                    cy={narrow ? 118 + i * 145 : 106}
                     r="5"
                     fill="var(--mint)"
                   />
@@ -167,22 +189,31 @@ export function Player({
                 className={`scene-node ${active ? "scene-active" : ""} ${active && scene.state === "failure" ? "scene-failure" : ""}`}
               >
                 <rect
-                  x={27 + i * 250}
-                  y="55"
+                  x={narrow ? 102 : 27 + i * 250}
+                  y={narrow ? 10 + i * 145 : 55}
                   width="156"
                   height="104"
                   rx="15"
                 />
-                <foreignObject x={91 + i * 250} y="72" width="30" height="30">
+                <foreignObject
+                  x={narrow ? 166 : 91 + i * 250}
+                  y={narrow ? 27 + i * 145 : 72}
+                  width="30"
+                  height="30"
+                >
                   <Icon size={25} />
                 </foreignObject>
-                <text x={105 + i * 250} y="132" textAnchor="middle">
+                <text
+                  x={narrow ? 180 : 105 + i * 250}
+                  y={narrow ? 87 + i * 145 : 132}
+                  textAnchor="middle"
+                >
                   {node.label}
                 </text>
                 <text
                   className="scene-node-tag"
-                  x={105 + i * 250}
-                  y="184"
+                  x={narrow ? 180 : 105 + i * 250}
+                  y={narrow ? 102 + i * 145 : 184}
                   textAnchor="middle"
                 >
                   {active

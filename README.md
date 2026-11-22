@@ -4,6 +4,10 @@
 
 A Next.js learning studio that turns public JavaScript and TypeScript repositories into source-linked architecture maps, prioritized concepts, animated lessons, and practical assessments.
 
+![SYNAPSE learning studio](evidence/overview-1366.png)
+
+Connect a repository, inspect the static architecture, follow a prerequisite-aware learning path, and read/watch/listen to a concept at your chosen depth. Open exact source excerpts, ask the template guide for context, and practice with deterministic feedback. The studio includes light/dark themes, mobile layouts, a transcript, and isolated local learner history.
+
 ## Run locally
 
 Requires Node.js 22 and npm.

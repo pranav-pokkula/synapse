@@ -34,6 +34,7 @@ import {
   X,
 } from "lucide-react";
 import { Brand } from "./brand";
+import { rankConcepts } from "@/lib/ranking";
 import { Architecture } from "./architecture";
 import { Player } from "./player";
 import { emptyProgress, makeLesson, mastery, questions } from "@/lib/learning";
@@ -139,8 +140,19 @@ export function Studio({ sample }: { sample: Snapshot }) {
     snapshot.concepts.reduce((sum, c) => sum + mastery(progress, c.id), 0) /
       Math.max(1, snapshot.concepts.length),
   );
+  const learningPath = rankConcepts(
+    snapshot.concepts,
+    Object.fromEntries(
+      snapshot.concepts.map((c) => [
+        c.id,
+        progress.attempts.some((a) => a.conceptId === c.id)
+          ? 1 - mastery(progress, c.id) / 100
+          : 0,
+      ]),
+    ),
+  );
   const nextConcept =
-    snapshot.concepts.find((c) => mastery(progress, c.id) < 100) ?? concept;
+    learningPath.find((c) => mastery(progress, c.id) < 100) ?? concept;
   const refreshSession = useCallback(async () => {
     try {
       setSession(await api<Session>("/api/session"));
@@ -153,38 +165,47 @@ export function Studio({ sample }: { sample: Snapshot }) {
     mounted.current = true;
     // Browser preferences are an external store; apply them after hydration.
     const restore = async () => {
-    await Promise.resolve();
-    const theme = localStorage.getItem("synapse-theme");
-    if (theme === "dark") {
-      setDark(true);
-      document.documentElement.dataset.theme = "dark";
-    }
-    const params = new URLSearchParams(location.search);
-    if (params.has("connect")) setConnect(true);
-    if (params.has("authError"))
-      setNotice(
-        "That sign-in link expired or was already used. Request a new link in settings.",
-      );
-    await refreshSession();
-    const remembered = localStorage.getItem("synapse-project");
-    if (remembered && remembered !== "sample") {
-      api<Snapshot>(`/api/project/${remembered}`)
-        .then((s) => {
-          setSnapshot(s);
-          setSelected(s.concepts[0]?.id ?? "");
-        })
-        .catch(() => localStorage.removeItem("synapse-project"));
-    }
-    const pending = localStorage.getItem("synapse-import");
-    if (pending)
-      api<Job>(`/api/import/${pending}`)
-        .then((j) => {
-          if (j.status !== "complete") {
-            setJob(j);
-            setConnect(true);
-          }
-        })
-        .catch(() => localStorage.removeItem("synapse-import"));
+      await Promise.resolve();
+      const theme = localStorage.getItem("synapse-theme");
+      if (theme === "dark") {
+        setDark(true);
+        document.documentElement.dataset.theme = "dark";
+      }
+      const params = new URLSearchParams(location.search);
+      if (params.has("connect")) {
+        setConnect(true);
+        params.delete("connect");
+        const query = params.toString();
+        window.history.replaceState(
+          window.history.state,
+          "",
+          `${location.pathname}${query ? "?" + query : ""}${location.hash}`,
+        );
+      }
+      if (params.has("authError"))
+        setNotice(
+          "That sign-in link expired or was already used. Request a new link in settings.",
+        );
+      await refreshSession();
+      const remembered = localStorage.getItem("synapse-project");
+      if (remembered && remembered !== "sample") {
+        api<Snapshot>(`/api/project/${remembered}`)
+          .then((s) => {
+            setSnapshot(s);
+            setSelected(s.concepts[0]?.id ?? "");
+          })
+          .catch(() => localStorage.removeItem("synapse-project"));
+      }
+      const pending = localStorage.getItem("synapse-import");
+      if (pending)
+        api<Job>(`/api/import/${pending}`)
+          .then((j) => {
+            if (j.status !== "complete") {
+              setJob(j);
+              setConnect(true);
+            }
+          })
+          .catch(() => localStorage.removeItem("synapse-import"));
     };
     void restore();
   }, [refreshSession]);
@@ -229,11 +250,14 @@ export function Studio({ sample }: { sample: Snapshot }) {
     setProgress(next);
     saveBrowser(snapshot.id, next);
     try {
-      await api("/api/progress", {
-        projectId: snapshot.id,
-        visited: [c.id],
-        level,
-      });
+      await Promise.all([
+        api("/api/progress", {
+          projectId: snapshot.id,
+          visited: [c.id],
+          level,
+        }),
+        api("/api/lesson", { projectId: snapshot.id, conceptId: c.id, level }),
+      ]);
     } catch {
       setNotice(
         "Progress is saved in this browser. Server sync is currently unavailable.",
@@ -602,7 +626,7 @@ export function Studio({ sample }: { sample: Snapshot }) {
                           </button>
                         </div>
                         <div className="concept-list">
-                          {snapshot.concepts.slice(0, 4).map((c, i) => (
+                          {learningPath.slice(0, 4).map((c, i) => (
                             <ConceptRow
                               key={c.id}
                               concept={c}
@@ -762,7 +786,7 @@ export function Studio({ sample }: { sample: Snapshot }) {
                     <LevelSelect value={level} onChange={changeLevel} />
                   </div>
                   <div className="path-list">
-                    {snapshot.concepts
+                    {learningPath
                       .filter((c) =>
                         (c.title + " " + c.objective)
                           .toLowerCase()

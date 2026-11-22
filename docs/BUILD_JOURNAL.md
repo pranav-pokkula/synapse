@@ -17,3 +17,13 @@ Verification: 57 unit/integration tests passed, including actual SQL RLS semanti
 Live imports succeeded for `sindresorhus/is-absolute-url` (4 files), `sindresorhus/is-plain-obj` (6), and `lukeed/clsx` (10). Reimport reused the exact first snapshot. Invalid host returned 400 and nonexistent repository returned 404. Raw outcomes: `evidence/live-import-results.json`.
 
 Initial retrieval evaluation retrieved the expected file in 4/5 top-three results; the validation question failed. Stopwords and morphological differences were investigated; token normalization and inverse-frequency weighting are being tested against the same questions. This is development-set tuning, not held-out evidence.
+
+## Reliability and evaluation milestone
+
+Commit `8392bdf` records the first working slice. Expanded security coverage reached 68 passing tests. The development browser suite reached 10 passing checks, including native narration start/end events, actual animation packet movement, source-output escaping, data deletion, four responsive sizes, and axe scans. The webpack production build passed. Dependency audit reported zero vulnerabilities. Retrieval tuning reached 5/5 on the same development questions; human/held-out and model evaluation remain pending.
+
+The first real demo recording uncovered a persistent `?connect=1` deep link that reopened the import dialog after a later reload. Fixed by consuming the entry parameter and added a regression test. That failed recording is not a completed deliverable. A corrected recording is in progress.
+
+## Production verification and demonstration
+
+The corrected production build passed all 11 Chrome checks. A transient contrast failure during theme color interpolation was eliminated by removing the background-color transition; both settled and changing themes retain legibility. Typecheck, lint, 68 unit/integration/security checks, and webpack build passed. The corrected real demo recorder completed its full sequence, including import, animation, feedback, and progress after reload. It is a silent captioned capture; no public video upload or Devpost submission has occurred.

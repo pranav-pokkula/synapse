@@ -107,18 +107,16 @@ export async function putRecord(
 ) {
   if (user.cloud) {
     const db = await supabase();
-    const { error } = await db!
-      .from("learning_records")
-      .upsert(
-        {
-          owner_id: user.id,
-          kind,
-          id,
-          payload,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "owner_id,kind,id" },
-      );
+    const { error } = await db!.from("learning_records").upsert(
+      {
+        owner_id: user.id,
+        kind,
+        id,
+        payload,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "owner_id,kind,id" },
+    );
     if (error)
       throw new AppError(
         "Cloud changes could not be saved. Please retry.",
@@ -182,10 +180,11 @@ export async function deleteRecords(user: Identity) {
       );
     return;
   }
-  await rm(path.dirname(path.dirname(location(user.id, "progress", "all"))), {
-    recursive: true,
-    force: true,
-  });
+  const root = path.dirname(path.dirname(location(user.id, "progress", "all")));
+  const entries = await readdir(root).catch(() => []);
+  for (const entry of entries)
+    if (entry !== "quota")
+      await rm(path.join(root, entry), { recursive: true, force: true });
 }
 const locks = new Map<string, Promise<unknown>>();
 export async function serialized<T>(

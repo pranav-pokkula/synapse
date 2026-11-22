@@ -9,4 +9,7 @@ coverage/
 *.tsbuildinfo
 .DS_Store
 .vercel/
+supabase/.temp/
 evidence/*.webm
+evidence/demo/*.webm
+evidence/*.mp4

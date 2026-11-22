@@ -3,9 +3,7 @@
     "argv": [
       "/opt/homebrew/Cellar/node@22/22.22.0/bin/node",
       "/Users/prapokks/Documents/synapse/node_modules/.bin/playwright",
-      "test",
-      "--grep",
-      "keyboard dialog"
+      "test"
     ],
     "configFile": "/Users/prapokks/Documents/synapse/playwright.config.ts",
     "rootDir": "/Users/prapokks/Documents/synapse/e2e",
@@ -57,7 +55,7 @@
         "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
         "timeout": 45000,
         "use": {
-          "baseURL": "http://127.0.0.1:3000",
+          "baseURL": "http://127.0.0.1:3001",
           "trace": "retain-on-failure",
           "screenshot": "only-on-failure",
           "video": "retain-on-failure",
@@ -120,6 +118,244 @@
       "line": 0,
       "specs": [
         {
+          "title": "the connect deep link is consumed once and does not reopen after reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1876,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-22T15:55:22.914Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bf222bad70f76648f722-7fc256867241d06e83e4",
+          "file": "journey.spec.ts",
+          "line": 4,
+          "column": 1
+        },
+        {
+          "title": "sample: explore, animate, inspect source, tutor, practice, persist",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7297,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-22T15:55:26.096Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bf222bad70f76648f722-4dd05e6d0ab054016d61",
+          "file": "journey.spec.ts",
+          "line": 17,
+          "column": 1
+        },
+        {
+          "title": "invalid repository error is recoverable and preserves the sample",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 845,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-22T15:55:33.402Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bf222bad70f76648f722-e82ed206a0d9359040ac",
+          "file": "journey.spec.ts",
+          "line": 108,
+          "column": 1
+        },
+        {
+          "title": "responsive 390: overview and lesson have no page overflow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 705,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-22T15:55:34.255Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bf222bad70f76648f722-62baa41283a51cfc3817",
+          "file": "journey.spec.ts",
+          "line": 135,
+          "column": 3
+        },
+        {
+          "title": "responsive 768: overview and lesson have no page overflow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 591,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-22T15:55:34.967Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bf222bad70f76648f722-337a38746ec8b3aebc96",
+          "file": "journey.spec.ts",
+          "line": 135,
+          "column": 3
+        },
+        {
+          "title": "responsive 1366: overview and lesson have no page overflow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 607,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-22T15:55:35.565Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bf222bad70f76648f722-dcb661b96a953c1787e4",
+          "file": "journey.spec.ts",
+          "line": 135,
+          "column": 3
+        },
+        {
+          "title": "responsive 1920: overview and lesson have no page overflow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 680,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-22T15:55:36.182Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bf222bad70f76648f722-810085aed7e992bc9f28",
+          "file": "journey.spec.ts",
+          "line": 135,
+          "column": 3
+        },
+        {
           "title": "keyboard dialog, themes, and accessibility scan",
           "ok": true,
           "tags": [],
@@ -135,12 +371,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1790,
+                  "duration": 1853,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-11-22T10:30:44.858Z",
+                  "startTime": "2026-11-22T15:55:36.870Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -150,7 +386,109 @@
           ],
           "id": "bf222bad70f76648f722-d25ac692b2ab57818a09",
           "file": "journey.spec.ts",
-          "line": 152,
+          "line": 166,
+          "column": 1
+        },
+        {
+          "title": "cross-session projects and progress stay isolated",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 529,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-22T15:55:38.731Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bf222bad70f76648f722-f5a1e1137f3725e9cdbf",
+          "file": "journey.spec.ts",
+          "line": 199,
+          "column": 1
+        },
+        {
+          "title": "actual packet movement and real browser speech callbacks",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8269,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-22T15:55:39.268Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bf222bad70f76648f722-2b28050a5a747fca6deb",
+          "file": "journey.spec.ts",
+          "line": 225,
+          "column": 1
+        },
+        {
+          "title": "untrusted tutor output stays text, and account deletion clears local progress",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 963,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-22T15:55:47.545Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bf222bad70f76648f722-214b0da2b3a8bd1b32c7",
+          "file": "journey.spec.ts",
+          "line": 297,
           "column": 1
         }
       ]
@@ -158,9 +496,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-11-22T10:30:44.396Z",
-    "duration": 3745.381,
-    "expected": 1,
+    "startTime": "2026-11-22T15:55:22.346Z",
+    "duration": 26284.915,
+    "expected": 11,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

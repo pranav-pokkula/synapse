@@ -1,0 +1,15 @@
+{
+  "events": [
+    "speak called",
+    "native start",
+    "native end",
+    "speak called",
+    "native start",
+    "native end",
+    "speak called",
+    "native start",
+    "native end"
+  ],
+  "voices": 180,
+  "note": "Native browser speech callbacks observed. Audible output has not been reviewed by a human."
+}
