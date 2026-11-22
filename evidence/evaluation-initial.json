@@ -1,0 +1,94 @@
+{
+  "recordedAt": "2026-11-22T10:33:15.075Z",
+  "dataset": "embedded Fieldnotes fixture, six predeclared questions (five answerable, one unknown)",
+  "fixtureHash": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+  "retrieval": {
+    "cases": [
+      {
+        "id": "validation",
+        "expected": "lib/validation.ts",
+        "retrieved": [
+          "components/note-composer.tsx",
+          "app/api/notes/route.ts",
+          "lib/notes.ts"
+        ],
+        "hitAt3": false,
+        "citationsValid": true,
+        "ms": 0.372
+      },
+      {
+        "id": "identity",
+        "expected": "app/api/notes/route.ts",
+        "retrieved": [
+          "app/api/notes/route.ts",
+          "lib/notes.ts",
+          "components/note-composer.tsx"
+        ],
+        "hitAt3": true,
+        "citationsValid": true,
+        "ms": 0.147
+      },
+      {
+        "id": "query",
+        "expected": "lib/notes.ts",
+        "retrieved": [
+          "lib/notes.ts",
+          "app/api/notes/route.ts",
+          "db/schema.sql"
+        ],
+        "hitAt3": true,
+        "citationsValid": true,
+        "ms": 0.176
+      },
+      {
+        "id": "state",
+        "expected": "components/note-composer.tsx",
+        "retrieved": [
+          "components/note-composer.tsx",
+          "app/api/notes/route.ts",
+          "lib/notes.ts"
+        ],
+        "hitAt3": true,
+        "citationsValid": true,
+        "ms": 0.127
+      },
+      {
+        "id": "tests",
+        "expected": "tests/validation.test.ts",
+        "retrieved": [
+          "tests/validation.test.ts",
+          "lib/validation.ts",
+          "app/api/notes/route.ts"
+        ],
+        "hitAt3": true,
+        "citationsValid": true,
+        "ms": 0.098
+      }
+    ],
+    "hitAt3": 0.8
+  },
+  "ordering": {
+    "metric": "Prerequisite inversions; this is not a learner-outcomes study",
+    "alphabetical": 2,
+    "synapse": 0
+  },
+  "llm": {
+    "status": "not run — no provider selected / RUN_LLM_EVAL not enabled",
+    "model": null,
+    "outputs": [],
+    "requiredManualMetrics": [
+      "technical accuracy",
+      "citation relevance",
+      "unsupported claims",
+      "explanation usefulness",
+      "pedagogical clarity"
+    ],
+    "limitations": [
+      "Small author-created fixture; not independently reviewed",
+      "Text-match citations do not validate semantic entailment",
+      "No measured learning benefit",
+      "Model latency/tokens only available after configured run",
+      "No fabricated live-model results"
+    ]
+  }
+}

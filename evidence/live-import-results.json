@@ -1,0 +1,100 @@
+{
+  "recordedAt": "2026-11-22T10:32:09.035Z",
+  "network": "Real public GitHub REST API; no mock responses",
+  "outcomes": [
+    {
+      "case": "ordinary-1",
+      "url": "https://github.com/sindresorhus/is-absolute-url",
+      "expected": "Pinned snapshot, genuine source, nonempty concept path, valid citations",
+      "observed": "pass",
+      "sha": "5fc796fd8b7d320d7304e15e8151120b6b987e16",
+      "files": 4,
+      "eligible": 4,
+      "partial": false,
+      "concepts": [
+        "modules",
+        "tests"
+      ],
+      "citations": 2,
+      "validCitations": 2,
+      "cached": false,
+      "ms": 1775,
+      "snapshotId": "78d5d213-ed84-4af0-91c5-7e728fda60fa"
+    },
+    {
+      "case": "ordinary-2",
+      "url": "https://github.com/sindresorhus/is-plain-obj",
+      "expected": "Pinned snapshot, genuine source, nonempty concept path, valid citations",
+      "observed": "pass",
+      "sha": "666df7c10035f7e26f27ec214fe5ae3173435f34",
+      "files": 6,
+      "eligible": 6,
+      "partial": false,
+      "concepts": [
+        "modules",
+        "tests"
+      ],
+      "citations": 4,
+      "validCitations": 4,
+      "cached": false,
+      "ms": 710,
+      "snapshotId": "e6ad5544-0d3d-4cd1-999f-1f117e696849"
+    },
+    {
+      "case": "repeatability",
+      "url": "https://github.com/sindresorhus/is-absolute-url",
+      "expected": "Pinned snapshot, genuine source, nonempty concept path, valid citations",
+      "observed": "pass",
+      "sha": "5fc796fd8b7d320d7304e15e8151120b6b987e16",
+      "files": 4,
+      "eligible": 4,
+      "partial": false,
+      "concepts": [
+        "modules",
+        "tests"
+      ],
+      "citations": 2,
+      "validCitations": 2,
+      "cached": true,
+      "ms": 81,
+      "snapshotId": "78d5d213-ed84-4af0-91c5-7e728fda60fa"
+    },
+    {
+      "case": "more-demanding",
+      "url": "https://github.com/lukeed/clsx",
+      "expected": "Pinned snapshot, genuine source, nonempty concept path, valid citations",
+      "observed": "pass",
+      "sha": "925494cf31bcd97d3337aacd34e659e80cae7fe2",
+      "files": 10,
+      "eligible": 10,
+      "partial": false,
+      "concepts": [
+        "modules",
+        "tests"
+      ],
+      "citations": 6,
+      "validCitations": 6,
+      "cached": false,
+      "ms": 931,
+      "snapshotId": "78868766-808d-487d-8c79-d8f4274e3e68"
+    },
+    {
+      "case": "invalid-host",
+      "expected": 400,
+      "observed": 400,
+      "body": {
+        "error": "Use a public https://github.com/owner/repository URL without credentials or extra parameters.",
+        "code": "INVALID_INPUT"
+      }
+    },
+    {
+      "case": "missing-repository",
+      "expected": 404,
+      "observed": 404,
+      "body": {
+        "error": "Repository not found or not public. Check the URL; private repositories are not supported.",
+        "code": "REPO_NOT_FOUND"
+      }
+    }
+  ]
+}
