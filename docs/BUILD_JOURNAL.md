@@ -1,5 +1,13 @@
 # Build journal
 
+## 2026-11-25 — Stage 2 environment audit (M1)
+
+Remote `main` still points to `1aa32d9cef8bb64f4b336d3068401b2c4bd8430c`. Work continues on `stage2/live-intelligence`; the existing generated `next-env.d.ts` development-path change was present before this stage. Re-ran strict typecheck, lint, and all 68 unit/integration/security tests successfully. Browser/build counts from November 22 remain historical until rerun.
+
+Required Prune and Supabase environment entries are present; values were not printed. The Prune endpoint and observed model match the user's requested configuration. The connected Supabase account still exposes only Adugu and its unrelated project, not TraceEval / Synapse learning. Requested reconnection or confirmation of the dedicated local project identity; no database changes were made. The intended Vercel team was verified and has no existing SYNAPSE project.
+
+Rechecked the official event page, rules, and full rubric: November 28 at 6 PM Eastern; 20/30/30/20 scoring; public source, a 2–4 minute demo, accurate disclosures, team roster, and individual contact forms remain required. Prune usage must be demonstrated for its sponsor award. Production promotion and Devpost submission require the user's explicit approval.
+
 ## 2026-11-22 — isolated project start
 
 Workspace was empty. Node 22.22.0 is installed. No pre-existing project code was copied. Official Devpost rules and full rubric checked. Only connected Supabase project belongs to ADUGU and will not be touched. No model API credentials are present in the environment.
