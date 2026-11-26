@@ -1,0 +1,22 @@
+{
+  "version": "2026-11-25-v1",
+  "status": "Predeclared before Stage 2 paired model execution; source inspected by the building agent, not independently authored",
+  "conditions": ["baseline: first two indexed files", "synapse: top three retrieved excerpts"],
+  "controls": "Same model alias, system prompt, intermediate level, temperature 0, output limit 1800, schema and citation validator. Routing and gateway cache off. No app cache. Alternating condition order. No automatic retries.",
+  "heldOutRepository": "vercel/nextjs-postgres-nextauth-tailwindcss-template",
+  "heldOutSha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+  "cases": [
+    {"id":"dev-validation","dataset":"development","question":"Where is the note body validated and what limits are applied?","expectedPath":"lib/validation.ts"},
+    {"id":"dev-identity","dataset":"development","question":"Where does the route check getUser before inserting a note?","expectedPath":"app/api/notes/route.ts"},
+    {"id":"dev-query","dataset":"development","question":"How does listNotes filter notes by user_id and limit results?","expectedPath":"lib/notes.ts"},
+    {"id":"dev-state","dataset":"development","question":"How does note-composer use useState and fetch when saving?","expectedPath":"components/note-composer.tsx"},
+    {"id":"dev-tests","dataset":"development","question":"What validation behavior does validation.test.ts assert?","expectedPath":"tests/validation.test.ts"},
+    {"id":"dev-unknown","dataset":"development","question":"Which production region hosts the database, and what uptime does it achieve?","expectedPath":null},
+    {"id":"held-auth","dataset":"held-out","question":"Which provider does lib/auth.ts configure, and which auth helpers does it export?","expectedPath":"lib/auth.ts"},
+    {"id":"held-delete","dataset":"held-out","question":"Does the deleteProduct server action currently delete a database row and revalidate the page? Distinguish active code from comments.","expectedPath":"app/(dashboard)/actions.ts"},
+    {"id":"held-pagination","dataset":"held-out","question":"How does getProducts in lib/db.ts handle a nonempty search versus pagination without a search?","expectedPath":"lib/db.ts"},
+    {"id":"held-unknown","dataset":"held-out","question":"What production availability SLA and deployment region are guaranteed by this repository?","expectedPath":null}
+  ],
+  "humanScores": null,
+  "limitations": ["Small author-selected set; held out from prior retrieval tuning, not independent adjudication", "Text-match citation validity does not measure semantic accuracy or learning gains", "Direct Gemini versus Prune cannot run without a separately available direct provider credential; Gemini remains in Prune Vault"]
+}
