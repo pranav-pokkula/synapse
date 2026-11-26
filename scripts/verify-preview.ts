@@ -44,7 +44,10 @@ try {
     "Unauthenticated preview is protected",
     protectedResponse.status === 401 ||
       protectedResponse.status === 403 ||
-      protectedResponse.status === 307,
+      ([302, 303, 307].includes(protectedResponse.status) &&
+        protectedResponse.headers
+          .get("location")
+          ?.startsWith("https://vercel.com/sso-api") === true),
   );
   const sr = await a.get("/api/session");
   const session = await sr.json();
@@ -140,6 +143,11 @@ try {
       fullPage: true,
     });
     await page.setViewportSize({ width: 390, height: 844 });
+    await page.waitForFunction(
+      () =>
+        (document.querySelector(".sidebar")?.getBoundingClientRect().right ??
+          1) <= 0,
+    );
     check(
       "Personalized mobile lesson has no page overflow",
       await page.evaluate(
@@ -149,6 +157,7 @@ try {
     await page.screenshot({
       path: "evidence/preview-mobile.png",
       fullPage: true,
+      animations: "disabled",
     });
     check("Preview browser has no runtime errors", errors.length === 0);
   } finally {

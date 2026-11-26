@@ -1,0 +1,126 @@
+{
+  "recordedAt": "2026-11-26T04:20:55.068Z",
+  "baseURL": "http://127.0.0.1:3000",
+  "checks": [
+    {
+      "name": "App creates a real hosted guest session",
+      "passed": true
+    },
+    {
+      "name": "Session response cannot be cached",
+      "passed": true
+    },
+    {
+      "name": "Real generated beginner lesson",
+      "passed": false
+    }
+  ],
+  "lessons": [
+    {
+      "conceptId": "modules",
+      "level": "beginner",
+      "title": "How the pieces connect",
+      "summary": "A project is a team of small pieces. An import lets one piece use something another piece provides.",
+      "analogy": "Think of a workshop: each workbench has a specialty. Importing a tool is asking another workbench for its capability.",
+      "details": [
+        "Trace a module dependency and explain what crosses that boundary.",
+        "Source observation: app/page.tsx contains the code excerpt shown below. The highlighted excerpt is the evidence for this lesson's connection to your project.",
+        "A project is a team of small pieces. An import lets one piece use something another piece provides."
+      ],
+      "tradeoffs": [
+        "More boundaries can improve reuse but also add indirection. An import alone does not establish that a particular function runs."
+      ],
+      "citations": [
+        {
+          "path": "app/page.tsx",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 1,
+          "end": 8,
+          "quote": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;"
+        },
+        {
+          "path": "components/note-composer.tsx",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 2,
+          "end": 9,
+          "quote": "import { useState } from 'react';\n\nexport function NoteComposer() {\n  const [body, setBody] = useState('');\n  const [message, setMessage] = useState('');\n  async function save() {\n    const response = await fetch('/api/notes', {\n      method: 'POST', headers: { 'Content-Type': 'application/json' },"
+        },
+        {
+          "path": "app/api/notes/route.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 1,
+          "end": 8,
+          "quote": "import { noteSchema } from '../../../lib/validation';\nimport { getDatabase } from '../../../lib/database';\n\nexport async function POST(request: Request) {\n  const db = await getDatabase();\n  const { data: { user } } = await db.auth.getUser();\n  if (!user) return Response.json({ error: 'Sign in required' }, { status: 401 });\n  const parsed = noteSchema.safeParse(await request.json());"
+        }
+      ],
+      "board": {
+        "nodes": [
+          {
+            "id": "input",
+            "label": "Caller",
+            "kind": "client"
+          },
+          {
+            "id": "process",
+            "label": "Dependency",
+            "kind": "server"
+          },
+          {
+            "id": "output",
+            "label": "Result",
+            "kind": "output"
+          }
+        ],
+        "steps": [
+          {
+            "id": "step-0",
+            "title": "Find the importing module.",
+            "caption": "Find the importing module. A project is a team of small pieces. An import lets one piece use something another piece provides.",
+            "active": [
+              "input"
+            ],
+            "state": "working"
+          },
+          {
+            "id": "step-1",
+            "title": "Resolve the module path.",
+            "caption": "Resolve the module path.",
+            "active": [
+              "input",
+              "process"
+            ],
+            "from": "input",
+            "to": "process",
+            "state": "working",
+            "citationIndex": 0
+          },
+          {
+            "id": "step-2",
+            "title": "Use an exported capability.",
+            "caption": "Use an exported capability.",
+            "active": [
+              "process",
+              "output"
+            ],
+            "from": "process",
+            "to": "output",
+            "state": "success"
+          },
+          {
+            "id": "step-3",
+            "title": "Return to the caller with the result.",
+            "caption": "Return to the caller with the result.",
+            "active": [
+              "process"
+            ],
+            "state": "working"
+          }
+        ]
+      },
+      "mode": "reviewed-sample",
+      "fallbackReason": "The AI provider did not respond within 25 seconds. Your lesson and progress are safe."
+    }
+  ],
+  "complete": false,
+  "error": "Real generated beginner lesson"
+}

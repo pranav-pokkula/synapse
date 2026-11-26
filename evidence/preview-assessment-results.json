@@ -1,0 +1,35 @@
+{
+  "recordedAt": "2026-11-26T18:12:50.134Z",
+  "baseURL": "https://synapse-learning-qr1qac164-pranav-pokkulas-projects.vercel.app",
+  "checks": [
+    {
+      "name": "Hosted assessment identity created",
+      "passed": true
+    },
+    {
+      "name": "Concurrent progress and grading stay bounded",
+      "passed": true
+    },
+    {
+      "name": "Grading succeeds after the conflicting write finishes",
+      "passed": true
+    },
+    {
+      "name": "Repeated correct answer does not inflate mastery",
+      "passed": true
+    },
+    {
+      "name": "Hosted graded attempts survive reload",
+      "passed": true
+    },
+    {
+      "name": "Assessment verification records can be deleted",
+      "passed": true
+    }
+  ],
+  "complete": true,
+  "concurrentStatuses": [
+    200,
+    409
+  ]
+}

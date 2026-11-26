@@ -4,3 +4,4 @@ project_id = "synapse-learning"
 
 [auth]
 enable_anonymous_sign_ins = true
+additional_redirect_urls = ["http://127.0.0.1:3000/auth/callback", "https://synapse-learning-qr1qac164-pranav-pokkulas-projects.vercel.app/auth/callback"]

@@ -1,0 +1,77 @@
+{
+  "recordedAt": "2026-11-26T04:18:33.285Z",
+  "project": "TraceEval / synapse-learning",
+  "projectRef": "fcwyithhipsimrnccqsy",
+  "authentication": "Two real independent Supabase anonymous accounts; not simulated JWTs or email-OTP verification",
+  "checks": [
+    {
+      "name": "Two independent hosted identities",
+      "passed": true
+    },
+    {
+      "name": "Owner can save progress",
+      "passed": true
+    },
+    {
+      "name": "Owner can reload persisted progress",
+      "passed": true
+    },
+    {
+      "name": "B cannot read A records",
+      "passed": true
+    },
+    {
+      "name": "B cannot modify A records",
+      "passed": true
+    },
+    {
+      "name": "B cannot delete A records",
+      "passed": true
+    },
+    {
+      "name": "Forged ownership rejected",
+      "passed": true
+    },
+    {
+      "name": "Ownership reassignment rejected",
+      "passed": true
+    },
+    {
+      "name": "Logged-out table access denied",
+      "passed": true
+    },
+    {
+      "name": "Session refresh preserves identity",
+      "passed": true
+    },
+    {
+      "name": "Concurrent hosted workers have one winner",
+      "passed": true
+    },
+    {
+      "name": "Stale hosted worker cannot write",
+      "passed": true
+    },
+    {
+      "name": "Users cannot reset their quota counters",
+      "passed": true
+    },
+    {
+      "name": "Logged-out users cannot reserve global usage",
+      "passed": true
+    },
+    {
+      "name": "Deployment-wide minute limit is atomic across identities",
+      "passed": true
+    },
+    {
+      "name": "Owner deletion persists",
+      "passed": true
+    }
+  ],
+  "complete": true,
+  "limitations": [
+    "Disposable anonymous Auth users remain; no service-role key is used to delete accounts.",
+    "Email delivery/OTP sign-in is not exercised by this test."
+  ]
+}

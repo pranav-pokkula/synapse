@@ -1,0 +1,293 @@
+{
+  "recordedAt": "2026-11-26T04:43:14.921Z",
+  "baseURL": "https://synapse-learning-qr1qac164-pranav-pokkulas-projects.vercel.app",
+  "checks": [
+    {
+      "name": "Unauthenticated preview is protected",
+      "passed": true
+    },
+    {
+      "name": "Preview creates hosted authenticated session",
+      "passed": true
+    },
+    {
+      "name": "Preview session is private and uncached",
+      "passed": true
+    },
+    {
+      "name": "Second preview session starts independently",
+      "passed": true
+    },
+    {
+      "name": "Preview saves progress",
+      "passed": true
+    },
+    {
+      "name": "Preview reload preserves saved level",
+      "passed": true
+    },
+    {
+      "name": "Other preview session cannot see progress",
+      "passed": true
+    },
+    {
+      "name": "Cross-origin mutation is denied",
+      "passed": true
+    },
+    {
+      "name": "Preview generates a real Prune lesson",
+      "passed": true
+    },
+    {
+      "name": "Generated narration distinguishes each step",
+      "passed": true
+    },
+    {
+      "name": "Browser loads persisted personalized lesson",
+      "passed": true
+    },
+    {
+      "name": "Personalized mobile lesson has no page overflow",
+      "passed": true
+    },
+    {
+      "name": "Preview browser has no runtime errors",
+      "passed": true
+    },
+    {
+      "name": "Preview tutor returns validated live answer",
+      "passed": true
+    },
+    {
+      "name": "Preview learner-data deletion persists",
+      "passed": true
+    },
+    {
+      "name": "Signed-out AI request cannot create an implicit session",
+      "passed": true
+    }
+  ],
+  "complete": true,
+  "lesson": {
+    "conceptId": "modules",
+    "level": "beginner",
+    "title": "How the pieces connect",
+    "summary": "Web applications are built by connecting different files and modules together. When a user visits a page, the server fetches data and components, combining them to display the final view in the browser.",
+    "analogy": "Think of a restaurant kitchen where the dining room (client) receives orders, the prep station (server) gathers ingredients from the pantry (database), and everything comes together to serve the customer. The limit of this analogy is that code execution happens instantly via digital networks rather than physical movement.",
+    "details": [
+      "Trace a module dependency and explain what crosses that boundary.",
+      "The home page imports the NoteComposer component and listNotes function to render notes."
+    ],
+    "tradeoffs": [
+      "These source excerpts cannot prove how authentication tokens are generated or stored outside the provided route handler."
+    ],
+    "citations": [
+      {
+        "path": "app/page.tsx",
+        "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+        "start": 1,
+        "end": 8,
+        "quote": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;"
+      }
+    ],
+    "board": {
+      "nodes": [
+        {
+          "id": "input",
+          "label": "Browser",
+          "kind": "client"
+        },
+        {
+          "id": "process",
+          "label": "Next.js Server",
+          "kind": "server"
+        },
+        {
+          "id": "output",
+          "label": "Database",
+          "kind": "output"
+        }
+      ],
+      "steps": [
+        {
+          "id": "one",
+          "title": "Page Request",
+          "caption": "The browser sends a request to load the home page.",
+          "active": [
+            "input"
+          ],
+          "state": "idle",
+          "citationIndex": 0
+        },
+        {
+          "id": "two",
+          "title": "Fetching Notes",
+          "caption": "The server executes HomePage and awaits listNotes to fetch data.",
+          "active": [
+            "process"
+          ],
+          "state": "working",
+          "citationIndex": 0
+        },
+        {
+          "id": "three",
+          "title": "Database Query",
+          "caption": "The database retrieves stored records to fulfill the request.",
+          "active": [
+            "output"
+          ],
+          "state": "working"
+        },
+        {
+          "id": "four",
+          "title": "Rendered View",
+          "caption": "The server packages the components and notes into HTML for the browser.",
+          "active": [
+            "input",
+            "process"
+          ],
+          "state": "success",
+          "citationIndex": 0
+        }
+      ]
+    },
+    "claims": [
+      {
+        "text": "The home page imports the NoteComposer component and listNotes function to render notes.",
+        "kind": "verified",
+        "citations": [
+          {
+            "path": "app/page.tsx",
+            "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+            "start": 1,
+            "end": 8,
+            "quote": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;"
+          }
+        ]
+      }
+    ],
+    "mode": "live-model",
+    "model": "gemini-3.5-flash-lite",
+    "telemetry": {
+      "requestedModel": "gemini/gemini-flash-lite-latest",
+      "servedModel": "gemini-3.5-flash-lite",
+      "latencyMs": 7237,
+      "usage": {
+        "input": 1207,
+        "output": 774
+      },
+      "prune": {
+        "provider": "gemini",
+        "cacheHit": false,
+        "cacheType": "miss",
+        "routeApplied": false,
+        "originalModel": "gemini-flash-lite-latest",
+        "routeReason": "routing_disabled",
+        "fallbackUsed": false,
+        "pipelineMode": "auto",
+        "estimatedCostUsd": 0.000429,
+        "counterfactualCostUsd": 0.000429,
+        "optimizations": [
+          "template_hoist_skip:provider_prefix_cache_preferred",
+          "token_budget_analyze",
+          "output_cap:json_exempt",
+          "prefix_broker_skip:prefix_cache_unsupported:gemini"
+        ],
+        "requestId": "2e5ff9f5-c060-462e-96b7-439e817890f3",
+        "receiptSignature": "gGMnzAJGoT6z69o7Y7vwCtVKXzOiU3423dCl082VRb88hCXaBE8JCCCaczHkvcVUemeQc/9Bm2MPtcUkg1MmAQ==",
+        "receiptVersion": "v2",
+        "receiptSignedAt": "2026-11-26T04:43:28.264167+00:00",
+        "receiptVerified": false
+      }
+    },
+    "generatedAt": "2026-11-26T04:43:28.322Z"
+  },
+  "tutor": {
+    "answer": "Validation of note data is handled via a schema in the application code, ensuring strings meet specific length requirements before processing.",
+    "claims": [
+      {
+        "text": "The note body is validated using a Zod schema that enforces string trimming and length constraints.",
+        "kind": "verified",
+        "citations": [
+          {
+            "path": "lib/validation.ts",
+            "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+            "start": 2,
+            "end": 4,
+            "quote": "export const noteSchema = z.object({\n  body: z.string().trim().min(1).max(2000)\n});"
+          }
+        ]
+      },
+      {
+        "text": "The observed length limits require a minimum length of 1 character and a maximum length of 2000 characters.",
+        "kind": "verified",
+        "citations": [
+          {
+            "path": "lib/validation.ts",
+            "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+            "start": 2,
+            "end": 4,
+            "quote": "export const noteSchema = z.object({\n  body: z.string().trim().min(1).max(2000)\n});"
+          }
+        ]
+      },
+      {
+        "text": "API requests parse incoming JSON payloads using this note schema inside the POST route handler.",
+        "kind": "verified",
+        "citations": [
+          {
+            "path": "app/api/notes/route.ts",
+            "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+            "start": 1,
+            "end": 8,
+            "quote": "import { noteSchema } from '../../../lib/validation';\nimport { getDatabase } from '../../../lib/database';\n\nexport async function POST(request: Request) {\n  const db = await getDatabase();\n  const { data: { user } } = await db.auth.getUser();\n  if (!user) return Response.json({ error: 'Sign in required' }, { status: 401 });\n  const parsed = noteSchema.safeParse(await request.json());"
+          }
+        ]
+      },
+      {
+        "text": "This validation code presence does not establish that runtime input handling is secure or that malicious inputs are entirely prevented across all client pathways.",
+        "kind": "inference",
+        "citations": []
+      }
+    ],
+    "insufficientEvidence": false,
+    "mode": "live-model",
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "input": 1183,
+      "output": 673
+    },
+    "telemetry": {
+      "requestedModel": "gemini/gemini-flash-lite-latest",
+      "servedModel": "gemini-3.5-flash-lite",
+      "latencyMs": 3662,
+      "usage": {
+        "input": 1183,
+        "output": 673
+      },
+      "prune": {
+        "provider": "gemini",
+        "cacheHit": false,
+        "cacheType": "miss",
+        "routeApplied": false,
+        "originalModel": "gemini-flash-lite-latest",
+        "routeReason": "routing_disabled",
+        "fallbackUsed": false,
+        "pipelineMode": "auto",
+        "estimatedCostUsd": 0.00038,
+        "counterfactualCostUsd": 0.00038,
+        "optimizations": [
+          "template_hoist_skip:provider_prefix_cache_preferred",
+          "token_budget_analyze",
+          "output_cap:json_exempt",
+          "prefix_broker_skip:prefix_cache_unsupported:gemini"
+        ],
+        "requestId": "e5d157bd-6faa-4292-8d2c-db81893b404a",
+        "receiptSignature": "bOTvVxGKC30USnHVfDn13zXVm9CucGAOH+Y0+1pPmCeTm7+WXP1bjnKXbkBu6xYedQqME1LYxX3dJbo7zuzMCg==",
+        "receiptVersion": "v2",
+        "receiptSignedAt": "2026-11-26T04:43:40.487584+00:00",
+        "receiptVerified": false
+      }
+    }
+  }
+}

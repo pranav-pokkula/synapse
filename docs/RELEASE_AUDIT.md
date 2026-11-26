@@ -1,61 +1,40 @@
-# Release audit — 2026-11-22
+# Release audit — Stage 2, November 25, 2026
 
-**Status: working local release candidate; not submission-ready or production-ready.** Live AI configuration/evaluation, hosted Supabase authentication, public hosting verification, and human review remain incomplete. The account-wide free Supabase project limit blocked a new project; no existing project was changed.
+Live services are verified locally and the protected Vercel preview is deployed; all 16 preview end-to-end checks passed. This is not a claim of production or submission readiness.
 
-## Feature status
+## Executed evidence
 
-| Capability | Status |
+| Capability | Actual result |
 |---|---|
-| Public JS/TS GitHub import, real blobs, exact SHA | Implemented; three JS libraries and a 37-file Next.js dashboard verified |
-| Bounded batches, saved cursor, retry, partial coverage | Implemented; controlled failure/recovery tested |
-| Source index, relative import graph, dependency detection | Implemented; static-analysis limits disclosed |
-| Prioritized concepts, prerequisites, practice-gap recommendation | Implemented; deterministic ranking tested |
-| Beginner/intermediate/advanced written lessons | Implemented source templates; not model-generated lessons |
-| Animated SVG, movement, pause/replay/steps/speed/captions/transcript | Implemented; real browser movement verified |
-| Browser narration | Native Chrome callbacks verified; human audio review pending |
-| Contextual guide | Source templates working; live model adapter implemented but unverified |
-| Multiple-choice and code-comprehension assessments | Implemented; server scoring and persistence verified |
-| Short-answer / architecture explanation practice | Rubric feedback only; model grading incomplete |
-| Local profiles, projects, lessons, attempts, progress, tutor records | Implemented; server/browser persistence verified |
-| Supabase Auth and RLS | Code and migration prepared; SQL isolation checked locally; hosted auth unverified |
-| Learner-data deletion | Implemented; browser verified; does not delete auth account |
-| Light/dark and four viewport sizes | Browser screenshots inspected; no page overflow; scanned axe checks pass |
-| LLM baseline evaluation | Harness ready; not run because model selection was deferred |
-| Public code / demo / Devpost | Public GitHub repository verified; local 2:44 captioned video complete; Devpost not submitted |
+| Dedicated Supabase | Verified TraceEval / synapse-learning, `fcwyithhipsimrnccqsy`; both explicitly approved migrations applied unchanged; advisors found no issues |
+| Auth and persistence | 16 real hosted anonymous-account checks passed; refresh, RLS, forged ownership, deletion, concurrency and global minute ceiling included |
+| Repository import | Hosted seven-checkpoint import: 37 files, 48 edges, 11 exact citations; reload passed; other identity received 404 |
+| Prune tutoring | Native Gemini parser fixed; real source-grounded answers passed; malformed citations rejected |
+| Generated teaching | Three levels generated; safe three-node scenes, distinct captions, shared narration, versioned cache; real repository browser flow passed |
+| Shield | User-confirmed saved $1/day UTC, 10/minute and anomaly detection; uncached rate probe observed real `429/rate_limit`; one timeout retained |
+| Central limits | Fixed PostgreSQL limits of 8 model reservations/minute, 50/day UTC, 55 GitHub requests/hour; per-user limits retained; unavailable controls fail closed |
+| Unit/security/SQL | 91 passed across six files; strict typecheck and lint passed |
+| Browser/accessibility | 12 regression checks passed in isolated development mode; separate actual-service Chrome checks passed against compiled local app |
+| Build/dependencies | Webpack build passed; audit reported zero vulnerabilities |
+| Baseline | 20 real paired calls completed; all outcomes retained; 16 accepted responses, 3 upstream 503s, 1 citation rejection; human scoring pending |
+| Hosting | Protected first bootstrap expressly approved, created with --skip-domain and no production service credentials; aliases empty. Protected preview built from implementation `ef87c9f`; 16 primary checks plus 6 hosted-assessment checks passed, including private sessions, isolation, live lessons/tutoring, mobile layout, grading retries, deletion and signed-out denial |
 
-## Executed quality gates
+## Security boundaries and residual risks
 
-- TypeScript strict checking passed.
-- ESLint passed; final unused import removed.
-- Vitest: 68 passed across four files.
-- Playwright: 12 passed against the compiled production build in installed Chrome, including answer-type rejection, source inspection, real packet movement, native narration callbacks, persistence, two-session isolation, recovery, data deletion, and safe text rendering.
-- Production build passed using webpack. Turbopack failed in the CSS worker even after permitted retry; no failure is hidden.
-- npm dependency audit: zero reported vulnerabilities.
-- Final tracked/candidate-file secret-pattern scan: zero findings across 90 files; no server credential configuration identifiers found in 32 production client chunks. `.env.local` and `.synapse/` are excluded from Git. See `evidence/secret-scan-results.json`; pattern scanning is not a guarantee against all secrets.
-- PostgreSQL RLS verified in PGlite using the actual migration and a stub `auth.uid()`; this is not an end-to-end Supabase authentication result.
-- Public repository: [pranav-pokkula/synapse](https://github.com/pranav-pokkula/synapse). The [first hosted CI run](https://github.com/pranav-pokkula/synapse/actions/runs/45041176859) passed all gates on `c4a2f36`; consult Actions for checks on later commits.
-- Local demo: `evidence/synapse-demo.mp4`, H.264, 1440 × 1000, 163.84 seconds, 2,532,447 bytes. Actual application capture with captions; silent, not publicly uploaded or submitted.
+Imported source is data, never executed. Fixed GitHub host, redirects refused, byte/file limits, safe JSON scene schema, React escaping, origin checks, private/no-store API responses and per-request validated Supabase clients remain in place. The web app has no service-role key. Owner-scoped expiring locks and fenced writes prevent stale checkpoint overwrites; direct quota modification is denied.
 
-## Release risks and evidence
+An authenticated user can consume reservation quota to deny availability, but cannot enlarge the ceilings. Anonymous users and JWTs are not removed by learner-data deletion; an operation already in flight can recreate data after deletion. Email OTP delivery, account migration/revocation and CAPTCHA remain unverified. Source citation matching does not establish semantic accuracy, safe runtime behavior or learning benefit. Static indexing and selected excerpts can miss important functions. Cached-output revalidation checks source matches, not claim entailment.
 
-| Risk | Tested mitigation | Residual limitation |
-|---|---|---|
-| A: incorrect explanations | Exact citation validation, unknown behavior, invalid model-output rejection; `core`/`security` tests | Semantic accuracy not established by text matching; real LLM quality unmeasured |
-| B: import failures | Real imports and 404/400 handling; mocked 429/timeouts and resumable failures | GitHub quotas still apply; no private repos |
-| C: repository overload | Size, type, file, byte, stream, and tree bounds; partial flag tests; 37-file Next.js import over seven checkpoints | Selection can omit important modules; large monorepos and arbitrary aliases remain unverified |
-| D: audio/animation failure | Movement observed; native speech start/end; captions/transcript remain usable | Browser voices vary; no human listening review |
-| E: provider failure | Mocked timeout, 429, invalid JSON, excessive output, fabricated citations | No live provider configured; model-assisted lesson/short-answer generation incomplete |
-| F: serverless limits | Six-file checkpoints, bounded source requests, persisted jobs | Local process locks are not distributed locks; multi-instance conflicts need testing |
-| G: exposure and ownership | RLS owner policies, local isolation, CSRF, URL restrictions, escaped output, key exclusion | Hosted Auth unverified; anonymous churn can evade per-session quotas; no deployment-wide spending cap |
-| H: demo failure | Interactive fixture, deterministic templates, local persistence, complete browser journey | Live GitHub can rate-limit; record fallback honestly; video has no captured audio |
+The $0.01 internal per-call reservation is accounting, not a provider-price guarantee. The $1 Shield setting was personally reviewed by the user and not deliberately exhausted. Cache hits did not trigger the uncached rate limit. No unrestricted public AI, unrelated project changes or production domain promotion occurred.
 
-## Remaining acceptance blockers
+## Remaining human gates
 
-1. Choose and configure a provider, verify model availability, set a hard spending cap, and run the baseline experiment with independent human scoring.
-2. Supply a new Supabase project within authorized free capacity. Apply the migration and verify real anonymous/email auth, cross-account isolation, session refresh, quota RPCs, deletion, and reconnect behavior.
-3. Add distributed checkpoint/progress concurrency protections and deployment-wide abuse limits before public cloud use with a paid provider.
-4. Expand independent review and held-out evaluation beyond the fixture, three libraries, and one Next.js dashboard. Large monorepos remain unverified.
-5. Human-review source claims, generated contributions, audio, and the submission video; complete team roster/contact forms. The official human-review rubric item is not satisfied by Codex checking itself.
-6. Verify a Vercel deployment only after durable storage is configured. No live deployed URL is claimed.
+Independent source/teaching review and benchmark scoring; human narration listening; final demo review/public video upload; team roster and contact forms; explicit approval before production promotion or Devpost submission. The user’s configuration review does not fulfill the event’s separate code/content human-review criterion.
 
-See [evaluation report](EVALUATION_REPORT.md) for measured cases and [Devpost draft](DEVPOST_SUBMISSION.md) for submission boundaries. Do not mark the full master directive complete while these items remain.
+Evidence lives in `evidence/hosted-*.json`, `stage2-*.json`, `prune-*.json`, screenshots and the evaluation report. Raw native receipts, authentication state and environment credentials remain ignored locally. Reported cost figures are gateway estimates, not independently reconciled billing.
+
+Protected preview: [https://synapse-learning-qr1qac164-pranav-pokkulas-projects.vercel.app](https://synapse-learning-qr1qac164-pranav-pokkulas-projects.vercel.app). Runtime error/fatal log query returned no entries during the verification window; this is not a guarantee that future requests cannot fail. Initial screenshot capture caught a responsive sidebar transition; the settled mobile layout was separately verified and recaptured.
+
+Rapid navigation followed immediately by grading can return a safe `409/JOB_BUSY` while progress saves; the UI asks for a retry. The added six-check hosted assessment run verified retry after the winning write, persisted attempts, non-inflating mastery and cleanup. No automatic model retry was added.
+
+Completed local demo: `evidence/synapse-stage2-demo.mp4`, 182.80 seconds, silent with captions. Public upload and human review remain pending.
