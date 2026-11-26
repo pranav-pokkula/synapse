@@ -38,3 +38,15 @@ Protected preview: [https://synapse-learning-qr1qac164-pranav-pokkulas-projects.
 Rapid navigation followed immediately by grading can return a safe `409/JOB_BUSY` while progress saves; the UI asks for a retry. The added six-check hosted assessment run verified retry after the winning write, persisted attempts, non-inflating mastery and cleanup. No automatic model retry was added.
 
 Completed local demo: `evidence/synapse-stage2-demo.mp4`, 182.80 seconds, silent with captions. Public upload and human review remain pending.
+
+## Final submission preparation audit — November 26, 2026
+
+Audited PR head `0833acd215ca021c082eb9f80a3d9233e8fb78c5`: both push and PR CI runs succeeded. Vercel reports protected preview `dpl_EHvrfHud13EAYEsVv3qYCvt6V5r2` READY at `ef87c9f58d8d7fb0cfa4249b0bc860fe414c66ec`. Compared app, components, lib, Next configuration, package manifest and lockfile: no differences. Subsequent submission preparation changes only documents and evidence. A new protected preview is unnecessary.
+
+Reviewed source/citation rejection, safe scene validation, origin/body limits, authenticated identity, ownership policies, locks and quotas against the existing security tests and hosted results. No new release-blocking application defect was identified in this focused audit; this is not a comprehensive penetration test. Existing privacy/concurrency limits above remain disclosed. Reran the secret-value scan with zero findings and the 91-test suite; no new model evaluation, provider charge, migration or deployment was initiated.
+
+The MP4 exists: H.264 video, 1440 × 1000, 182.80 seconds, 3,068,348 bytes, no audio stream. Full decode passed. Sampled frames show readable overview, saved lesson and captions; earlier verified frames show grading and reloaded cloud progress. This is sampled visual inspection, not human listening or a completed human video review. A visible temporary sync warning needs the short explanatory text supplied in FINAL_REVIEW_PACKET.md and the final Devpost answer. The smallest correction is that clarification next to the embedded video; no re-recording is required. The video itself is unchanged.
+
+Prepared a genuine gallery image at `evidence/devpost-gallery.png`, copied without modification from the actual generated-lesson screenshot. It is suitable as a gallery image; it is not labeled a 3:2 thumbnail. No synthetic UI or claims were inserted.
+
+Entry-material blockers: an accessible embedded video URL (user upload), verified participant eligibility/roster/private forms, final truthful copy review and submission approval. Human content/code/audio review remains a requested review action and scoring limitation, not an invented entry requirement. Public production hosting, email OTP and merging PR #1 are not entry blockers. PR remains draft and unmerged; it can be marked ready for code review without authorizing merge or promotion.

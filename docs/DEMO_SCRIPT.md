@@ -11,3 +11,7 @@ Two incomplete attempts preceded the final capture. One stopped at an overly str
 The video has **no captured audio**. Browser narration shares the displayed captions, and native speech callbacks were separately checked; human listening review remains pending. Review the final video and generated explanations before submitting or uploading. No public video upload or Devpost submission has occurred.
 
 The historical Stage 1 recording remains `evidence/synapse-demo.mp4` (2:44); it demonstrates template mode and local storage and should not be used as proof of Stage 2 services.
+
+## Final submission inspection
+
+Full MP4 decoding passed; no audio stream is present. The saved lesson portion visibly shows a temporary sync warning. Keep it visible. The exact smallest clarification, included in the final Devpost answer, is: “During the lesson, a progress sync request temporarily failed and progress remained in the browser; the graded result is saved to Supabase and reloaded later in the recording.” Alternatively add that sentence to the existing caption near 1:20. No new recording, synthetic frame or cinematic edit is needed. Human review of the entire video remains pending.
