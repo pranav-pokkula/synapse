@@ -95,7 +95,7 @@ try {
       .click();
     await page.getByRole("button", { name: "Personalize with AI" }).click();
     await page
-      .getByText("Saved AI lesson", { exact: false })
+      .getByText(/SAVED AI LESSON/)
       .waitFor({ timeout: 60000 });
     await page
       .getByRole("button", { name: "Play animation", exact: true })

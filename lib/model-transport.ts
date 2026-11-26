@@ -239,6 +239,12 @@ export async function completionRequest(options: RequestOptions) {
         429,
         "PRUNE_LIMIT",
       );
+    if (response.status >= 500)
+      throw new AppError(
+        "The AI gateway is temporarily unavailable. Your saved lessons and progress remain available. Retry later.",
+        503,
+        "MODEL_UNAVAILABLE",
+      );
     throw new AppError(
       response.status === 429
         ? "The model provider has reached its usage limit. Use the source lesson or retry later."

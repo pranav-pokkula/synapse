@@ -76,14 +76,12 @@ describe("model trust boundary using mocked provider responses", () => {
   });
   it("handles a Prune Shield deny without retrying", async () => {
     configured();
-    const fetch = vi
-      .fn()
-      .mockResolvedValue(
-        new Response("{}", {
-          status: 429,
-          headers: { "X-Prune-Shield-Code": "spend_cap" },
-        }),
-      );
+    const fetch = vi.fn().mockResolvedValue(
+      new Response("{}", {
+        status: 429,
+        headers: { "X-Prune-Shield-Code": "spend_cap" },
+      }),
+    );
     vi.stubGlobal("fetch", fetch);
     await expect(
       modelRequest(snapshot, "question", "evidence", "beginner"),
@@ -95,6 +93,32 @@ describe("model trust boundary using mocked provider responses", () => {
     await expect(
       modelRequest(snapshot, "question", "evidence", "beginner"),
     ).rejects.toMatchObject({ code: "MODEL_CONFIG" });
+  });
+  it("reports an observed gateway outage without suggesting invalid credentials", async () => {
+    configured();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(new Response("{}", { status: 503 })),
+    );
+    await expect(
+      modelRequest(snapshot, "question", "evidence", "beginner"),
+    ).rejects.toMatchObject({ code: "MODEL_UNAVAILABLE", status: 503 });
+  });
+  it("treats a wrong model schema as an upstream error", async () => {
+    configured();
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValue(
+          Response.json({
+            choices: [{ message: { content: '{"wrong":true}' } }],
+          }),
+        ),
+    );
+    await expect(
+      modelRequest(snapshot, "question", "evidence", "beginner"),
+    ).rejects.toMatchObject({ code: "MODEL_OUTPUT", status: 502 });
   });
   it("handles a timeout without exposing provider secrets", async () => {
     configured();
