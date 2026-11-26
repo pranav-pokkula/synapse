@@ -42,6 +42,7 @@ import type {
   Citation,
   Concept,
   Level,
+  Lesson,
   Progress,
   Snapshot,
   TutorAnswer,
@@ -250,14 +251,11 @@ export function Studio({ sample }: { sample: Snapshot }) {
     setProgress(next);
     saveBrowser(snapshot.id, next);
     try {
-      await Promise.all([
-        api("/api/progress", {
-          projectId: snapshot.id,
-          visited: [c.id],
-          level,
-        }),
-        api("/api/lesson", { projectId: snapshot.id, conceptId: c.id, level }),
-      ]);
+      await api("/api/progress", {
+        projectId: snapshot.id,
+        visited: [c.id],
+        level,
+      });
     } catch {
       setNotice(
         "Progress is saved in this browser. Server sync is currently unavailable.",
@@ -1424,9 +1422,36 @@ function LessonWorkspace({
   onBack: () => void;
   ai: boolean;
 }) {
-  const lesson = makeLesson(snapshot, concept, level);
+  const [lesson, setLesson] = useState<Lesson>(() =>
+    makeLesson(snapshot, concept, level),
+  );
+  const [lessonBusy, setLessonBusy] = useState(false);
+  const [lessonError, setLessonError] = useState("");
   const [step, setStep] = useState(0);
   const onStep = useCallback((i: number) => setStep(i), []);
+  async function personalize() {
+    setLessonBusy(true);
+    setLessonError("");
+    try {
+      const result = await api<Lesson>("/api/lesson", {
+        projectId: snapshot.id,
+        conceptId: concept.id,
+        level,
+      });
+      if (result.fallbackReason) setLessonError(result.fallbackReason);
+      // Retain a previous successful AI lesson if a new request falls back.
+      setLesson((previous) =>
+        result.fallbackReason && previous.mode === "live-model"
+          ? previous
+          : result,
+      );
+      setStep(0);
+    } catch (error) {
+      setLessonError((error as Error).message);
+    } finally {
+      setLessonBusy(false);
+    }
+  }
   return (
     <>
       <button className="back-link" onClick={onBack}>
@@ -1437,9 +1462,11 @@ function LessonWorkspace({
       <div className="lesson-heading">
         <div>
           <span className="eyebrow">
-            {lesson.mode === "reviewed-sample"
-              ? "TEACHING FIXTURE"
-              : "SOURCE-GROUNDED TEMPLATE"}{" "}
+            {lesson.mode === "live-model"
+              ? `${lesson.cached ? "SAVED AI LESSON" : lesson.telemetry?.prune?.cacheHit ? "GATEWAY-CACHED AI LESSON" : "AI-GENERATED LESSON"}`
+              : lesson.mode === "reviewed-sample"
+                ? "TEACHING FIXTURE"
+                : "SOURCE-GROUNDED TEMPLATE"}{" "}
             · {concept.minutes} MIN
           </span>
           <h1>{concept.title}</h1>
@@ -1447,9 +1474,42 @@ function LessonWorkspace({
         </div>
         <LevelSelect value={level} onChange={onLevel} />
       </div>
+      {ai && (
+        <div className="path-toolbar">
+          <button
+            className="button secondary"
+            onClick={() => void personalize()}
+            disabled={lessonBusy}
+          >
+            {lessonBusy ? (
+              <Loader2 size={16} className="spin" />
+            ) : (
+              <Sparkles size={16} />
+            )}
+            {lessonBusy
+              ? "Preparing your lesson…"
+              : lesson.mode === "live-model"
+                ? "Revisit personalized lesson"
+                : "Personalize with AI"}
+          </button>
+          <p className="fine-print">
+            Uses this source snapshot, your level, and recent practice. The
+            visual is a conceptual model.
+          </p>
+        </div>
+      )}
+      {lessonError && (
+        <p role="status" className="notice">
+          {lessonError} Your current lesson remains available.
+        </p>
+      )}
       <div className="lesson-grid">
         <div className="lesson-main">
-          <Player lesson={lesson} onStep={onStep} />
+          <Player
+            key={lesson.generatedAt ?? "source-template"}
+            lesson={lesson}
+            onStep={onStep}
+          />
           <article className="written-lesson">
             <span className="eyebrow">THE IDEA</span>
             <h2>Let’s break it down.</h2>
@@ -1462,7 +1522,18 @@ function LessonWorkspace({
               </div>
             </div>
             <h3>In your project</h3>
-            <p>{lesson.details[1]}</p>
+            {lesson.claims ? (
+              lesson.claims.map((claim, i) => (
+                <div className="claim" key={i}>
+                  <span className={`claim-kind ${claim.kind}`}>
+                    {claim.kind}
+                  </span>
+                  <p>{claim.text}</p>
+                </div>
+              ))
+            ) : (
+              <p>{lesson.details[1]}</p>
+            )}
             {lesson.citations[0] && (
               <div className="inline-source">
                 <button
@@ -1620,7 +1691,7 @@ function Tutor({
             <div className="assistant-message">
               <span className="answer-mode">
                 {m.answer.mode === "live-model"
-                  ? m.answer.model
+                  ? `${m.answer.model}${m.answer.cached ? " · saved answer" : m.answer.telemetry?.prune?.cacheHit ? " · gateway cache" : " · generated answer"}`
                   : "Source template"}
                 {m.answer.insufficientEvidence
                   ? " · insufficient evidence"

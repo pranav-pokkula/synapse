@@ -1,0 +1,12 @@
+.git
+.env*
+.synapse
+.vercel
+supabase/.temp
+node_modules
+.next
+evidence
+playwright-report
+test-results
+coverage
+*.tsbuildinfo

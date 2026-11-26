@@ -6,7 +6,7 @@ import { failure } from "@/lib/http";
 import type { Snapshot } from "@/lib/types";
 export async function GET() {
   try {
-    const user = await identity();
+    const user = await identity({ createGuest: true });
     if (!(await getRecord(user, "profile", "learner")))
       await putRecord(user, "profile", "learner", {
         createdAt: new Date().toISOString(),

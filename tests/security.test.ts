@@ -3,6 +3,7 @@ import { modelRequest } from "@/lib/provider";
 import { sampleSnapshot } from "@/lib/sample";
 import { readBody } from "@/lib/http";
 import { indexFile } from "@/lib/analysis";
+import { parseCompletionEnvelope, pruneTelemetry } from "@/lib/model-transport";
 const snapshot = sampleSnapshot();
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -14,6 +15,81 @@ function configured() {
   vi.stubEnv("LLM_API_KEY", "test-secret-never-a-real-key");
 }
 describe("model trust boundary using mocked provider responses", () => {
+  it("parses Prune's native Gemini envelope without retaining thought signatures", () => {
+    const result = parseCompletionEnvelope(
+      {
+        modelVersion: "gemini-test",
+        candidates: [
+          {
+            finishReason: "STOP",
+            content: {
+              parts: [
+                { thought: true, text: "hidden" },
+                { text: '{"answer":"hello"}', thoughtSignature: "opaque" },
+              ],
+            },
+          },
+        ],
+        usageMetadata: { promptTokenCount: 12, candidatesTokenCount: 4 },
+      },
+      true,
+    );
+    expect(result).toEqual({
+      parsed: { answer: "hello" },
+      model: "gemini-test",
+      usage: { input: 12, output: 4 },
+    });
+    expect(JSON.stringify(result)).not.toContain("opaque");
+  });
+  it("does not accept native envelopes from a different provider transport", () => {
+    expect(() =>
+      parseCompletionEnvelope(
+        { candidates: [{ content: { parts: [{ text: "{}" }] } }] },
+        false,
+      ),
+    ).toThrow(/unsupported response/);
+  });
+  it("rejects truncated provider JSON", () => {
+    expect(() =>
+      parseCompletionEnvelope(
+        { choices: [{ finish_reason: "length", message: { content: "{}" } }] },
+        false,
+      ),
+    ).toThrow(/output allowance/);
+  });
+  it("retains useful gateway metadata while excluding tenant and session identifiers", () => {
+    const t = pruneTelemetry(
+      {
+        provider: "gemini",
+        cost_with_prune_usd: 0.001,
+        receipt_signature: "signed",
+        org_id: "private",
+        session_id: "private",
+        cache_hit: true,
+      },
+      new Headers(),
+    );
+    expect(t?.estimatedCostUsd).toBe(0.001);
+    expect(t?.cacheHit).toBe(true);
+    expect(JSON.stringify(t)).not.toContain("private");
+    expect(t?.receiptVerified).toBe(false);
+  });
+  it("handles a Prune Shield deny without retrying", async () => {
+    configured();
+    const fetch = vi
+      .fn()
+      .mockResolvedValue(
+        new Response("{}", {
+          status: 429,
+          headers: { "X-Prune-Shield-Code": "spend_cap" },
+        }),
+      );
+    vi.stubGlobal("fetch", fetch);
+    await expect(
+      modelRequest(snapshot, "question", "evidence", "beginner"),
+    ).rejects.toMatchObject({ code: "PRUNE_LIMIT", status: 429 });
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
   it("reports precise missing configuration", async () => {
     vi.stubEnv("LLM_MODEL", "");
     await expect(
@@ -63,34 +139,32 @@ describe("model trust boundary using mocked provider responses", () => {
     configured();
     vi.stubGlobal(
       "fetch",
-      vi
-        .fn()
-        .mockResolvedValue(
-          Response.json({
-            choices: [
-              {
-                message: {
-                  content: JSON.stringify({
-                    answer: "General overview",
-                    claims: [
-                      {
-                        text: "A fabricated assertion",
-                        kind: "verified",
-                        citations: [
-                          {
-                            ...snapshot.concepts[0].evidence[0],
-                            path: "missing.ts",
-                          },
-                        ],
-                      },
-                    ],
-                    insufficientEvidence: false,
-                  }),
-                },
+      vi.fn().mockResolvedValue(
+        Response.json({
+          choices: [
+            {
+              message: {
+                content: JSON.stringify({
+                  answer: "General overview",
+                  claims: [
+                    {
+                      text: "A fabricated assertion",
+                      kind: "verified",
+                      citations: [
+                        {
+                          ...snapshot.concepts[0].evidence[0],
+                          path: "missing.ts",
+                        },
+                      ],
+                    },
+                  ],
+                  insufficientEvidence: false,
+                }),
               },
-            ],
-          }),
-        ),
+            },
+          ],
+        }),
+      ),
     );
     await expect(
       modelRequest(snapshot, "question", "evidence", "beginner"),
@@ -117,23 +191,21 @@ describe("model trust boundary using mocked provider responses", () => {
   });
   it("bounds source context and includes explicit untrusted-input instructions", async () => {
     configured();
-    const fetch = vi
-      .fn()
-      .mockResolvedValue(
-        Response.json({
-          choices: [
-            {
-              message: {
-                content: JSON.stringify({
-                  answer: "Unknown",
-                  claims: [],
-                  insufficientEvidence: true,
-                }),
-              },
+    const fetch = vi.fn().mockResolvedValue(
+      Response.json({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                answer: "Unknown",
+                claims: [],
+                insufficientEvidence: true,
+              }),
             },
-          ],
-        }),
-      );
+          },
+        ],
+      }),
+    );
     vi.stubGlobal("fetch", fetch);
     await modelRequest(snapshot, "question", "x".repeat(100000), "advanced");
     const options = fetch.mock.calls[0][1];

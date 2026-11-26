@@ -6,7 +6,8 @@ import {
   getRecord,
   identity,
   putRecord,
-  serialized,
+  withLease,
+  consumeGlobal,
 } from "@/lib/store";
 import { failure, readBody } from "@/lib/http";
 import { AppError } from "@/lib/errors";
@@ -42,13 +43,15 @@ export async function POST(request: Request, ctx: Context) {
     const id = z.uuid().parse((await ctx.params).id);
     const user = await identity();
     await consume(user, "import-steps", 60, 3600);
-    return await serialized(`${user.id}:import:${id}`, async () => {
+    return await withLease(user, `import:${id}`, async (lease) => {
       const job = await getRecord<ImportJob>(user, "import", id);
       if (!job) throw new AppError("Import not found in this session.", 404);
-      const result = await advanceImport(job);
+      const result = await advanceImport(job, () =>
+        consumeGlobal(user, "github-hour"),
+      );
       if (result.snapshot)
-        await putRecord(user, "snapshot", id, result.snapshot);
-      await putRecord(user, "import", id, result.job);
+        await putRecord(user, "snapshot", id, result.snapshot, lease);
+      await putRecord(user, "import", id, result.job, lease);
       return NextResponse.json(summarize(result.job));
     });
   } catch (e) {

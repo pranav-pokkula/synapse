@@ -13,6 +13,11 @@ export async function POST(request: Request) {
         z.object({ action: z.literal("sign-in"), email: z.email().max(254) }),
       ])
       .parse(await readBody(request));
+    if (b.action === "sign-out") {
+      const db = await supabase();
+      if (db) await db.auth.signOut({ scope: "local" });
+      return NextResponse.json({ ok: true });
+    }
     const user = await identity();
     if (b.action === "delete-data") {
       await deleteRecords(user);
@@ -25,10 +30,6 @@ export async function POST(request: Request) {
         503,
         "AUTH_CONFIG",
       );
-    if (b.action === "sign-out") {
-      await db.auth.signOut();
-      return NextResponse.json({ ok: true });
-    }
     await consume(user, "email-auth", 3, 3600);
     const origin = process.env.APP_ORIGIN ?? new URL(request.url).origin;
     const { error } = await db.auth.signInWithOtp({

@@ -112,6 +112,11 @@ export type Lesson = {
   board: Storyboard;
   mode: "reviewed-sample" | "source-template" | "live-model";
   model?: string;
+  claims?: z.infer<typeof modelAnswerSchema>["claims"];
+  telemetry?: ModelTelemetry;
+  cached?: boolean;
+  fallbackReason?: string;
+  generatedAt?: string;
 };
 export type Attempt = {
   id: string;
@@ -168,4 +173,32 @@ export type TutorAnswer = z.infer<typeof modelAnswerSchema> & {
   mode: "source-template" | "live-model";
   model?: string;
   usage?: { input: number; output: number };
+  telemetry?: ModelTelemetry;
+  cached?: boolean;
+};
+
+export type ModelTelemetry = {
+  requestedModel: string;
+  servedModel: string;
+  latencyMs: number;
+  usage: { input: number; output: number };
+  prune?: {
+    provider?: string;
+    cacheHit: boolean;
+    cacheType?: string;
+    routeApplied: boolean;
+    originalModel?: string;
+    routedModel?: string;
+    routeReason?: string;
+    fallbackUsed: boolean;
+    pipelineMode?: string;
+    estimatedCostUsd?: number;
+    counterfactualCostUsd?: number;
+    optimizations: string[];
+    requestId?: string;
+    receiptSignature?: string;
+    receiptVersion?: string;
+    receiptSignedAt?: string;
+    receiptVerified: boolean;
+  };
 };
