@@ -33,3 +33,9 @@ npx tsx scripts/verify-public.ts
 The script exercises signed-out navigation, source evidence, animation, template guidance, grading/reload, browser separation, mobile accessibility and direct API denial. It does not claim audible speech or spend model credits. Set `PUBLIC_TEST_URL` to the actual production origin to run the same checks there. CI uses Chromium; local tests default to Chrome.
 
 See [final handoff](FINAL_SUBMISSION_HANDOFF.md) for the verified deployment URL, commit and results. The approved video records the full protected experience, so its cloud and AI features are not advertised as available in the public sample.
+
+## Verified deployment
+
+Public domain: https://synapse-learning-one.vercel.app. Initial release deployment `dpl_8wEp4APaKfetqpZrGJzbuXDTybUd` was built from merged main `84983f462eca9ac660836f9029fc560a75da8df0`, staged, checked, then promoted. Standard Protection is saved as `all_except_custom_domains`; signed-out preview requests redirect to Vercel SSO. All 22 production checks passed. The temporary automation bypass created by CLI verification was revoked. Later documentation-only deployments preserve this application implementation.
+
+[Official Standard Protection scope](https://vercel.com/docs/deployment-protection) · [API policy values](https://vercel.com/docs/deployment-protection/methods-to-protect-deployments/vercel-authentication).

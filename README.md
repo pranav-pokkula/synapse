@@ -6,7 +6,7 @@
 
 **Turn an AI-assisted project into something you can explain.**
 
-[Explore the product](#try-synapse) · [Demonstration](docs/DEMO_SCRIPT.md) · [Engineering](docs/ARCHITECTURE.md) · [Verification](https://github.com/pranav-pokkula/synapse/actions)
+[Try the public sample](https://synapse-learning-one.vercel.app) · [Demonstration](docs/DEMO_SCRIPT.md) · [Engineering](docs/ARCHITECTURE.md) · [Verification](https://github.com/pranav-pokkula/synapse/actions)
 
 </div>
 
@@ -18,7 +18,7 @@ Built for students and early-career developers preparing for project reviews, in
 
 ## Try SYNAPSE
 
-**Public release:** the browser-only sample is prepared for deployment; the verified URL will be recorded in the [final handoff](docs/FINAL_SUBMISSION_HANDOFF.md). It needs no account or paid AI. Architecture, source excerpts, animated lessons, narration, template guidance and deterministic practice run locally in your browser. Progress stays on that device.
+**[Open the public sample](https://synapse-learning-one.vercel.app).** Verified signed out on Vercel; [release details](docs/FINAL_SUBMISSION_HANDOFF.md). It needs no account or paid AI. Architecture, source excerpts, animated lessons, narration, template guidance and deterministic practice run locally in your browser. Progress stays on that device.
 
 **Full AI experience:** the [protected preview](https://synapse-learning-qr1qac164-pranav-pokkulas-projects.vercel.app) requires authorized Vercel sign-in. It supports real public-repository imports, Gemini teaching through Prune, and hosted Supabase progress. Those services are deliberately unavailable in public production.
 

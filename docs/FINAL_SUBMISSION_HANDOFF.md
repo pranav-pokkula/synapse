@@ -4,11 +4,12 @@ Prepared November 26, 2026. **Deadline: November 28, 6 PM Eastern.** Nothing has
 
 ## Links and release status
 
-- Public website: release verification pending; this line will be replaced only after signed-out checks pass.
+- **Public website: [https://synapse-learning-one.vercel.app](https://synapse-learning-one.vercel.app)** — signed-out browser-only sample; all 22 production checks passed.
 - [Final source — main](https://github.com/pranav-pokkula/synapse/tree/main)
 - [README](https://github.com/pranav-pokkula/synapse#readme)
-- [PR #1](https://github.com/pranav-pokkula/synapse/pull/1): release checks in progress; merge not yet claimed.
-- [GitHub Actions](https://github.com/pranav-pokkula/synapse/actions)
+- [PR #1](https://github.com/pranav-pokkula/synapse/pull/1): **merged successfully** after passing PR CI.
+- Release implementation/merge SHA: [`84983f462eca9ac660836f9029fc560a75da8df0`](https://github.com/pranav-pokkula/synapse/commit/84983f462eca9ac660836f9029fc560a75da8df0). Subsequent handoff updates change only documentation/evidence; [current main commit](https://github.com/pranav-pokkula/synapse/commit/main).
+- [Passing merged-main CI](https://github.com/pranav-pokkula/synapse/actions/runs/45919319963) · [passing PR CI](https://github.com/pranav-pokkula/synapse/actions/runs/45919031836) · [latest main checks](https://github.com/pranav-pokkula/synapse/actions?query=branch%3Amain)
 - [Full protected AI workspace](https://synapse-learning-qr1qac164-pranav-pokkulas-projects.vercel.app): authorized Vercel sign-in required.
 - Video URL: **PASTE YOUR REAL UNLISTED YOUTUBE URL HERE**.
 
@@ -22,6 +23,7 @@ Prepared November 26, 2026. **Deadline: November 28, 6 PM Eastern.** Nothing has
 | Built with | Next.js, React, TypeScript, Tailwind CSS, Node.js, Supabase, PostgreSQL, Prune, Google Gemini, GitHub REST API, Vercel, Zod, Web Speech API, Playwright, Vitest |
 | Development assistance | OpenAI Codex |
 | Suggested awards | Best Use of Prune; Best Developer Tool; Best AI Knowledge & Research Tool; optionally Best Design & User Experience, if available in the form |
+| Website | https://synapse-learning-one.vercel.app |
 | Source link | https://github.com/pranav-pokkula/synapse/tree/main |
 
 Momen was not integrated. Do not select its award or add it as a technology.
@@ -61,3 +63,11 @@ Retain this clarification beside the video: **“The recording shows the full pr
 Email OTP, independent learning gains and additional human content/code review remain unverified. Public hosting is optional for entry; a hosting failure would not justify delaying the submission. No public paid AI access is authorized by this release.
 
 YouTube instructions checked against [official visibility guidance](https://support.google.com/youtube/answer/157177?hl=en) and [embedding guidance](https://support.google.com/youtube/answer/171780?hl=en).
+
+## Verified release safeguards
+
+98 unit/SQL/security/public-mode tests, 12 full-studio browser checks and 22 production browser/security checks passed. Typecheck, lint, both builds and deterministic evaluation passed; dependency audit and configured-secret scans found no issues. The existing ESLint 9 deprecation is a maintenance warning, not a reported vulnerability.
+
+Vercel uses the existing active Hobby project. Standard Authentication protects previews and generated deployment URLs; the production domain is public. Production has no Prune or Supabase credentials, blocks all server API/auth routes and saves sample progress in the visitor's browser. The full protected AI workspace retains its existing quotas and Shield policy. The temporary CLI-created automation bypass was revoked. No database changes or paid evaluations were performed. [Production checks](../evidence/production-verification.json) · [client-secret/protection check](../evidence/production-security.json).
+
+No technical submission blocker remains. The missing video URL and personal Devpost/account steps above remain yours. Separate explanation/code review and email OTP are still unverified and must not be claimed as complete.

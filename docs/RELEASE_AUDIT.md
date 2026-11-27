@@ -62,3 +62,9 @@ Executed npm ci; typecheck; clean ESLint; 98 passing unit/SQL/security/public-mo
 The first deterministic evaluation command hit the sandbox's local IPC restriction and succeeded when rerun with approved execution permissions. npm reports the existing ESLint 9 deprecation; this is not a vulnerability finding. No failing test was removed. Historical screenshots and experiment records were preserved; fresh verification outputs have separate release filenames. No tracked files were deleted; the exact inventory/retention record is in REPOSITORY_INVENTORY.md. Both Supabase migrations remain unchanged.
 
 Production deployment and merged-main verification are recorded in FINAL_SUBMISSION_HANDOFF.md after completion; this paragraph does not preclaim those gates.
+
+## Completed merge and public verification
+
+PR #1 was marked ready and merged at `84983f462eca9ac660836f9029fc560a75da8df0` after both CI jobs passed. Merged-main CI run `45919319963` also passed. The staged production build identified the exact main commit, and the alias API confirms `https://synapse-learning-one.vercel.app` maps to `dpl_8wEp4APaKfetqpZrGJzbuXDTybUd`. Signed-out production returns 200; the existing preview redirects to Vercel SSO. Standard Protection remains enabled for previews and generated URLs. The 22 production checks passed; error/fatal runtime-log query returned no records in the verification window. This is not a guarantee against future failures.
+
+The authenticated CLI automatically created a temporary automation bypass during staging inspection. It was identified by its creation timestamp and revoked without disclosing its value. Production configuration contains only the public-sample switch; existing preview credentials are unchanged. The handoff now records actual links and owner approvals. No files were deleted, no video was uploaded, no paid model evaluation ran, and Devpost was not submitted.
