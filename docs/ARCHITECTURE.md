@@ -1,10 +1,14 @@
 # Architecture
 
+I designed SYNAPSE around an inspectable chain from source code to explanation. Imported code remains data, generated content passes an explicit contract, and the renderer controls what appears on screen. The public sample uses the same learning components without requiring paid services.
+
 ## Flow and boundaries
 
 ```mermaid
 flowchart LR
-  UI[Next.js learning studio] --> API[Validated route handlers]
+  PUBLIC[Public sample] --> BROWSER[Embedded fixture + browser storage]
+  BROWSER --> VIEW
+  UI[Protected Next.js learning studio] --> API[Validated route handlers]
   API --> GH[GitHub REST: public metadata / tree / blobs]
   GH --> IDX[TypeScript parser + bounded structural index]
   IDX --> SNAP[Commit-pinned snapshot]
@@ -38,7 +42,7 @@ Concept order respects prerequisites first, then architectural importance, diffi
 
 The optional tutor retrieves bounded excerpts and includes current concept, level, and four recent conversation turns. It uses an OpenAI-compatible chat-completions endpoint selected by environment configuration. Output separates verified, inferred, general, and unknown claims. Invented citations and unreferenced verified claims are rejected. Prune uses the configured Gemini alias; live responses have served `gemini-3.5-flash-lite`. Native Gemini content is parsed without thought parts or signatures. Exact Prune caching is used for app calls, with routing disabled to keep the chosen model/provider explicit; benchmark calls disable gateway caching too. Template-mode guidance remains useful and clearly labeled.
 
-Limits: 18,000 tutor context characters, 1,800 tutor / 3,200 lesson requested output tokens, 48 KB response, configurable timeout capped at 45 seconds, no automatic model retry, and 20 calls/user/day. Shared PostgreSQL counters enforce 8 reservations/minute, 50/day UTC and 55 GitHub requests/hour across identities and instances, failing closed when unavailable. The fixed $0.01 reservation is conservative internal accounting, not a provider-price guarantee. Prune Shield supplies the user-confirmed $1/day cap; an actual uncached 429 verified its rate-denial path.
+Limits: 18,000 tutor context characters, 1,800 tutor / 3,200 lesson requested output tokens, 48 KB response, configurable timeout capped at 45 seconds, no automatic model retry, and 20 calls/user/day. Shared PostgreSQL counters enforce 8 reservations/minute, 50/day UTC and 55 GitHub requests/hour across identities and instances, failing closed when unavailable. The fixed $0.01 reservation is conservative internal accounting, not a provider-price guarantee. Prune Shield supplies the dashboard-verified $1/day cap; an actual uncached 429 verified its rate-denial path.
 
 Generated lessons include summary, analogy, explicit claims, tradeoffs, and a strictly validated three-node scene. Step narration must be distinct, nodes/transitions must fit the existing renderer, and citations must match the snapshot. One caption string supplies visible text and speech. Model-generated HTML/scripts are rejected. Cached lessons are owner scoped and keyed by model, prompt version, source, level and learner context; failures preserve the previous valid lesson.
 
@@ -50,10 +54,12 @@ Local mode uses an opaque, HttpOnly, same-site UUID cookie and atomic JSON-file 
 
 Supabase mode uses `@supabase/ssr`, cookie-based anonymous/email sessions, and `getUser()` validation. No service-role key is needed. `learning_records` stores typed JSONB records for profiles, jobs, snapshots, lessons, attempts, progress, and tutor history. Every query is owner-scoped and RLS enforces both USING and WITH CHECK. Rate counters have no direct client write privileges; a fixed-bucket function in a non-exposed schema validates the authenticated identity and caps requested limits. Records are payload-bounded. Quota metadata survives learning-data deletion.
 
-Email sign-in opens that account’s history; guest progress is not automatically migrated. Account removal/revocation, CAPTCHA, email delivery, and abuse-related availability remain further release work. Expiring owner-scoped leases and fenced writes now protect import checkpoints and progress mutations across instances. The current delete control deletes learning data, not the Supabase account itself.
+Email sign-in opens that account’s history; guest progress is not automatically migrated. Account removal/revocation, CAPTCHA, email delivery, and abuse-related availability remain limitations of the full workspace. Expiring owner-scoped leases and fenced writes now protect import checkpoints and progress mutations across instances. The current delete control deletes learning data, not the Supabase account itself.
 
 ## Security and current limits
 
-Server-only provider keys; fixed GitHub API host; no redirect following; bounded JSON/stream reading; origin checks; same-site cookies; escaped React text; CSP/frame protection; safe diagram schema; per-owner data checks. Local checks and 16 hosted checks passed, including real anonymous identities, refresh, RLS, deletion, lock contention, stale writes, and atomic global limits. The two migrations were explicitly approved and applied only to the verified SYNAPSE project. Vercel preview-only credentials are configured behind Vercel Authentication; the user approved the required initial protected bootstrap with domain assignment skipped, and the subsequent preview passed 16 checks. The exact preview callback URL is allowlisted; actual email OTP delivery remains untested. No production service credentials or unrestricted public AI are enabled.
+Provider keys stay on the server. Fixed GitHub API hosts, refused redirects, bounded JSON/stream reading, origin checks, same-site cookies, escaped React text, CSP/frame protection, safe scene schemas and per-owner data checks constrain external inputs. Sixteen hosted checks exercised real anonymous identities, refresh, RLS, deletion, lock contention, stale writes and atomic global limits. The dedicated database is TraceEval / synapse-learning (`fcwyithhipsimrnccqsy`); its two migrations are tracked in [`supabase/migrations`](../supabase/migrations).
+
+The full workspace uses preview-only credentials behind Vercel Authentication. Its exact callback URL is allowlisted; actual email OTP delivery remains untested. The public production environment contains only the browser-sample switch. Its API/auth routes return `403/PUBLIC_SAMPLE_ONLY`, with additional production guards in identity and provider configuration. See [public release configuration](PUBLIC_RELEASE.md).
 
 Residual limits: authenticated clients can consume their own or global reservation quota to deny availability, although they cannot enlarge the caps or trigger model calls through SQL. Learning-data deletion does not delete Auth users or revoke issued JWTs; an already running operation can repopulate data after deletion. Email OTP, account migration, independent semantic accuracy and learning outcomes are not verified.

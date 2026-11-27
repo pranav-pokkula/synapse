@@ -8,10 +8,10 @@ The table and repository timings below are historical Stage 1 measurements from 
 | Browser journeys | 12 passed against the production build in installed Chrome | `evidence/playwright-results.json` |
 | Viewports | 390, 768, 1366, 1920 px; no document overflow | `evidence/overview-*.png`, `lesson-*.png` |
 | Accessibility | No axe WCAG A/AA violations in scanned overview, light lesson, dark lesson | Browser accessibility check; not a full accessibility certification |
-| Native narration | 180 available voices; observed native start and end callbacks | `evidence/narration-results.json`; audible quality not human-reviewed |
-| SQL ownership | Read/delete isolation, forged insert denial, reassignment denial, anonymous denial, quota permissions | PGlite tests with stub `auth.uid()`; hosted Auth not tested |
+| Native narration | 180 available voices; observed native start and end callbacks | `evidence/narration-results.json`; callbacks only in this Stage 1 run; later listening review below |
+| SQL ownership | Read/delete isolation, forged insert denial, reassignment denial, anonymous denial, quota permissions | PGlite tests with stub `auth.uid()`; hosted Auth not tested in Stage 1; later hosted checks below |
 | Dependency audit | 0 reported vulnerabilities | `npm audit --json` |
-| Production build | Passed with webpack | `npm run build`; Turbopack failure disclosed in journal |
+| Production build | Passed with webpack | `npm run build`; Turbopack failure documented in experiment notes |
 
 ## Real GitHub examples
 
@@ -41,7 +41,7 @@ See [experiment notes](EXPERIMENT_NOTES.md) and raw `evidence/evaluation-*.json`
 
 ## Stage 2 paired model experiment — November 25, 2026
 
-Frozen protocol: [`stage2-evaluation-manifest.json`](../evidence/stage2-evaluation-manifest.json), committed before execution in `8dbde47`. Ten questions × two conditions, same Gemini alias, intermediate prompt, temperature 0, 1,800 output cap, schema/citation validator, cache off and routing off. Calls were paced and charged against hosted quotas. The actual observed serving model was `gemini-3.5-flash-lite`. Four questions use a real pinned repository held out from the earlier retrieval tuning; the builder inspected its source, so it is not an independently authored dataset.
+Frozen protocol: [`stage2-evaluation-manifest.json`](../evidence/stage2-evaluation-manifest.json), committed before execution in `8dbde47`. Ten questions × two conditions, same Gemini alias, intermediate prompt, temperature 0, 1,800 output cap, schema/citation validator, cache off and routing off. Calls were paced and charged against hosted quotas. The actual observed serving model was `gemini-3.5-flash-lite`. Four questions use a real pinned repository held out from the earlier retrieval tuning; its source was inspected during development, so it is not an independently authored dataset.
 
 | Observed measure | Limited-context baseline | SYNAPSE retrieval |
 |---|---:|---:|
@@ -68,13 +68,19 @@ Direct Gemini-versus-Prune was **not run**: no direct Gemini credential is avail
 - Twelve regression/accessibility browser checks passed with external services disabled. Separate Chrome checks used the compiled app, actual Prune calls and hosted Supabase records.
 - Sixteen hosted database checks passed with two real anonymous accounts, including RLS, forged ownership, refresh, deletion, lock contention, stale-worker fencing, protected quota counters and deployment-wide atomic minute limits. Email delivery was not tested.
 - A real hosted Next.js import persisted 37 files, 48 edges and 11 valid citations, survived client reload, and returned 404 to another session.
-- Three generated lesson levels passed source validation. A 25-second timeout and an invalid tutor citation are retained as failures; increasing the configured maximum to 45 seconds allowed the larger response. Agent screenshot review identified repeated narration; the prompt/schema and cache version were corrected and the real browser flow passed again.
-- Prune receipt verification returned `valid:true` for the full receipt; the public artifact is a redacted excerpt, not an independently verifiable signature payload. User dashboard review confirmed $1/day, 10/minute and anomaly settings. A bounded uncached test produced 9 successes, 1 actual Shield `429/rate_limit`, and 1 timeout. The spend cap was not exhausted.
+- Three generated lesson levels passed source validation. A 25-second timeout and an invalid tutor citation are retained as failures; increasing the configured maximum to 45 seconds allowed the larger response. Visual inspection identified repeated narration; the prompt/schema and cache version were corrected and the real browser flow passed again.
+- Prune receipt verification returned `valid:true` for the full receipt; the public artifact is a redacted excerpt, not an independently verifiable signature payload. Dashboard inspection confirmed $1/day, 10/minute and anomaly settings. A bounded uncached test produced 9 successes, 1 actual Shield `429/rate_limit`, and 1 timeout. The spend cap was not exhausted.
 
 ## Protected preview verification
 
 The [preview](https://synapse-learning-qr1qac164-pranav-pokkulas-projects.vercel.app) passed 16 checks: Vercel Authentication redirect, hosted session and no-store responses, two-account persistence/isolation, CSRF, real generated lesson and distinct narration, persisted cache, real browser animation and mobile layout, live tutoring, deletion and signed-out denial. `evidence/preview-results.json` records outcomes; `preview-mobile-check.json` separately verifies the settled responsive layout. Error/fatal runtime-log lookup returned no entries in the inspected window. Six further actual preview assessment checks passed: new hosted identity, bounded concurrent progress/grading, retry after the winning write, repeated-answer mastery unchanged, attempts surviving reload, and record deletion. See `preview-assessment-results.json`. These checks do not include real email OTP delivery.
 
-## Human review: pending
+## Review and interpretation
 
-The user reviewed service configuration and authorized database/deployment actions. No learner study, independently scored AI output, person-reviewed code contribution, or human listening review has been recorded. Review the fixture, citations, model benchmark outputs when available, and the demo before submission.
+I reviewed SYNAPSE's development and product behavior throughout the project. On November 26, 2026, I personally tested browser narration and watched and approved the complete 3:03 silent demonstration. That ongoing review is distinct from an independently scored evaluation: there is no recorded independent factual-accuracy benchmark, learner study, or formal scoring of the selected explanations and code changes.
+
+Model-response structural validation is **not independent factual accuracy scoring**. It checks output shape and source quotation, not whether every interpretation is correct. I interpret the paired experiment as evidence that selecting relevant excerpts can make a small, constrained tutor more useful than supplying the first two files. It does not establish superiority over an assistant given the full repository, or improved learning outcomes.
+
+## Public sample release — November 26, 2026
+
+The expanded suite passed 98 unit/SQL/security/public-mode tests, 12 full-studio browser regressions and 22 signed-out public-sample browser/security checks. These counts describe separate scopes, not a single count of independent experiments. The public checks cover animation, source-template guidance, practice/reload, browser isolation, mobile accessibility and direct API/auth denial. They do not exercise paid AI or hosted storage. Results are in [`release-browser-results.json`](../evidence/release-browser-results.json) and [`production-verification.json`](../evidence/production-verification.json); the current configuration is documented in the [release audit](RELEASE_AUDIT.md).

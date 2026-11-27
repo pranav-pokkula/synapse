@@ -1,41 +1,36 @@
 # Public release configuration
 
-The public edition is **option B: a functioning browser-only teaching sample**. It uses the existing animation, narration, architecture, source-guide templates and deterministic assessment functions. It does not run imported code or call paid AI. Its progress is local to the browser and can be cleared in settings.
+I made the public edition a functioning browser-only teaching sample so visitors can explore SYNAPSE without creating an account or consuming paid AI. It uses the existing animation, narration, architecture, source-guide templates and deterministic assessment functions. Progress stays in the current browser and can be cleared in settings.
 
 ## Environment separation
 
 | Environment | Configuration | Available services |
 |---|---|---|
-| Public production | `NEXT_PUBLIC_SYNAPSE_PUBLIC_SAMPLE=true` at build time; no model or Supabase credentials | Embedded sample and browser storage only |
-| Existing protected preview | Existing preview-only Prune and dedicated Supabase configuration; public flag unset/false | Full imported-repository studio, real AI and hosted progress |
-| Local full studio | `.env.example`, public flag false; credentials optional | Local filesystem storage or configured Supabase; optional AI |
+| [Public production](https://synapse-learning-one.vercel.app) | `NEXT_PUBLIC_SYNAPSE_PUBLIC_SAMPLE=true` at build time; no model or Supabase credentials | Embedded Fieldnotes sample and browser storage |
+| [Protected preview](https://synapse-learning-qr1qac164-pranav-pokkulas-projects.vercel.app) | Preview-only Prune and dedicated Supabase configuration; sample flag unset/false | Imported-repository studio, real AI and hosted progress; Vercel Authentication required |
+| Local full studio | [`.env.example`](../.env.example), sample flag false; credentials optional | Local filesystem storage or configured Supabase; optional AI |
 
-The public flag is a nonsecret build-time switch. `proxy.ts` denies `/api/*` and `/auth/*` in public mode. Vercel production is also denied even if this flag is accidentally omitted. `identity()` and `providerConfigured()` provide additional server-side checks. Production must never receive the preview credentials. Enabling paid public AI would require a separate reviewed implementation and authorization.
+The public flag is a nonsecret build-time switch. [`proxy.ts`](../proxy.ts) denies `/api/*` and `/auth/*` in public mode. Vercel production is also denied even if this flag is accidentally omitted. Identity and provider-configuration checks add server-side defenses. Paid public AI is outside this release's scope; preview credentials are absent from production.
 
-The client routes sample operations to `lib/browser-sample.ts`, which uses the existing deterministic lesson/scoring code and a versioned localStorage key. Inputs and restored progress are validated. No server session, Supabase anonymous account, private project access or server filesystem is needed. Practice scores are self-study indicators, not tamper-resistant credentials.
+[`lib/browser-sample.ts`](../lib/browser-sample.ts) routes sample operations through the existing deterministic lesson/scoring code and a versioned localStorage key. Inputs and restored progress are validated. No server session, Supabase anonymous account, private-project access or server filesystem is used. Practice scores are self-study indicators, not tamper-resistant credentials.
 
-## Vercel access
+## Hosting and access
 
-Use only the existing `synapse-learning` project in `pranav-pokkulas-projects`. Standard Vercel Authentication should protect preview and generated deployment URLs while allowing the production domain. Do not disable protection globally. Verify the actual policy, signed-out production requests and signed-out preview denial after release.
+The `synapse-learning` Vercel project uses Standard Protection with policy `all_except_custom_domains`. The production domain is accessible signed out; preview and generated deployment URLs require Vercel Authentication. The project is not Git-connected, so a documentation commit does not automatically deploy it. The current deployment identity and measured checks are recorded in the [release audit](RELEASE_AUDIT.md).
 
-Deploy the merged main commit as a staged production deployment with `--skip-domain`, inspect it, then promote only after the intended public configuration is verified. Preserve preview credentials and the existing dedicated database. No migration is needed for this release.
+The public sample shares learning components with the full workspace, but GitHub import, generated Gemini tutoring and cloud persistence remain protected features. The recorded demo shows that full workspace.
 
 ## Reproduce public checks
 
+Use a local environment without model or Supabase credentials:
+
 ```sh
-# Supply the flag before building. Keep production service credentials absent.
 NEXT_PUBLIC_SYNAPSE_PUBLIC_SAMPLE=true npm run build
 NEXT_PUBLIC_SYNAPSE_PUBLIC_SAMPLE=true VERCEL_ENV=production npm start -- --port 3001
-# Another terminal:
+# In another terminal:
 npx tsx scripts/verify-public.ts
 ```
 
-The script exercises signed-out navigation, source evidence, animation, template guidance, grading/reload, browser separation, mobile accessibility and direct API denial. It does not claim audible speech or spend model credits. Set `PUBLIC_TEST_URL` to the actual production origin to run the same checks there. CI uses Chromium; local tests default to Chrome.
+The script exercises signed-out navigation, source evidence, animation, template guidance, grading/reload, browser separation, mobile accessibility and direct API/auth denial. It does not assess audible speech or spend model credits. Set `PUBLIC_TEST_URL` to the actual production origin to run the same checks there. CI uses Chromium; local tests default to Chrome. The script writes its report and genuine screenshots under `evidence/`.
 
-See [final handoff](FINAL_SUBMISSION_HANDOFF.md) for the verified deployment URL, commit and results. The approved video records the full protected experience, so its cloud and AI features are not advertised as available in the public sample.
-
-## Verified deployment
-
-Public domain: https://synapse-learning-one.vercel.app. Initial release deployment `dpl_8wEp4APaKfetqpZrGJzbuXDTybUd` was built from merged main `84983f462eca9ac660836f9029fc560a75da8df0`, staged, checked, then promoted. Standard Protection is saved as `all_except_custom_domains`; signed-out preview requests redirect to Vercel SSO. All 22 production checks passed. The temporary automation bypass created by CLI verification was revoked. Later documentation-only deployments preserve this application implementation.
-
-[Official Standard Protection scope](https://vercel.com/docs/deployment-protection) · [API policy values](https://vercel.com/docs/deployment-protection/methods-to-protect-deployments/vercel-authentication).
+[Official Standard Protection documentation](https://vercel.com/docs/deployment-protection) · [Vercel Authentication policy](https://vercel.com/docs/deployment-protection/methods-to-protect-deployments/vercel-authentication).

@@ -1,0 +1,96 @@
+{
+  "recordedAt": "2026-11-27T14:33:56.955Z",
+  "baseURL": "https://synapse-learning-one.vercel.app",
+  "checks": [
+    {
+      "check": "signed-out landing and truthful availability",
+      "passed": true
+    },
+    {
+      "check": "public sample opens without a server session",
+      "passed": true
+    },
+    {
+      "check": "architecture renders",
+      "passed": true
+    },
+    {
+      "check": "source lesson animation advances",
+      "passed": true
+    },
+    {
+      "check": "source evidence, transcript and narration control",
+      "passed": true
+    },
+    {
+      "check": "source guide is visibly a template",
+      "passed": true
+    },
+    {
+      "check": "practice grades and survives reload",
+      "passed": true
+    },
+    {
+      "check": "no sample operation calls server APIs",
+      "passed": true
+    },
+    {
+      "check": "separate browser has no learner history",
+      "passed": true
+    },
+    {
+      "check": "public settings do not offer email authentication",
+      "passed": true
+    },
+    {
+      "check": "mobile layout and accessibility",
+      "passed": true
+    },
+    {
+      "check": "server GET denied: /api/session",
+      "passed": true
+    },
+    {
+      "check": "server GET denied: /api/project/sample",
+      "passed": true
+    },
+    {
+      "check": "server GET denied: /api/progress",
+      "passed": true
+    },
+    {
+      "check": "server GET denied: /auth/callback",
+      "passed": true
+    },
+    {
+      "check": "server POST denied: /api/tutor",
+      "passed": true
+    },
+    {
+      "check": "server POST denied: /api/lesson",
+      "passed": true
+    },
+    {
+      "check": "server POST denied: /api/import",
+      "passed": true
+    },
+    {
+      "check": "server POST denied: /api/account",
+      "passed": true
+    },
+    {
+      "check": "server POST denied: /api/assessment",
+      "passed": true
+    },
+    {
+      "check": "server POST denied: /api/progress",
+      "passed": true
+    },
+    {
+      "check": "no browser runtime errors",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "scope": "Unauthenticated sample/browser and API-denial checks. Narration control tested; no automated claim of audible speech."
+}

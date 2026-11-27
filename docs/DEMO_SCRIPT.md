@@ -1,21 +1,26 @@
-# Stage 2 demonstration — 3:03
+# Demonstration
 
-Completed actual screen capture: `evidence/synapse-stage2-demo.mp4` (182.80 seconds, 1440 × 1000, silent with explanatory captions). The WebM original and MP4 export are local and excluded from Git. The app uses real saved Prune-generated lessons and hosted Supabase records from the previously imported pinned Next.js dashboard. Cached output is visibly labeled; this is not presented as a fresh import or a fresh model generation on every click.
+The 3:03 recording follows a real imported Next.js dashboard through architecture, source inspection, saved Gemini teaching, animation, tutoring, practice and reloaded hosted progress. I reviewed and approved the complete recording on November 26, 2026. It is **silent with explanatory captions**; browser narration was tested separately.
 
-Reproduce after the hosted import/browser setup with `npx tsx scripts/record-demo-stage2.ts` while the local production build is running. This recorder uses only its own ignored verification account state. It can make real model requests if the appropriate cache is absent. Do not run it on an unrelated account.
+The public video URL has not yet been published. The local recording is `evidence/synapse-stage2-demo.mp4`: H.264, 1440 × 1000, 182.80 seconds, with no audio stream. The MP4 and WebM source are excluded from Git. [Capture metadata](../evidence/stage2-demo-recording.json) and a [final progress screenshot](../evidence/stage2-demo-final.png) are available in the repository.
 
-The recording covers landing, real repository overview, static architecture and source inspection, saved AI teaching, animation and distinct captions, transcript, source claims, actual tutor output, deterministic assessment feedback, hosted progress and reload. Final metadata: `evidence/stage2-demo-recording.json`; final screenshot: `evidence/stage2-demo-final.png`.
+## What the recording demonstrates
 
-Two incomplete attempts preceded the final capture. One stopped at an overly strict navigation selector. The second encountered an actual recoverable `409/JOB_BUSY` when grading overlapped progress persistence. The updated recorder follows the UI’s retry instruction once if needed; a separate six-check hosted assessment run verified safe retry and persisted grades. The final recording completed the full sequence.
+| Sequence | Behavior |
+|---|---|
+| Project and architecture | A previously imported repository pinned to an exact commit; static relationships and source excerpts |
+| Lesson | Saved Prune-generated teaching, conceptual animation, distinct captions and a transcript |
+| Tutor | Actual recorded model output linked to indexed source |
+| Practice and progress | Deterministic feedback, hosted records and progress after reload |
 
-The video has **no captured audio**. Browser narration shares the displayed captions, and native speech callbacks were separately checked; human listening review remains pending. Review the final video and generated explanations before submitting or uploading. No public video upload or Devpost submission has occurred.
+Saved output is labeled. The recording does not imply that each click makes a fresh import or model request. It shows the **protected full workspace**; the [public application](https://synapse-learning-one.vercel.app) provides browser-only sample learning, with live AI, imports and cloud history disabled.
 
-The historical Stage 1 recording remains `evidence/synapse-demo.mp4` (2:44); it demonstrates template mode and local storage and should not be used as proof of Stage 2 services.
+A temporary progress-sync warning remains visible during the lesson. Progress stayed in the browser during that failure; the graded result was subsequently saved to Supabase and reloaded. The recording therefore does not establish uninterrupted cloud synchronization.
 
-## Final submission inspection
+Two incomplete captures preceded the final video: a navigation selector stopped one attempt, and overlapping grading/progress persistence produced a recoverable `409/JOB_BUSY` in another. The recorder follows the displayed retry path; a separate [six-check hosted assessment run](../evidence/preview-assessment-results.json) verified persistence and non-inflating mastery after retry. These failures remain part of the engineering record.
 
-Full MP4 decoding passed; no audio stream is present. The saved lesson portion visibly shows a temporary sync warning. Keep it visible. The exact smallest clarification, included in the final Devpost answer, is: “During the lesson, a progress sync request temporarily failed and progress remained in the browser; the graded result is saved to Supabase and reloaded later in the recording.” Alternatively add that sentence to the existing caption near 1:20. No new recording, synthetic frame or cinematic edit is needed. Human review of the entire video remains pending.
+## Reproduction
 
-## Owner approval — November 26, 2026
+`scripts/record-demo-stage2.ts` captures the full workflow using its ignored verification account state and a configured local production build. It may make provider requests when cached teaching is unavailable. The historical Stage 1 recorder demonstrates template/local-storage behavior and is not evidence of hosted Stage 2 services.
 
-The owner states that they watched and approved the complete 3:03 silent, captioned Stage 2 recording and separately tested and approved browser narration. This does not establish completion of the five-explanation or three-code-change review. The existing video is retained unchanged. Its temporary sync warning is explained in the submission; public production is a browser-only sample while this recording shows the full protected experience.
+The [gallery image](../evidence/devpost-gallery.png) is an unchanged application capture of a generated lesson in the protected workspace.

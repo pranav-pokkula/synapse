@@ -1,34 +1,31 @@
-# AI development disclosure
+# Development approach and AI disclosure
 
-## Codex contributions during this session
+I am Pranav Pokkula, the creator and developer of SYNAPSE. I established the project's direction, guided its product and technical decisions, and take responsibility for the finished application. I reviewed the work and product behavior throughout development, using OpenAI Codex as an assistant for implementation, debugging, tests, documentation and refinement.
 
-Codex created the new Next.js application, design system, teaching fixture, bounded GitHub importer, structural analyzer, concept rules, lesson templates, SVG player, browser narration coordination, assessments, local storage adapter, Supabase integration/migration, optional provider adapter, tests, evaluation harness, and documentation. No code was copied from the user's other repositories. Third-party frameworks and libraries are pre-existing dependencies, not original SYNAPSE contributions.
+The project began in an empty workspace on November 22, 2026, during the Global AI Builder's Challenge. Its application, teaching fixture, tests and evaluation harness were developed for the event. Frameworks, libraries and hosted services are pre-existing tools; no code was reused from my other projects. This was AI-assisted development, not a claim that I manually wrote every line.
 
-## Checks actually performed by Codex
+## Decisions that shaped the implementation
 
-- Typecheck, lint, unit/integration/security tests, PostgreSQL policy execution in PGlite, production build, npm audit.
-- Browser journeys at four viewports; direct screenshot inspection; axe scans; native speech callbacks and actual CSS packet motion.
-- Real public GitHub imports, a repeat import, and two distinct live failure responses.
-- A separate 37-file Next.js dashboard import, lesson generation, and screenshot inspection; 12 final production-browser checks and successful hosted CI on the published implementation commit.
-- Fixed origin handling, contrast, compiler-version incompatibility, retrieval weighting, mobile diagram readability, session-initialization ordering, and repeated-answer mastery inflation prevention.
-- Saved initial retrieval failures and the subsequent development-set results without portraying them as a held-out benchmark.
+**Make explanations inspectable.** I wanted learning to begin with the actual project. Bounded GitHub imports and a TypeScript structural index produce commit-pinned excerpts. Generated claims are checked against those excerpts, while the interface keeps references visible. Exact matches establish that quoted text exists; they do not independently validate the interpretation.
 
-These are **AI-performed checks**, not evidence of a person reviewing AI output. No human approval, human test outcome, learner study, or external testimonial is invented.
+**Keep generation separate from execution.** Codex assisted the provider adapter, citation validation and constrained lesson schema. Gemini supplies text and scene data; application code handles indexing, validation, animation and scoring. No imported repository code or model-generated script is executed.
 
-## AI in the product
+**Handle provider differences without weakening validation.** The first integration exposed a mismatch between OpenAI-style and native Gemini response formats. Supporting both envelopes preserved one validation contract, while excluding thought parts and signatures. Subsequent checks retained timeouts and invalid-citation failures rather than treating every response as a success.
 
-The product combines deterministic source analysis and assessment with actual Prune-backed Gemini tutoring and structured lesson generation. Templates remain clearly labeled fallbacks. Real model calls, estimated costs, failures, native-format parsing and the paired experiment are recorded in Stage 2 evidence. Browser speech synthesis reads the generated scene captions. Codex-assisted development is distinct from integrated product AI.
+**Preserve progress under concurrent work.** The hosted workspace uses Supabase ownership policies, expiring leases and fenced writes. These protect records across application instances. A simultaneous progress save and assessment can still return a recoverable conflict; hosted checks verified retry and persistence without inflating mastery.
 
-## Stage 2 contributions and actual user review
+**Make the public experience useful without exposing paid AI.** I chose a browser-only sample for public access and retained the complete AI/import/cloud workflow behind Vercel Authentication. The sample reuses the same deterministic learning components; production server routes fail closed.
 
-Codex integrated Prune-native Gemini responses, generated safe lessons, model/receipt telemetry, owner-scoped caches, expiring database leases, fenced progress/import writes and shared quotas. It diagnosed a native-envelope incompatibility, retained model timeouts and an invalid-citation rejection, and corrected repetitive generated narration after screenshot inspection. It prepared and executed the actual two-identity hosted tests and frozen paired evaluation, and configured only SYNAPSE’s protected Vercel project. The original UI layout was preserved.
+## AI inside SYNAPSE
 
-The user explicitly approved the two reviewed migrations, identified the dedicated project, and personally verified saved Prune settings and successful Gemini requests in the dashboard. That is human review of service configuration and authorization. It does **not** establish human review of generated code, lesson accuracy, pedagogy, narration quality, or evaluation scores.
+Google Gemini, accessed through Prune, generates structured tutoring and learning scenes from retrieved source excerpts. The observed serving model was `gemini-3.5-flash-lite`. Output validation, owner-scoped caching, bounded requests and usage limits surround generation. Clearly labeled source templates remain available without a model.
 
-## Human review still required
+Codex's development assistance is distinct from this product integration. Repository indexing, source matching, rendering, quota enforcement and assessment scoring follow explicit application logic. Momen was not integrated.
 
-Review the Fieldnotes lesson and a real imported example against source, run a key workflow personally, inspect a specific generated code change, and record whether you kept, changed, or rejected it and why. Then review the video, narration quality, benchmark outputs when available, and the five submission answers. Do not claim the event’s A4 human-review points until this happened.
+## Review and evidence
 
-## Final public release preparation — November 26, 2026
+I worked through the architecture, implementation choices and product behavior during development. I personally checked the saved Prune Shield settings and successful requests. On November 26, 2026, I tested browser narration and reviewed and approved the complete 3:03 silent, captioned demonstration.
 
-Codex prepared the README, inventory, final submission handoff and a restricted browser-only sample using the existing lesson and scoring logic. Production server APIs and model access fail closed; protected preview services remain separate. The owner personally approved browser narration and the complete silent 3:03 demo on November 26. No separate explanation/code-review record, accuracy scores or learner outcomes have been supplied.
+Those checks and my ongoing involvement are distinct from an independently scored benchmark or a formal security audit. The recorded experiment measured structural acceptance and source matching; it did not independently score factual accuracy or educational outcomes.
+
+Codex-assisted automated verification covered unit/SQL/security tests, browser workflows, accessibility scans, real imports, hosted isolation and provider integration. The [evaluation report](EVALUATION_REPORT.md), [experiment notes](EXPERIMENT_NOTES.md) and [release audit](RELEASE_AUDIT.md) distinguish measured results, failures and remaining limits.
