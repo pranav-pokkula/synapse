@@ -37,3 +37,29 @@ jobs:
           path: |
             playwright-report/
             evidence/
+  public-sample:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_PUBLIC_SYNAPSE_PUBLIC_SAMPLE: 'true'
+      VERCEL_ENV: production
+      PLAYWRIGHT_CHROMIUM: '1'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Verify public sample and closed server APIs
+        run: |
+          npm start -- --port 3001 > /tmp/synapse-public.log 2>&1 &
+          for attempt in $(seq 1 30); do curl -fsS http://127.0.0.1:3001 >/dev/null && break || sleep 1; done
+          npx tsx scripts/verify-public.ts
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: public-verification
+          path: evidence/public-*

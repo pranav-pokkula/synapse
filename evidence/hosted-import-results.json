@@ -1,0 +1,20 @@
+{
+  "recordedAt": "2026-11-26T04:23:59.812Z",
+  "baseURL": "http://127.0.0.1:3000",
+  "repository": "vercel/nextjs-postgres-nextauth-tailwindcss-template",
+  "complete": true,
+  "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+  "files": 37,
+  "edges": 48,
+  "concepts": [
+    "modules",
+    "requests",
+    "auth",
+    "data",
+    "interface"
+  ],
+  "validCitations": 11,
+  "reload": true,
+  "crossSessionStatus": 404,
+  "snapshotId": "b9a5934c-c274-4a7e-8b87-efdf3d32d29f"
+}

@@ -1,3 +1,4 @@
+import { publicSample } from "@/lib/deployment-mode";
 import Link from "next/link";
 import {
   GitBranch,
@@ -46,18 +47,30 @@ export default function Home() {
               architecture, follow the code, and make the knowledge yours.
             </p>
             <div className="hero-actions">
-              <Link className="button primary large" href="/learn?connect=1">
+              <Link
+                className="button primary large"
+                href={publicSample ? "/learn" : "/learn?connect=1"}
+              >
                 <GitBranch size={18} />
-                Connect a repository
+                {publicSample ? "Explore the sample" : "Connect a repository"}
               </Link>
-              <Link className="button quiet large" href="/learn">
+              <Link
+                className="button quiet large"
+                href={
+                  publicSample
+                    ? "https://github.com/pranav-pokkula/synapse"
+                    : "/learn"
+                }
+              >
                 <Play size={17} />
-                Explore the sample
+                {publicSample ? "View on GitHub" : "Explore the sample"}
               </Link>
             </div>
             <p className="hero-note">
-              <ShieldCheck size={15} /> Public repositories. No GitHub sign-in
-              required.
+              <ShieldCheck size={15} />{" "}
+              {publicSample
+                ? "Public sample · no account or paid AI. Imports and live AI remain protected."
+                : "Public repositories. No GitHub sign-in required."}
             </p>
           </div>
           <div
@@ -217,7 +230,9 @@ export default function Home() {
       <footer className="landing-footer">
         <Brand />
         <span>Build knowledge from what you build.</span>
-        <span>Made for curious builders.</span>
+        <a href="https://github.com/pranav-pokkula/synapse/blob/main/docs/DEMO_SCRIPT.md">
+          Demo & documentation
+        </a>
       </footer>
     </div>
   );

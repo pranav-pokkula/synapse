@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { beginImport } from "@/lib/github";
-import { consume, identity, putRecord, listRecords } from "@/lib/store";
+import {
+  consume,
+  identity,
+  putRecord,
+  listRecords,
+  consumeGlobal,
+} from "@/lib/store";
 import type { Snapshot } from "@/lib/types";
 import { failure, readBody } from "@/lib/http";
 export const maxDuration = 60;
@@ -13,7 +19,9 @@ export async function POST(request: Request) {
       .parse(await readBody(request));
     const user = await identity();
     await consume(user, "imports-hour", 5, 3600);
-    const job = await beginImport(url);
+    const job = await beginImport(url, () =>
+      consumeGlobal(user, "github-hour"),
+    );
     const cached = (await listRecords<Snapshot>(user, "snapshot")).find(
       (s) =>
         s.owner.toLowerCase() === job.owner.toLowerCase() &&

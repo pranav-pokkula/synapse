@@ -134,9 +134,13 @@ const treeSchema = z.object({
     }),
   ),
 });
-export async function beginImport(url: string): Promise<ImportJob> {
+export async function beginImport(
+  url: string,
+  beforeRequest?: () => Promise<void>,
+): Promise<ImportJob> {
   const { owner, repo } = parseGitHubUrl(url);
   const base = `/repos/${owner}/${repo}`;
+  await beforeRequest?.();
   const info = repoSchema.parse(await githubGet(base));
   if (info.private)
     throw new AppError(
@@ -150,11 +154,13 @@ export async function beginImport(url: string): Promise<ImportJob> {
       413,
       "SIZE_LIMIT",
     );
+  await beforeRequest?.();
   const commit = commitSchema.parse(
     await githubGet(
       `${base}/commits/${encodeURIComponent(info.default_branch)}`,
     ),
   );
+  await beforeRequest?.();
   const tree = treeSchema.parse(
     await githubGet(`${base}/git/trees/${commit.sha}?recursive=1`),
   );
@@ -213,6 +219,7 @@ export async function beginImport(url: string): Promise<ImportJob> {
 }
 export async function advanceImport(
   job: ImportJob,
+  beforeRequest?: () => Promise<void>,
 ): Promise<{ job: ImportJob; snapshot?: Snapshot }> {
   if (job.status === "complete") return { job };
   const next: ImportJob = {
@@ -226,6 +233,7 @@ export async function advanceImport(
   const items = job.queue.slice(job.cursor, job.cursor + LIMITS.batch);
   const results = await Promise.allSettled(
     items.map(async (file) => {
+      await beforeRequest?.();
       const blob = z
         .object({ content: z.string(), encoding: z.string(), size: z.number() })
         .parse(

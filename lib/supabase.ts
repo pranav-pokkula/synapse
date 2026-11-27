@@ -13,6 +13,15 @@ export async function supabase() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
+      global: {
+        fetch: (url, init) =>
+          fetch(url, {
+            ...init,
+            signal: init?.signal
+              ? AbortSignal.any([init.signal, AbortSignal.timeout(10_000)])
+              : AbortSignal.timeout(10_000),
+          }),
+      },
       cookies: {
         getAll: () => store.getAll(),
         setAll: (values) =>

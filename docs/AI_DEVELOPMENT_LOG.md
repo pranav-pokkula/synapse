@@ -17,8 +17,18 @@ These are **AI-performed checks**, not evidence of a person reviewing AI output.
 
 ## AI in the product
 
-The current demonstrated product uses deterministic source analysis, instructional templates, and browser speech synthesis. Live AI tutor integration is implemented behind environment configuration, but the user has deferred model choice. No product model calls or provider charges occurred. Codex-assisted development is distinct from integrated product AI.
+The product combines deterministic source analysis and assessment with actual Prune-backed Gemini tutoring and structured lesson generation. Templates remain clearly labeled fallbacks. Real model calls, estimated costs, failures, native-format parsing and the paired experiment are recorded in Stage 2 evidence. Browser speech synthesis reads the generated scene captions. Codex-assisted development is distinct from integrated product AI.
+
+## Stage 2 contributions and actual user review
+
+Codex integrated Prune-native Gemini responses, generated safe lessons, model/receipt telemetry, owner-scoped caches, expiring database leases, fenced progress/import writes and shared quotas. It diagnosed a native-envelope incompatibility, retained model timeouts and an invalid-citation rejection, and corrected repetitive generated narration after screenshot inspection. It prepared and executed the actual two-identity hosted tests and frozen paired evaluation, and configured only SYNAPSE’s protected Vercel project. The original UI layout was preserved.
+
+The user explicitly approved the two reviewed migrations, identified the dedicated project, and personally verified saved Prune settings and successful Gemini requests in the dashboard. That is human review of service configuration and authorization. It does **not** establish human review of generated code, lesson accuracy, pedagogy, narration quality, or evaluation scores.
 
 ## Human review still required
 
 Review the Fieldnotes lesson and a real imported example against source, run a key workflow personally, inspect a specific generated code change, and record whether you kept, changed, or rejected it and why. Then review the video, narration quality, benchmark outputs when available, and the five submission answers. Do not claim the event’s A4 human-review points until this happened.
+
+## Final public release preparation — November 26, 2026
+
+Codex prepared the README, inventory, final submission handoff and a restricted browser-only sample using the existing lesson and scoring logic. Production server APIs and model access fail closed; protected preview services remain separate. The owner personally approved browser narration and the complete silent 3:03 demo on November 26. No separate explanation/code-review record, accuracy scores or learner outcomes have been supplied.

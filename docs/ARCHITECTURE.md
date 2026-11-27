@@ -9,14 +9,14 @@ flowchart LR
   GH --> IDX[TypeScript parser + bounded structural index]
   IDX --> SNAP[Commit-pinned snapshot]
   SNAP --> PATH[Prerequisite-aware concept ranking]
-  PATH --> LESSON[Source templates + validated storyboards]
+  PATH --> LESSON[Templates + generated safe storyboards]
   LESSON --> VIEW[React / SVG animation + browser speech]
   SNAP --> RET[Lexical source retrieval]
-  RET --> LLM[Optional OpenAI-compatible provider]
+  RET --> LLM[Prune gateway + Gemini]
   LLM --> CHECK[Structured output + exact citation checks]
   API --> STORE[Per-owner persistence adapter]
   STORE --> LOCAL[Local ignored files for development]
-  STORE -. configured separately .-> SB[Supabase Auth + PostgreSQL RLS]
+  STORE --> SB[Supabase Auth + PostgreSQL RLS]
 ```
 
 The product is one Next.js App Router web app on Node 22. No imported code, scripts, dependencies, or instructions are executed. TypeScript 6 is an intentional pin: TypeScript 7's native package did not expose the compiler API used here. Production uses the supported webpack build because the local Turbopack CSS build worker failed.
@@ -36,9 +36,11 @@ The fixture has a deterministic content hash and is explicitly not represented a
 
 Concept order respects prerequisites first, then architectural importance, difficulty, and observed practice gaps. Explanations have beginner, intermediate, and advanced versions. The same lesson object supplies visual captions and narration. The scene schema accepts only named nodes and transitions, never executable HTML or JavaScript.
 
-The optional tutor retrieves bounded excerpts and includes current concept, level, and four recent conversation turns. It uses an OpenAI-compatible chat-completions endpoint selected by environment configuration. Output separates verified, inferred, general, and unknown claims. Invented citations and unreferenced verified claims are rejected. No model is preselected; no actual provider has been evaluated. Template-mode guidance remains useful and clearly labeled.
+The optional tutor retrieves bounded excerpts and includes current concept, level, and four recent conversation turns. It uses an OpenAI-compatible chat-completions endpoint selected by environment configuration. Output separates verified, inferred, general, and unknown claims. Invented citations and unreferenced verified claims are rejected. Prune uses the configured Gemini alias; live responses have served `gemini-3.5-flash-lite`. Native Gemini content is parsed without thought parts or signatures. Exact Prune caching is used for app calls, with routing disabled to keep the chosen model/provider explicit; benchmark calls disable gateway caching too. Template-mode guidance remains useful and clearly labeled.
 
-Limits: 18,000 context characters, 1,800 requested output tokens, 48 KB response, 25-second timeout, no automatic model retry, 20 calls per session/day by default, cached successful answers. These are per-session controls; anonymous-session churn and deployment-wide spend protection remain release concerns. Use a provider-side hard spending cap before opening live AI to the public.
+Limits: 18,000 tutor context characters, 1,800 tutor / 3,200 lesson requested output tokens, 48 KB response, configurable timeout capped at 45 seconds, no automatic model retry, and 20 calls/user/day. Shared PostgreSQL counters enforce 8 reservations/minute, 50/day UTC and 55 GitHub requests/hour across identities and instances, failing closed when unavailable. The fixed $0.01 reservation is conservative internal accounting, not a provider-price guarantee. Prune Shield supplies the user-confirmed $1/day cap; an actual uncached 429 verified its rate-denial path.
+
+Generated lessons include summary, analogy, explicit claims, tradeoffs, and a strictly validated three-node scene. Step narration must be distinct, nodes/transitions must fit the existing renderer, and citations must match the snapshot. One caption string supplies visible text and speech. Model-generated HTML/scripts are rejected. Cached lessons are owner scoped and keyed by model, prompt version, source, level and learner context; failures preserve the previous valid lesson.
 
 Two deterministic checks estimate mastery per concept. Each latest unique answer contributes 0 or 50 points; repeated attempts do not accumulate credit. Short explanations receive transparent keyword-rubric practice feedback and **do not** change mastery. Model-assisted open-answer grading is not implemented.
 
@@ -48,8 +50,10 @@ Local mode uses an opaque, HttpOnly, same-site UUID cookie and atomic JSON-file 
 
 Supabase mode uses `@supabase/ssr`, cookie-based anonymous/email sessions, and `getUser()` validation. No service-role key is needed. `learning_records` stores typed JSONB records for profiles, jobs, snapshots, lessons, attempts, progress, and tutor history. Every query is owner-scoped and RLS enforces both USING and WITH CHECK. Rate counters have no direct client write privileges; a fixed-bucket function in a non-exposed schema validates the authenticated identity and caps requested limits. Records are payload-bounded. Quota metadata survives learning-data deletion.
 
-Email sign-in opens that account’s history; guest progress is not automatically migrated. Account removal/revocation, CAPTCHA, distributed progress transactions, and quota abuse protections need further release work. The current delete control deletes learning data, not the Supabase account itself.
+Email sign-in opens that account’s history; guest progress is not automatically migrated. Account removal/revocation, CAPTCHA, email delivery, and abuse-related availability remain further release work. Expiring owner-scoped leases and fenced writes now protect import checkpoints and progress mutations across instances. The current delete control deletes learning data, not the Supabase account itself.
 
 ## Security and current limits
 
-Server-only provider keys; fixed GitHub API host; no redirect following; bounded JSON/stream reading; origin checks; same-site cookies; escaped React text; CSP/frame protection; safe diagram schema; per-owner data checks. Local two-session isolation and PostgreSQL RLS semantics have been tested. Hosted Auth/RLS and Vercel are unverified because a new free Supabase project could not be created. Local locks are not distributed locks; multi-instance import/progress concurrency needs verification before cloud release.
+Server-only provider keys; fixed GitHub API host; no redirect following; bounded JSON/stream reading; origin checks; same-site cookies; escaped React text; CSP/frame protection; safe diagram schema; per-owner data checks. Local checks and 16 hosted checks passed, including real anonymous identities, refresh, RLS, deletion, lock contention, stale writes, and atomic global limits. The two migrations were explicitly approved and applied only to the verified SYNAPSE project. Vercel preview-only credentials are configured behind Vercel Authentication; the user approved the required initial protected bootstrap with domain assignment skipped, and the subsequent preview passed 16 checks. The exact preview callback URL is allowlisted; actual email OTP delivery remains untested. No production service credentials or unrestricted public AI are enabled.
+
+Residual limits: authenticated clients can consume their own or global reservation quota to deny availability, although they cannot enlarge the caps or trigger model calls through SQL. Learning-data deletion does not delete Auth users or revoke issued JWTs; an already running operation can repopulate data after deletion. Email OTP, account migration, independent semantic accuracy and learning outcomes are not verified.

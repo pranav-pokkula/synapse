@@ -1,0 +1,234 @@
+{
+  "recordedAt": "2026-11-26T04:27:26.120Z",
+  "baseURL": "http://127.0.0.1:3000",
+  "repository": "vercel/nextjs-postgres-nextauth-tailwindcss-template",
+  "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+  "complete": true,
+  "lesson": {
+    "conceptId": "modules",
+    "level": "beginner",
+    "title": "How the pieces connect",
+    "summary": "Modular applications connect pieces together by importing UI components and database functions into pages. This lets individual pages build structured layouts and fetch data cleanly.",
+    "analogy": "Like assembling a pre-built house from modular furniture boxes and plumbing kits: you bring specialized parts into each room, but the instructions don't show how every factory made them.",
+    "details": [
+      "Trace a module dependency and explain what crosses that boundary.",
+      "The customers page imports card UI components from '@/components/ui/card'.",
+      "The dashboard main page imports products data handlers and UI tabs."
+    ],
+    "tradeoffs": [
+      "These source excerpts cannot prove how database queries execute at runtime or how authentication guards every route boundary."
+    ],
+    "citations": [
+      {
+        "path": "app/(dashboard)/customers/page.tsx",
+        "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+        "start": 1,
+        "end": 8,
+        "quote": "import {\n  Card,\n  CardContent,\n  CardDescription,\n  CardHeader,\n  CardTitle\n} from '@/components/ui/card';\n"
+      },
+      {
+        "path": "app/(dashboard)/page.tsx",
+        "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+        "start": 1,
+        "end": 8,
+        "quote": "import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';\nimport { File, PlusCircle } from 'lucide-react';\nimport { Button } from '@/components/ui/button';\nimport { ProductsTable } from './products-table';\nimport { getProducts } from '@/lib/db';\n\nexport const dynamic = 'force-dynamic';\n"
+      }
+    ],
+    "board": {
+      "nodes": [
+        {
+          "id": "input",
+          "label": "Client Page",
+          "kind": "client"
+        },
+        {
+          "id": "process",
+          "label": "Module Import",
+          "kind": "server"
+        },
+        {
+          "id": "output",
+          "label": "UI Component",
+          "kind": "output"
+        }
+      ],
+      "steps": [
+        {
+          "id": "one",
+          "title": "Page Request",
+          "caption": "The modular applications connect pieces together by importing UI components and database functions into pages.",
+          "active": [
+            "input"
+          ],
+          "state": "working",
+          "citationIndex": 0
+        },
+        {
+          "id": "two",
+          "title": "Import Dependencies",
+          "caption": "The modular applications connect pieces together by importing UI components and database functions into pages.",
+          "active": [
+            "process"
+          ],
+          "state": "working",
+          "citationIndex": 0
+        },
+        {
+          "id": "three",
+          "title": "Render Elements",
+          "caption": "The modular applications connect pieces together by importing UI components and database functions into pages.",
+          "active": [
+            "output"
+          ],
+          "state": "working",
+          "citationIndex": 1
+        },
+        {
+          "id": "four",
+          "title": "Complete View",
+          "caption": "The modular applications connect pieces together by importing UI components and database functions into pages.",
+          "active": [
+            "input",
+            "output"
+          ],
+          "state": "success"
+        }
+      ]
+    },
+    "claims": [
+      {
+        "text": "The customers page imports card UI components from '@/components/ui/card'.",
+        "kind": "verified",
+        "citations": [
+          {
+            "path": "app/(dashboard)/customers/page.tsx",
+            "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+            "start": 1,
+            "end": 8,
+            "quote": "import {\n  Card,\n  CardContent,\n  CardDescription,\n  CardHeader,\n  CardTitle\n} from '@/components/ui/card';\n"
+          }
+        ]
+      },
+      {
+        "text": "The dashboard main page imports products data handlers and UI tabs.",
+        "kind": "verified",
+        "citations": [
+          {
+            "path": "app/(dashboard)/page.tsx",
+            "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+            "start": 1,
+            "end": 8,
+            "quote": "import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';\nimport { File, PlusCircle } from 'lucide-react';\nimport { Button } from '@/components/ui/button';\nimport { ProductsTable } from './products-table';\nimport { getProducts } from '@/lib/db';\n\nexport const dynamic = 'force-dynamic';\n"
+          }
+        ]
+      }
+    ],
+    "mode": "live-model",
+    "model": "gemini-3.5-flash-lite",
+    "telemetry": {
+      "requestedModel": "gemini/gemini-flash-lite-latest",
+      "servedModel": "gemini-3.5-flash-lite",
+      "latencyMs": 6704,
+      "usage": {
+        "input": 1015,
+        "output": 606
+      },
+      "prune": {
+        "provider": "gemini",
+        "cacheHit": false,
+        "cacheType": "miss",
+        "routeApplied": false,
+        "originalModel": "gemini-flash-lite-latest",
+        "routeReason": "routing_disabled",
+        "fallbackUsed": false,
+        "pipelineMode": "auto",
+        "estimatedCostUsd": 0.000339,
+        "counterfactualCostUsd": 0.000339,
+        "optimizations": [
+          "template_hoist_skip:provider_prefix_cache_preferred",
+          "token_budget_analyze",
+          "output_cap:json_exempt",
+          "prefix_broker_skip:prefix_cache_unsupported:gemini"
+        ],
+        "requestId": "e6fa6122-9b21-4dc0-a221-9093f244a173",
+        "receiptSignature": "pFWM+tP4Gybm2+Gnl2HvYUOUaUSiRFvPrGyZWckhDhh1RGnIVIVrzTjTP4UyPGuFvh6NDg8LMrFE+sfvJ8KfAA==",
+        "receiptVersion": "v2",
+        "receiptSignedAt": "2026-11-26T04:27:35.957199+00:00",
+        "receiptVerified": false
+      }
+    },
+    "generatedAt": "2026-11-26T04:27:35.973Z"
+  },
+  "tutor": {
+    "answer": "Authentication setup involves configuring identity providers through libraries like NextAuth. Here is a summary of the provider configured in the authentication module and what remains unestablished by the visible source code.",
+    "claims": [
+      {
+        "text": "The authentication module configures the GitHub provider using NextAuth.",
+        "kind": "verified",
+        "citations": [
+          {
+            "path": "lib/auth.ts",
+            "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+            "start": 1,
+            "end": 7,
+            "quote": "import NextAuth from 'next-auth';\nimport GitHub from 'next-auth/providers/github';\n\nexport const { handlers, signIn, signOut, auth } = NextAuth({\n  providers: [GitHub]\n});\n"
+          }
+        ]
+      },
+      {
+        "text": "The visible source code does not establish how user permissions or role-based access control (authorization) are implemented beyond retrieving the session user.",
+        "kind": "inference",
+        "citations": [
+          {
+            "path": "app/(dashboard)/user.tsx",
+            "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+            "start": 15,
+            "end": 22,
+            "quote": "  let session = await auth();\n  let user = session?.user;\n\n  return (\n    <DropdownMenu>\n      <DropdownMenuTrigger asChild>\n        <Button\n          variant=\"outline\""
+          }
+        ]
+      }
+    ],
+    "insufficientEvidence": false,
+    "mode": "live-model",
+    "model": "gemini-3.5-flash-lite",
+    "usage": {
+      "input": 1053,
+      "output": 332
+    },
+    "telemetry": {
+      "requestedModel": "gemini/gemini-flash-lite-latest",
+      "servedModel": "gemini-3.5-flash-lite",
+      "latencyMs": 29949,
+      "usage": {
+        "input": 1053,
+        "output": 332
+      },
+      "prune": {
+        "provider": "gemini",
+        "cacheHit": false,
+        "cacheType": "miss",
+        "routeApplied": false,
+        "originalModel": "gemini-flash-lite-latest",
+        "routeReason": "routing_disabled",
+        "fallbackUsed": false,
+        "pipelineMode": "auto",
+        "estimatedCostUsd": 0.000216,
+        "counterfactualCostUsd": 0.000216,
+        "optimizations": [
+          "template_hoist_skip:provider_prefix_cache_preferred",
+          "token_budget_analyze",
+          "output_cap:json_exempt",
+          "prefix_broker_skip:prefix_cache_unsupported:gemini"
+        ],
+        "requestId": "7cc916e0-9507-4668-a66a-c64bd0ee9d18",
+        "receiptSignature": "BCAmI1uJQye3pev14TJabJG1yvNpY5B71do1IJVWvrDYbj+mFWuKDzMI9q/GBrTA0QrfTDJDhYDkM6LM9LNSCQ==",
+        "receiptVersion": "v2",
+        "receiptSignedAt": "2026-11-26T04:28:11.070372+00:00",
+        "receiptVerified": false
+      }
+    }
+  },
+  "cacheReload": true,
+  "browserErrors": []
+}

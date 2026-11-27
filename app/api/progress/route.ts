@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { levelSchema, type Progress } from "@/lib/types";
 import { emptyProgress } from "@/lib/learning";
-import { identity, getRecord, putRecord, serialized } from "@/lib/store";
+import { identity, getRecord, putRecord, withLease } from "@/lib/store";
 import { project } from "@/lib/project";
 import { failure, readBody } from "@/lib/http";
 export async function GET(request: Request) {
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
       .parse(await readBody(request));
     const user = await identity();
     const snapshot = await project(user, projectId);
-    return await serialized(`${user.id}:progress:${projectId}`, async () => {
+    return await withLease(user, `progress:${projectId}`, async (lease) => {
       const progress =
         (await getRecord<Progress>(user, "progress", projectId)) ??
         emptyProgress();
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
         ]),
       ];
       progress.updatedAt = new Date().toISOString();
-      await putRecord(user, "progress", projectId, progress);
+      await putRecord(user, "progress", projectId, progress, lease);
       return NextResponse.json(progress);
     });
   } catch (e) {

@@ -1,0 +1,49 @@
+{
+  "project": "TraceEval / synapse-learning",
+  "projectRef": "fcwyithhipsimrnccqsy",
+  "migrations": [
+    {
+      "file": "20261122102555_learning_records.sql",
+      "sha256": "e4d9dae285cd0883aa51fffb3cc7f4ee5364369c49e7ff8ccbea72f78bbad1cf"
+    },
+    {
+      "file": "20261125202233_cloud_concurrency_and_budget.sql",
+      "sha256": "365bbc6253bb3302a15406991f1932ef50563cb384a44cfc6a5986f6651ea8de"
+    }
+  ],
+  "remoteVersionsVerified": [
+    "20261122102555",
+    "20261125202233"
+  ],
+  "authChanges": [
+    "enable_anonymous_sign_ins=true",
+    "additional_redirect_urls: exact localhost callback and verified preview callback only"
+  ],
+  "vercel": {
+    "projectId": "prj_RMwgdJSer7ZTDao4j96JlivYdWaG",
+    "teamId": "team_hyDyuYXt4tQ5Ui1y2SkdmeYs",
+    "node": "22.x",
+    "protection": "Vercel Authentication, all deployments",
+    "bootstrap": {
+      "id": "dpl_4TLd2sRrTzMg3zNbcG95Gck5rDTc",
+      "target": "production",
+      "state": "READY",
+      "aliases": [],
+      "authorization": "User explicitly approved protected bootstrap with --skip-domain and no production service credentials"
+    },
+    "preview": {
+      "id": "dpl_EHvrfHud13EAYEsVv3qYCvt6V5r2",
+      "url": "https://synapse-learning-qr1qac164-pranav-pokkulas-projects.vercel.app",
+      "implementationCommit": "ef87c9f58d8d7fb0cfa4249b0bc860fe414c66ec",
+      "state": "READY",
+      "target": "preview",
+      "aliases": []
+    }
+  },
+  "runtimeLogCheck": "No error/fatal entries returned in the preview verification window on 2026-11-26 UTC; not a guarantee of future availability",
+  "limitations": [
+    "No production service credentials configured",
+    "No domain promotion or Devpost submission",
+    "Email OTP delivery not exercised"
+  ]
+}

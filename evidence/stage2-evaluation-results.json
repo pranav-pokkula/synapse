@@ -1,0 +1,1468 @@
+{
+  "recordedAt": "2026-11-26T04:30:56.721Z",
+  "manifestHash": "e777fcb065e219f98670ffd327be84081dcf15953af565ed4808c28674175ae9",
+  "manifestVersion": "2026-11-25-v1",
+  "requestedModel": "gemini-flash-lite-latest",
+  "outputs": [
+    {
+      "id": "dev-validation",
+      "dataset": "development",
+      "condition": "baseline",
+      "question": "Where is the note body validated and what limits are applied?",
+      "context": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"name\": \"fieldnotes\",\n  \"private\": true,\n  \"dependencies\": {\n    \"next\": \"16\",\n    \"react\": \"19\",\n    \"zod\": \"4\",\n    \"@supabase/supabase-js\": \"2\"\n  }\n}"
+        },
+        {
+          "path": "app/page.tsx",
+          "content": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;\n}"
+        }
+      ],
+      "sourceSha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+      "humanScores": null,
+      "valid": false,
+      "error": "The AI provider rejected this request. Check its configured endpoint, key, and model.",
+      "ms": 22456,
+      "httpStatus": 503,
+      "rawModelText": null
+    },
+    {
+      "id": "dev-validation",
+      "dataset": "development",
+      "condition": "synapse",
+      "question": "Where is the note body validated and what limits are applied?",
+      "context": [
+        {
+          "path": "lib/validation.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 2,
+          "end": 4,
+          "quote": "export const noteSchema = z.object({\n  body: z.string().trim().min(1).max(2000)\n});"
+        },
+        {
+          "path": "lib/notes.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 2,
+          "end": 9,
+          "quote": "export async function listNotes() {\n  const db = await getDatabase();\n  const { data: { user } } = await db.auth.getUser();\n  if (!user) return [];\n  const { data, error } = await db.from('notes').select('id, body')\n    .eq('user_id', user.id).limit(20);\n  if (error) throw new Error('Notes unavailable');\n  return data ?? [];"
+        },
+        {
+          "path": "app/api/notes/route.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 1,
+          "end": 8,
+          "quote": "import { noteSchema } from '../../../lib/validation';\nimport { getDatabase } from '../../../lib/database';\n\nexport async function POST(request: Request) {\n  const db = await getDatabase();\n  const { data: { user } } = await db.auth.getUser();\n  if (!user) return Response.json({ error: 'Sign in required' }, { status: 401 });\n  const parsed = noteSchema.safeParse(await request.json());"
+        }
+      ],
+      "sourceSha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+      "humanScores": null,
+      "valid": false,
+      "error": "The AI provider rejected this request. Check its configured endpoint, key, and model.",
+      "ms": 4815,
+      "httpStatus": 503,
+      "rawModelText": null
+    },
+    {
+      "id": "dev-identity",
+      "dataset": "development",
+      "condition": "synapse",
+      "question": "Where does the route check getUser before inserting a note?",
+      "context": [
+        {
+          "path": "app/api/notes/route.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 1,
+          "end": 8,
+          "quote": "import { noteSchema } from '../../../lib/validation';\nimport { getDatabase } from '../../../lib/database';\n\nexport async function POST(request: Request) {\n  const db = await getDatabase();\n  const { data: { user } } = await db.auth.getUser();\n  if (!user) return Response.json({ error: 'Sign in required' }, { status: 401 });\n  const parsed = noteSchema.safeParse(await request.json());"
+        },
+        {
+          "path": "lib/notes.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 1,
+          "end": 8,
+          "quote": "import { getDatabase } from './database';\nexport async function listNotes() {\n  const db = await getDatabase();\n  const { data: { user } } = await db.auth.getUser();\n  if (!user) return [];\n  const { data, error } = await db.from('notes').select('id, body')\n    .eq('user_id', user.id).limit(20);\n  if (error) throw new Error('Notes unavailable');"
+        },
+        {
+          "path": "components/note-composer.tsx",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 4,
+          "end": 11,
+          "quote": "export function NoteComposer() {\n  const [body, setBody] = useState('');\n  const [message, setMessage] = useState('');\n  async function save() {\n    const response = await fetch('/api/notes', {\n      method: 'POST', headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({ body })\n    });"
+        }
+      ],
+      "sourceSha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+      "humanScores": null,
+      "answer": {
+        "answer": "The API route handler verifies user authentication by calling getUser before parsing or inserting a new note.",
+        "claims": [
+          {
+            "text": "The POST route handler calls db.auth.getUser() to retrieve the user object before performing further operations.",
+            "kind": "verified",
+            "citations": [
+              {
+                "path": "app/api/notes/route.ts",
+                "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+                "start": 4,
+                "end": 7,
+                "quote": "export async function POST(request: Request) {\n  const db = await getDatabase();\n  const { data: { user } } = await db.auth.getUser();\n  if (!user) return Response.json({ error: 'Sign in required' }, { status: 401 });"
+              }
+            ]
+          },
+          {
+            "text": "If the user is not found, the route immediately returns a 401 status response requiring sign-in.",
+            "kind": "verified",
+            "citations": [
+              {
+                "path": "app/api/notes/route.ts",
+                "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+                "start": 7,
+                "end": 7,
+                "quote": "  if (!user) return Response.json({ error: 'Sign in required' }, { status: 401 });"
+              }
+            ]
+          }
+        ],
+        "insufficientEvidence": false,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 845,
+          "output": 318
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 1900,
+          "usage": {
+            "input": 845,
+            "output": 318
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.000198,
+            "counterfactualCostUsd": 0.000198,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "8c4ded27-d04c-4f1f-8e39-93c65298ea29",
+            "receiptSignature": "7p4cxUTjTptaoLQmPdTRse6YBgPA7u9pnQbAFliVu/QUD6Sg4WHRU4L+jSqVl1/B+rIDabgY+BhgcalVn9aUAA==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:31:31.096681+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 1907,
+      "httpStatus": 200,
+      "rawModelText": "{\"answer\":\"The API route handler verifies user authentication by calling getUser before parsing or inserting a new note.\",\"claims\":[{\"text\":\"The POST route handler calls db.auth.getUser() to retrieve the user object before performing further operations.\",\"kind\":\"verified\",\"citations\":[{\"path\":\"app/api/notes/route.ts\",\"sha\":\"8aefd6113809f700adc03f3d4f29e6a030165cea\",\"start\":4,\"start\":4,\"end\":7,\"quote\":\"export async function POST(request: Request) {\\n  const db = await getDatabase();\\n  const { data: { user } } = await db.auth.getUser();\\n  if (!user) return Response.json({ error: 'Sign in required' }, { status: 401 });\"}]},{\"text\":\"If the user is not found, the route immediately returns a 401 status response requiring sign-in.\",\"kind\":\"verified\",\"citations\":[{\"path\":\"app/api/notes/route.ts\",\"sha\":\"8aefd6113809f700adc03f3d4f29e6a030165cea\",\"start\":7,\"start\":7,\"end\":7,\"quote\":\"  if (!user) return Response.json({ error: 'Sign in required' }, { status: 401 });\"}]}],\"insufficientEvidence\":false}"
+    },
+    {
+      "id": "dev-identity",
+      "dataset": "development",
+      "condition": "baseline",
+      "question": "Where does the route check getUser before inserting a note?",
+      "context": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"name\": \"fieldnotes\",\n  \"private\": true,\n  \"dependencies\": {\n    \"next\": \"16\",\n    \"react\": \"19\",\n    \"zod\": \"4\",\n    \"@supabase/supabase-js\": \"2\"\n  }\n}"
+        },
+        {
+          "path": "app/page.tsx",
+          "content": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;\n}"
+        }
+      ],
+      "sourceSha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+      "humanScores": null,
+      "answer": {
+        "answer": "Based on the provided repository evidence, there is insufficient information to determine where a route checks getUser before inserting a note.",
+        "claims": [],
+        "insufficientEvidence": true,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 569,
+          "output": 51
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 17347,
+          "usage": {
+            "input": 569,
+            "output": 51
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.000062,
+            "counterfactualCostUsd": 0.000062,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "a10ac33a-1aef-4643-91f5-9fd81b7cda27",
+            "receiptSignature": "GBUTDR+SvV4llOeinjVQzxHxYZrhhD4X2oF1UG7MNz2IALubmITqU40zR/csacuZ909IFqzf/5SFtb8AvymZDQ==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:31:55.954566+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 17348,
+      "httpStatus": 200,
+      "rawModelText": "```json\n{\n  \"answer\": \"Based on the provided repository evidence, there is insufficient information to determine where a route checks getUser before inserting a note.\",\n  \"claims\": [],\n  \"insufficientEvidence\": true\n}\n```"
+    },
+    {
+      "id": "dev-query",
+      "dataset": "development",
+      "condition": "baseline",
+      "question": "How does listNotes filter notes by user_id and limit results?",
+      "context": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"name\": \"fieldnotes\",\n  \"private\": true,\n  \"dependencies\": {\n    \"next\": \"16\",\n    \"react\": \"19\",\n    \"zod\": \"4\",\n    \"@supabase/supabase-js\": \"2\"\n  }\n}"
+        },
+        {
+          "path": "app/page.tsx",
+          "content": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;\n}"
+        }
+      ],
+      "sourceSha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+      "humanScores": null,
+      "answer": {
+        "answer": "The provided evidence does not contain the implementation of listNotes, so its filtering and limiting behavior cannot be determined from the repository files.",
+        "claims": [
+          {
+            "text": "The provided files do not include the implementation or definition of the listNotes function.",
+            "kind": "verified",
+            "citations": [
+              {
+                "path": "app/page.tsx",
+                "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+                "start": 2,
+                "end": 2,
+                "quote": "import { listNotes } from '../lib/notes';"
+              }
+            ]
+          },
+          {
+            "text": "Without evidence of the listNotes function body, any details regarding user_id filtering or result limiting are unknown.",
+            "kind": "unknown",
+            "citations": []
+          }
+        ],
+        "insufficientEvidence": true,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 567,
+          "output": 243
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 2041,
+          "usage": {
+            "input": 567,
+            "output": 243
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.000148,
+            "counterfactualCostUsd": 0.000148,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "55af9b3f-b313-4be8-a6ac-398d63b37d9f",
+            "receiptSignature": "I+YVGBqAxjKqqQf/B5wGQ79LtMYkvbQMjkB90zPTm+LouRjRrcBqBXX2U96dUg5J9j50U16u476ZbWf7G5WTCA==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:31:58.330068+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 2042,
+      "httpStatus": 200,
+      "rawModelText": "```json\n{\n  \"answer\": \"The provided evidence does not contain the implementation of listNotes, so its filtering and limiting behavior cannot be determined from the repository files.\",\n  \"claims\": [\n    {\n      \"text\": \"The provided files do not include the implementation or definition of the listNotes function.\",\n      \"kind\": \"verified\",\n      \"citations\": [\n        {\n          \"path\": \"app/page.tsx\",\n          \"sha\": \"8aefd6113809f700adc03f3d4f29e6a030165cea\",\n          \"start\": 2,\n          \"end\": 2,\n          \"quote\": \"import { listNotes } from '../lib/notes';\"\n        }\n      ]\n    },\n    {\n      \"text\": \"Without evidence of the listNotes function body, any details regarding user_id filtering or result limiting are unknown.\",\n      \"kind\": \"unknown\",\n      \"citations\": []\n    }\n  ],\n  \"insufficientEvidence\": true\n}\n```"
+    },
+    {
+      "id": "dev-query",
+      "dataset": "development",
+      "condition": "synapse",
+      "question": "How does listNotes filter notes by user_id and limit results?",
+      "context": [
+        {
+          "path": "lib/notes.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 2,
+          "end": 9,
+          "quote": "export async function listNotes() {\n  const db = await getDatabase();\n  const { data: { user } } = await db.auth.getUser();\n  if (!user) return [];\n  const { data, error } = await db.from('notes').select('id, body')\n    .eq('user_id', user.id).limit(20);\n  if (error) throw new Error('Notes unavailable');\n  return data ?? [];"
+        },
+        {
+          "path": "app/api/notes/route.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 1,
+          "end": 8,
+          "quote": "import { noteSchema } from '../../../lib/validation';\nimport { getDatabase } from '../../../lib/database';\n\nexport async function POST(request: Request) {\n  const db = await getDatabase();\n  const { data: { user } } = await db.auth.getUser();\n  if (!user) return Response.json({ error: 'Sign in required' }, { status: 401 });\n  const parsed = noteSchema.safeParse(await request.json());"
+        },
+        {
+          "path": "components/note-composer.tsx",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 4,
+          "end": 11,
+          "quote": "export function NoteComposer() {\n  const [body, setBody] = useState('');\n  const [message, setMessage] = useState('');\n  async function save() {\n    const response = await fetch('/api/notes', {\n      method: 'POST', headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({ body })\n    });"
+        }
+      ],
+      "sourceSha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+      "humanScores": null,
+      "answer": {
+        "answer": "The listNotes function retrieves notes by authenticating the current user and querying the database with specific filtering and limit constraints.",
+        "claims": [
+          {
+            "text": "The listNotes function checks for an authenticated user before querying the database.",
+            "kind": "verified",
+            "citations": [
+              {
+                "path": "lib/notes.ts",
+                "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+                "start": 2,
+                "end": 5,
+                "quote": "export async function listNotes() {\n  const db = await getDatabase();\n  const { data: { user } } = await db.auth.getUser();\n  if (!user) return [];"
+              }
+            ]
+          },
+          {
+            "text": "The database query filters notes by matching the user_id column to the authenticated user's id.",
+            "kind": "verified",
+            "citations": [
+              {
+                "path": "lib/notes.ts",
+                "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+                "start": 6,
+                "end": 7,
+                "quote": "  const { data, error } = await db.from('notes').select('id, body')\n    .eq('user_id', user.id).limit(20);"
+              }
+            ]
+          },
+          {
+            "text": "The query restricts the number of returned results to a maximum of 20 items.",
+            "kind": "verified",
+            "citations": [
+              {
+                "path": "lib/notes.ts",
+                "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+                "start": 6,
+                "end": 7,
+                "quote": "  const { data, error } = await db.from('notes').select('id, body')\n    .eq('user_id', user.id).limit(20);"
+              }
+            ]
+          }
+        ],
+        "insufficientEvidence": false,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 846,
+          "output": 412
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 3672,
+          "usage": {
+            "input": 846,
+            "output": 412
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.00024,
+            "counterfactualCostUsd": 0.00024,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "1667e058-3a09-41c2-9841-324efd8ebcf6",
+            "receiptSignature": "PsRiYByhnk+gS8B9bPenFPAUirDMVmbdNISoiERJDqhAh/ISD0BUG7NeqEKH4FMAPpuX2+pT3sNUUmYOJxCYDA==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:32:09.361525+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 3673,
+      "httpStatus": 200,
+      "rawModelText": "{\"answer\":\"The listNotes function retrieves notes by authenticating the current user and querying the database with specific filtering and limit constraints.\",\"claims\":[{\"text\":\"The listNotes function checks for an authenticated user before querying the database.\",\"kind\":\"verified\",\"citations\":[{\"path\":\"lib/notes.ts\",\"sha\":\"8aefd6113809f700adc03f3d4f29e6a030165cea\",\"start\":2,\"end\":5,\"quote\":\"export async function listNotes() {\\n  const db = await getDatabase();\\n  const { data: { user } } = await db.auth.getUser();\\n  if (!user) return [];\"}]},{\"text\":\"The database query filters notes by matching the user_id column to the authenticated user's id.\",\"kind\":\"verified\",\"citations\":[{\"path\":\"lib/notes.ts\",\"sha\":\"8aefd6113809f700adc03f3d4f29e6a030165cea\",\"start\":6,\"end\":7,\"quote\":\"  const { data, error } = await db.from('notes').select('id, body')\\n    .eq('user_id', user.id).limit(20);\"}]},{\"text\":\"The query restricts the number of returned results to a maximum of 20 items.\",\"kind\":\"verified\",\"citations\":[{\"path\":\"lib/notes.ts\",\"sha\":\"8aefd6113809f700adc03f3d4f29e6a030165cea\",\"start\":6,\"end\":7,\"quote\":\"  const { data, error } = await db.from('notes').select('id, body')\\n    .eq('user_id', user.id).limit(20);\"}]}],\"insufficientEvidence\":false}"
+    },
+    {
+      "id": "dev-state",
+      "dataset": "development",
+      "condition": "synapse",
+      "question": "How does note-composer use useState and fetch when saving?",
+      "context": [
+        {
+          "path": "components/note-composer.tsx",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 2,
+          "end": 9,
+          "quote": "import { useState } from 'react';\n\nexport function NoteComposer() {\n  const [body, setBody] = useState('');\n  const [message, setMessage] = useState('');\n  async function save() {\n    const response = await fetch('/api/notes', {\n      method: 'POST', headers: { 'Content-Type': 'application/json' },"
+        },
+        {
+          "path": "app/api/notes/route.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 1,
+          "end": 8,
+          "quote": "import { noteSchema } from '../../../lib/validation';\nimport { getDatabase } from '../../../lib/database';\n\nexport async function POST(request: Request) {\n  const db = await getDatabase();\n  const { data: { user } } = await db.auth.getUser();\n  if (!user) return Response.json({ error: 'Sign in required' }, { status: 401 });\n  const parsed = noteSchema.safeParse(await request.json());"
+        },
+        {
+          "path": "lib/notes.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 2,
+          "end": 9,
+          "quote": "export async function listNotes() {\n  const db = await getDatabase();\n  const { data: { user } } = await db.auth.getUser();\n  if (!user) return [];\n  const { data, error } = await db.from('notes').select('id, body')\n    .eq('user_id', user.id).limit(20);\n  if (error) throw new Error('Notes unavailable');\n  return data ?? [];"
+        }
+      ],
+      "sourceSha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+      "humanScores": null,
+      "valid": false,
+      "error": "The model returned a citation that does not match the indexed source. The answer was rejected.",
+      "ms": 17160,
+      "httpStatus": 200,
+      "rawModelText": "{\"answer\":\"The note-composer component uses React's useState hook for managing state and the fetch API to make a POST request when saving a note.\",\"claims\":[{\"text\":\"The NoteComposer component imports and uses useState for managing note body and message states.\",\"kind\":\"verified\",\"citations\":[{\"path\":\"components/note-composer.tsx\",\"sha\":\"8aefd6113809f700adc03f3d4f29e6a030165cea\",\"start\":2,\"end\":6,\"quote\":\"import { useState } from 'react';\\n\\nexport function NoteComposer() {\\n  const [body, setBody] = useState('');\\n  const [message, setMessage] = useState('');\"}]},{\"text\":\"The save function calls fetch using the POST method and JSON content type headers.\",\"kind\":\"verified\",\"citations\":[{\"path\":\"components/note-composer.tsx\",\"sha\":\"8aefd6113809f700adc03f3d4f29e6a030165cea\",\"start\":6,\"end\":9,\"quote\":\"  async function save() {\\n    const response = await fetch('/api/notes', {\\n      method: 'POST', headers: { 'Content-Type': 'application/json' },\"}]}],\"insufficientEvidence\":false}"
+    },
+    {
+      "id": "dev-state",
+      "dataset": "development",
+      "condition": "baseline",
+      "question": "How does note-composer use useState and fetch when saving?",
+      "context": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"name\": \"fieldnotes\",\n  \"private\": true,\n  \"dependencies\": {\n    \"next\": \"16\",\n    \"react\": \"19\",\n    \"zod\": \"4\",\n    \"@supabase/supabase-js\": \"2\"\n  }\n}"
+        },
+        {
+          "path": "app/page.tsx",
+          "content": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;\n}"
+        }
+      ],
+      "sourceSha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+      "humanScores": null,
+      "answer": {
+        "answer": "The provided evidence contains only package configurations and a home page component, lacking any implementation details for NoteComposer, useState, or fetch calls.",
+        "claims": [
+          {
+            "text": "The repository package configuration lists dependencies for Next.js, React, Zod, and Supabase.",
+            "kind": "verified",
+            "citations": [
+              {
+                "path": "package.json",
+                "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+                "start": 1,
+                "end": 10,
+                "quote": "{\n  \"name\": \"fieldnotes\",\n  \"private\": true,\n  \"dependencies\": {\n    \"next\": \"16\",\n    \"react\": \"19\",\n    \"zod\": \"4\",\n    \"@supabase/supabase-js\": \"2\"\n  }\n}"
+              }
+            ]
+          },
+          {
+            "text": "The home page imports the NoteComposer component and renders a list of notes.",
+            "kind": "verified",
+            "citations": [
+              {
+                "path": "app/page.tsx",
+                "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+                "start": 1,
+                "end": 9,
+                "quote": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;\n}"
+              }
+            ]
+          },
+          {
+            "text": "There is insufficient evidence in the provided files to determine how note-composer uses useState and fetch.",
+            "kind": "unknown",
+            "citations": []
+          }
+        ],
+        "insufficientEvidence": true,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 570,
+          "output": 403
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 1526,
+          "usage": {
+            "input": 570,
+            "output": 403
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.00022,
+            "counterfactualCostUsd": 0.00022,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "8293d400-0c96-48b0-a753-f240ab1c207b",
+            "receiptSignature": "zGYDdZ2emrWGgYmuicXaOQ6+hR5bP7K7JFmR38E6wl0mYZRxY4BNhKEZhyN0yl8fvIiIozxSYDGPE/QcgRNRDQ==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:32:34.039413+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 1526,
+      "httpStatus": 200,
+      "rawModelText": "{\"answer\":\"The provided evidence contains only package configurations and a home page component, lacking any implementation details for NoteComposer, useState, or fetch calls.\",\"claims\":[{\"text\":\"The repository package configuration lists dependencies for Next.js, React, Zod, and Supabase.\",\"kind\":\"verified\",\"citations\":[{\"path\":\"package.json\",\"sha\":\"8aefd6113809f700adc03f3d4f29e6a030165cea\",\"start\":1,\"end\":10,\"quote\":\"{\\n  \\\"name\\\": \\\"fieldnotes\\\",\\n  \\\"private\\\": true,\\n  \\\"dependencies\\\": {\\n    \\\"next\\\": \\\"16\\\",\\n    \\\"react\\\": \\\"19\\\",\\n    \\\"zod\\\": \\\"4\\\",\\n    \\\"@supabase/supabase-js\\\": \\\"2\\\"\\n  }\\n}\"}]},{\"text\":\"The home page imports the NoteComposer component and renders a list of notes.\",\"kind\":\"verified\",\"citations\":[{\"path\":\"app/page.tsx\",\"sha\":\"8aefd6113809f700adc03f3d4f29e6a030165cea\",\"start\":1,\"end\":9,\"quote\":\"import { NoteComposer } from '../components/note-composer';\\nimport { listNotes } from '../lib/notes';\\n\\nexport default async function HomePage() {\\n  const notes = await listNotes();\\n  return <main><h1>Fieldnotes</h1><NoteComposer />\\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\\n  </main>;\\n}\"}]},{\"text\":\"There is insufficient evidence in the provided files to determine how note-composer uses useState and fetch.\",\"kind\":\"unknown\",\"citations\":[]}],\"insufficientEvidence\":true}"
+    },
+    {
+      "id": "dev-tests",
+      "dataset": "development",
+      "condition": "baseline",
+      "question": "What validation behavior does validation.test.ts assert?",
+      "context": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"name\": \"fieldnotes\",\n  \"private\": true,\n  \"dependencies\": {\n    \"next\": \"16\",\n    \"react\": \"19\",\n    \"zod\": \"4\",\n    \"@supabase/supabase-js\": \"2\"\n  }\n}"
+        },
+        {
+          "path": "app/page.tsx",
+          "content": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;\n}"
+        }
+      ],
+      "sourceSha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+      "humanScores": null,
+      "answer": {
+        "answer": "The provided repository evidence does not contain a validation.test.ts file, making it impossible to report on its specific assertions.",
+        "claims": [],
+        "insufficientEvidence": true,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 565,
+          "output": 38
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 1284,
+          "usage": {
+            "input": 565,
+            "output": 38
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.000056,
+            "counterfactualCostUsd": 0.000056,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "6cd7db43-eb2e-4c92-b5e7-d6245440ef31",
+            "receiptSignature": "BDeB2l76HNoHVa/I0tw5QEQN4UDhCH6NciHfVZuHWPtHsYReBBimff9yfAWXX6offo7AAibksdn4J6jhjSqXBw==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:32:43.057312+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 1284,
+      "httpStatus": 200,
+      "rawModelText": "{\"answer\":\"The provided repository evidence does not contain a validation.test.ts file, making it impossible to report on its specific assertions.\",\"claims\":[],\"insufficientEvidence\":true}"
+    },
+    {
+      "id": "dev-tests",
+      "dataset": "development",
+      "condition": "synapse",
+      "question": "What validation behavior does validation.test.ts assert?",
+      "context": [
+        {
+          "path": "tests/validation.test.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 1,
+          "end": 5,
+          "quote": "import { expect, test } from 'vitest';\nimport { noteSchema } from '../lib/validation';\ntest('empty notes are rejected', () => {\n  expect(noteSchema.safeParse({ body: '' }).success).toBe(false);\n});"
+        },
+        {
+          "path": "lib/validation.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 1,
+          "end": 4,
+          "quote": "import { z } from 'zod';\nexport const noteSchema = z.object({\n  body: z.string().trim().min(1).max(2000)\n});"
+        },
+        {
+          "path": "app/api/notes/route.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 1,
+          "end": 8,
+          "quote": "import { noteSchema } from '../../../lib/validation';\nimport { getDatabase } from '../../../lib/database';\n\nexport async function POST(request: Request) {\n  const db = await getDatabase();\n  const { data: { user } } = await db.auth.getUser();\n  if (!user) return Response.json({ error: 'Sign in required' }, { status: 401 });\n  const parsed = noteSchema.safeParse(await request.json());"
+        }
+      ],
+      "sourceSha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+      "humanScores": null,
+      "answer": {
+        "answer": "The provided test file checks that empty notes fail schema validation using Vitest.",
+        "claims": [
+          {
+            "text": "The test asserts that empty notes are rejected by the note schema.",
+            "kind": "verified",
+            "citations": [
+              {
+                "path": "tests/validation.test.ts",
+                "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+                "start": 3,
+                "end": 5,
+                "quote": "test('empty notes are rejected', () => {\n  expect(noteSchema.safeParse({ body: '' }).success).toBe(false);\n});"
+              }
+            ]
+          }
+        ],
+        "insufficientEvidence": false,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 750,
+          "output": 142
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 1344,
+          "usage": {
+            "input": 750,
+            "output": 142
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.000112,
+            "counterfactualCostUsd": 0.000112,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "09e9a9f9-935d-4bb9-90d4-6e7e7258cbf9",
+            "receiptSignature": "lOZrwMgIn886mcdjN2AFvHgsfPLRx43T5mTyigXm+SNNqnBFFpZkScljfLnhHo83BgwquDRHKuoDbWiY81P2DQ==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:32:52.272893+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 1345,
+      "httpStatus": 200,
+      "rawModelText": "{\"answer\":\"The provided test file checks that empty notes fail schema validation using Vitest.\",\"claims\":[{\"text\":\"The test asserts that empty notes are rejected by the note schema.\",\"kind\":\"verified\",\"citations\":[{\"path\":\"tests/validation.test.ts\",\"sha\":\"8aefd6113809f700adc03f3d4f29e6a030165cea\",\"start\":3,\"end\":5,\"quote\":\"test('empty notes are rejected', () => {\\n  expect(noteSchema.safeParse({ body: '' }).success).toBe(false);\\n});\"}]}],\"insufficientEvidence\":false}"
+    },
+    {
+      "id": "dev-unknown",
+      "dataset": "development",
+      "condition": "synapse",
+      "question": "Which production region hosts the database, and what uptime does it achieve?",
+      "context": [
+        {
+          "path": "lib/database.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 4,
+          "end": 11,
+          "quote": "export async function getDatabase() {\n  const store = await cookies();\n  return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,\n    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, {\n      cookies: { getAll: () => store.getAll(), setAll: values => {\n        values.forEach(({ name, value, options }) => store.set(name, value, options));\n      }}\n    });"
+        },
+        {
+          "path": "app/api/notes/route.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 2,
+          "end": 9,
+          "quote": "import { getDatabase } from '../../../lib/database';\n\nexport async function POST(request: Request) {\n  const db = await getDatabase();\n  const { data: { user } } = await db.auth.getUser();\n  if (!user) return Response.json({ error: 'Sign in required' }, { status: 401 });\n  const parsed = noteSchema.safeParse(await request.json());\n  if (!parsed.success) return Response.json({ error: 'Invalid note' }, { status: 400 });"
+        },
+        {
+          "path": "lib/notes.ts",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 1,
+          "end": 8,
+          "quote": "import { getDatabase } from './database';\nexport async function listNotes() {\n  const db = await getDatabase();\n  const { data: { user } } = await db.auth.getUser();\n  if (!user) return [];\n  const { data, error } = await db.from('notes').select('id, body')\n    .eq('user_id', user.id).limit(20);\n  if (error) throw new Error('Notes unavailable');"
+        }
+      ],
+      "sourceSha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+      "humanScores": null,
+      "answer": {
+        "answer": "The provided evidence does not contain information regarding the production region hosting the database or its achieved uptime.",
+        "claims": [
+          {
+            "text": "The provided evidence contains no details about the database production region or uptime statistics.",
+            "kind": "unknown",
+            "citations": []
+          }
+        ],
+        "insufficientEvidence": true,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 884,
+          "output": 57
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 1278,
+          "usage": {
+            "input": 884,
+            "output": 57
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.000083,
+            "counterfactualCostUsd": 0.000083,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "6c555d27-e745-4a4d-b82f-f9db59ab52cc",
+            "receiptSignature": "HDex7OQwSdDuH9o5XIZlzHX6sK16VCcPv3PJqepnZw2C2Q2hWPr2wfKQUDM2yLm+Tcvjc9ina2b7WWDdUhRQDw==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:33:01.571767+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 1280,
+      "httpStatus": 200,
+      "rawModelText": "{\"answer\":\"The provided evidence does not contain information regarding the production region hosting the database or its achieved uptime.\",\"claims\":[{\"text\":\"The provided evidence contains no details about the database production region or uptime statistics.\",\"kind\":\"unknown\",\"citations\":[]}],\"insufficientEvidence\":true}"
+    },
+    {
+      "id": "dev-unknown",
+      "dataset": "development",
+      "condition": "baseline",
+      "question": "Which production region hosts the database, and what uptime does it achieve?",
+      "context": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"name\": \"fieldnotes\",\n  \"private\": true,\n  \"dependencies\": {\n    \"next\": \"16\",\n    \"react\": \"19\",\n    \"zod\": \"4\",\n    \"@supabase/supabase-js\": \"2\"\n  }\n}"
+        },
+        {
+          "path": "app/page.tsx",
+          "content": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;\n}"
+        }
+      ],
+      "sourceSha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+      "humanScores": null,
+      "answer": {
+        "answer": "The provided repository evidence does not contain information regarding the database production region or its uptime.",
+        "claims": [],
+        "insufficientEvidence": true,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 572,
+          "output": 45
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 2644,
+          "usage": {
+            "input": 572,
+            "output": 45
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.000059,
+            "counterfactualCostUsd": 0.000059,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "019fec9a-85ad-4afd-ae1e-03bb6a5aed7f",
+            "receiptSignature": "CyTCLnF7EQepnKGgTXB9bSPgINCup0WHeUee8kbFPbpoA9zXZ70vZATKw1RLES9PoyVorXp+R5NR+F6LdtYSAg==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:33:12.357618+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 2645,
+      "httpStatus": 200,
+      "rawModelText": "```json\n{\n  \"answer\": \"The provided repository evidence does not contain information regarding the database production region or its uptime.\",\n  \"claims\": [],\n  \"insufficientEvidence\": true\n}\n```"
+    },
+    {
+      "id": "held-auth",
+      "dataset": "held-out",
+      "condition": "baseline",
+      "question": "Which provider does lib/auth.ts configure, and which auth helpers does it export?",
+      "context": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"next dev --turbopack\",\n    \"build\": \"next build\",\n    \"start\": \"next start\"\n  },\n  \"dependencies\": {\n    \"@neondatabase/serverless\": \"^0.9.5\",\n    \"@radix-ui/react-dialog\": \"^1.1.4\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.4\",\n    \"@radix-ui/react-slot\": \"^1.1.1\",\n    \"@radix-ui/react-tabs\": \"^1.1.2\",\n    \"@radix-ui/react-tooltip\": \"^1.1.6\",\n    \"@types/node\": \"20.17.6\",\n    \"@types/react\": \"19.0.0\",\n    \"@types/react-dom\": \"19.0.0\",\n    \"@vercel/analytics\": \"^1.4.1\",\n    \"autoprefixer\": \"^10.4.20\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"drizzle-kit\": \"^0.22.8\",\n    \"drizzle-orm\": \"^0.31.4\",\n    \"drizzle-zod\": \"^0.5.1\",\n    \"lucide-react\": \"^0.400.0\",\n    \"next\": \"^15.1.9\",\n    \"next-auth\": \"5.0.0-beta.25\",\n    \"postcss\": \"^8.4.49\",\n    \"prettier\": \"^3.4.2\",\n    \"prop-types\": \"^15.8.1\",\n    \"react\": \"19.0.0\",\n    \"react-dom\": \"19.0.0\",\n    \"server-only\": \"^0.0.1\",\n    \"tailwind-merge\": \"^2.6.0\",\n    \"tailwindcss\": \"^3.4.17\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"typescript\": \"5.7.2\",\n    \"zod\": \"^3.24.1\"\n  },\n  \"prettier\": {\n    \"arrowParens\": \"always\",\n    \"singleQuote\": true,\n    \"tabWidth\": 2,\n    \"trailingComma\": \"none\"\n  }\n}\n"
+        },
+        {
+          "path": "app/(dashboard)/customers/page.tsx",
+          "content": "import {\n  Card,\n  CardContent,\n  CardDescription,\n  CardHeader,\n  CardTitle\n} from '@/components/ui/card';\n\nexport default function CustomersPage() {\n  return (\n    <Card>\n      <CardHeader>\n        <CardTitle>Customers</CardTitle>\n        <CardDescription>View all customers and their orders.</CardDescription>\n      </CardHeader>\n      <CardContent></CardContent>\n    </Card>\n  );\n}\n"
+        }
+      ],
+      "sourceSha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+      "humanScores": null,
+      "answer": {
+        "answer": "Authentication configuration details are examined at an intermediate level.",
+        "claims": [],
+        "insufficientEvidence": true,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 1313,
+          "output": 38
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 26853,
+          "usage": {
+            "input": 1313,
+            "output": 38
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.00011,
+            "counterfactualCostUsd": 0.00011,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "2aa6a1c0-e6e9-4efa-86e9-5495ae1f05a9",
+            "receiptSignature": "Te5EsyS3m2PQudv+jtGWVNv4+ghZJo86UijHq2aaOUVH5k2s4JAgpgS6SUFyasPTMdVHiWjRdyqId6NXuan/CA==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:33:45.861977+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 26854,
+      "httpStatus": 200,
+      "rawModelText": "```json\n{\n  \"answer\": \"Authentication configuration details are examined at an intermediate level.\",\n  \"claims\": [],\n  \"insufficientEvidence\": true\n}\n```"
+    },
+    {
+      "id": "held-auth",
+      "dataset": "held-out",
+      "condition": "synapse",
+      "question": "Which provider does lib/auth.ts configure, and which auth helpers does it export?",
+      "context": [
+        {
+          "path": "lib/auth.ts",
+          "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+          "start": 1,
+          "end": 7,
+          "quote": "import NextAuth from 'next-auth';\nimport GitHub from 'next-auth/providers/github';\n\nexport const { handlers, signIn, signOut, auth } = NextAuth({\n  providers: [GitHub]\n});\n"
+        },
+        {
+          "path": "app/(dashboard)/providers.tsx",
+          "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+          "start": 3,
+          "end": 8,
+          "quote": "import { TooltipProvider } from '@/components/ui/tooltip';\n\nexport default function Providers({ children }: { children: React.ReactNode }) {\n  return <TooltipProvider>{children}</TooltipProvider>;\n}\n"
+        },
+        {
+          "path": "lib/db.ts",
+          "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+          "start": 17,
+          "end": 24,
+          "quote": "export const db = drizzle(neon(process.env.POSTGRES_URL!));\n\nexport const statusEnum = pgEnum('status', ['active', 'inactive', 'archived']);\n\nexport const products = pgTable('products', {\n  id: serial('id').primaryKey(),\n  imageUrl: text('image_url').notNull(),\n  name: text('name').notNull(),"
+        }
+      ],
+      "sourceSha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+      "humanScores": null,
+      "answer": {
+        "answer": "The file lib/auth.ts configures NextAuth with a specific authentication provider and exports standard authentication helpers for application use.",
+        "claims": [
+          {
+            "text": "lib/auth.ts configures NextAuth with the GitHub provider.",
+            "kind": "verified",
+            "citations": [
+              {
+                "path": "lib/auth.ts",
+                "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+                "start": 1,
+                "end": 7,
+                "quote": "import NextAuth from 'next-auth';\nimport GitHub from 'next-auth/providers/github';\n\nexport const { handlers, signIn, signOut, auth } = NextAuth({\n  providers: [GitHub]\n});\n"
+              }
+            ]
+          },
+          {
+            "text": "lib/auth.ts exports handlers, signIn, signOut, and auth helpers.",
+            "kind": "verified",
+            "citations": [
+              {
+                "path": "lib/auth.ts",
+                "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+                "start": 4,
+                "end": 6,
+                "quote": "export const { handlers, signIn, signOut, auth } = NextAuth({\n  providers: [GitHub]\n});"
+              }
+            ]
+          }
+        ],
+        "insufficientEvidence": false,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 752,
+          "output": 284
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 10227,
+          "usage": {
+            "input": 752,
+            "output": 284
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.000176,
+            "counterfactualCostUsd": 0.000176,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "e11d0e67-b9e2-438a-a546-1e13c6e874af",
+            "receiptSignature": "0O84h3mPEi6q4O808fzwP03pPmTgNojLyKzf18Sh2v4jihpsBY3gAjyxQ1h/kKc6iUiCKxKqrk30+Hy5VPgRBw==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:33:57.066135+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 10229,
+      "httpStatus": 200,
+      "rawModelText": "{\"answer\":\"The file lib/auth.ts configures NextAuth with a specific authentication provider and exports standard authentication helpers for application use.\",\"claims\":[{\"text\":\"lib/auth.ts configures NextAuth with the GitHub provider.\",\"kind\":\"verified\",\"citations\":[{\"path\":\"lib/auth.ts\",\"sha\":\"fe026711c19ac3ee4589c86a738f59b84e611559\",\"start\":1,\"end\":7,\"quote\":\"import NextAuth from 'next-auth';\\nimport GitHub from 'next-auth/providers/github';\\n\\nexport const { handlers, signIn, signOut, auth } = NextAuth({\\n  providers: [GitHub]\\n});\\n\"}]},{\"text\":\"lib/auth.ts exports handlers, signIn, signOut, and auth helpers.\",\"kind\":\"verified\",\"citations\":[{\"path\":\"lib/auth.ts\",\"sha\":\"fe026711c19ac3ee4589c86a738f59b84e611559\",\"start\":4,\"end\":6,\"quote\":\"export const { handlers, signIn, signOut, auth } = NextAuth({\\n  providers: [GitHub]\\n});\"}]}],\"insufficientEvidence\":false}"
+    },
+    {
+      "id": "held-delete",
+      "dataset": "held-out",
+      "condition": "synapse",
+      "question": "Does the deleteProduct server action currently delete a database row and revalidate the page? Distinguish active code from comments.",
+      "context": [
+        {
+          "path": "app/(dashboard)/actions.ts",
+          "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+          "start": 1,
+          "end": 8,
+          "quote": "'use server';\n\nimport { deleteProductById } from '@/lib/db';\nimport { revalidatePath } from 'next/cache';\n\nexport async function deleteProduct(formData: FormData) {\n  // let id = Number(formData.get('id'));\n  // await deleteProductById(id);"
+        },
+        {
+          "path": "app/(dashboard)/product.tsx",
+          "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+          "start": 12,
+          "end": 19,
+          "quote": "import { TableCell, TableRow } from '@/components/ui/table';\nimport { SelectProduct } from '@/lib/db';\nimport { deleteProduct } from './actions';\n\nexport function Product({ product }: { product: SelectProduct }) {\n  return (\n    <TableRow>\n      <TableCell className=\"hidden sm:table-cell\">"
+        },
+        {
+          "path": "app/(dashboard)/products-table.tsx",
+          "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+          "start": 5,
+          "end": 12,
+          "quote": "  TableRow,\n  TableHeader,\n  TableBody,\n  Table\n} from '@/components/ui/table';\nimport {\n  Card,\n  CardContent,"
+        }
+      ],
+      "sourceSha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+      "humanScores": null,
+      "answer": {
+        "answer": "The deleteProduct server action currently comments out the logic for deleting a database row and does not execute the deletion or revalidate the page in active code.",
+        "claims": [
+          {
+            "text": "The deleteProduct function is defined as a server action, but the database deletion logic inside it is commented out.",
+            "kind": "verified",
+            "citations": [
+              {
+                "path": "app/(dashboard)/actions.ts",
+                "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+                "start": 6,
+                "end": 8,
+                "quote": "export async function deleteProduct(formData: FormData) {\n  // let id = Number(formData.get('id'));\n  // await deleteProductById(id);"
+              }
+            ]
+          },
+          {
+            "text": "The revalidatePath function is imported in actions.ts, but there is no evidence in the provided snippet that it is currently called within deleteProduct.",
+            "kind": "verified",
+            "citations": [
+              {
+                "path": "app/(dashboard)/actions.ts",
+                "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+                "start": 4,
+                "end": 8,
+                "quote": "import { revalidatePath } from 'next/cache';\n\nexport async function deleteProduct(formData: FormData) {\n  // let id = Number(formData.get('id'));\n  // await deleteProductById(id);"
+              }
+            ]
+          }
+        ],
+        "insufficientEvidence": false,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 766,
+          "output": 431
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 36999,
+          "usage": {
+            "input": 766,
+            "output": 431
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.000243,
+            "counterfactualCostUsd": 0.000243,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "ead84daa-2cfa-41c7-8d3f-5e2ef41c8cb9",
+            "receiptSignature": "ZlvmR0Er81QNGB9VFPTYgzf7veyVKl1q6YVcz0RO8kHtWjBIPr/aA0VWyMfLlAm3MnKIrp74ilZZx6CQQaMqBA==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:34:34.778824+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 37000,
+      "httpStatus": 200,
+      "rawModelText": "```json\n{\n  \"answer\": \"The deleteProduct server action currently comments out the logic for deleting a database row and does not execute the deletion or revalidate the page in active code.\",\n  \"claims\": [\n    {\n      \"text\": \"The deleteProduct function is defined as a server action, but the database deletion logic inside it is commented out.\",\n      \"kind\": \"verified\",\n      \"citations\": [\n        {\n          \"path\": \"app/(dashboard)/actions.ts\",\n          \"sha\": \"fe026711c19ac3ee4589c86a738f59b84e611559\",\n          \"start\": 6,\n          \"end\": 8,\n          \"quote\": \"export async function deleteProduct(formData: FormData) {\\n  // let id = Number(formData.get('id'));\\n  // await deleteProductById(id);\"\n        }\n      ]\n    },\n    {\n      \"text\": \"The revalidatePath function is imported in actions.ts, but there is no evidence in the provided snippet that it is currently called within deleteProduct.\",\n      \"kind\": \"verified\",\n      \"citations\": [\n        {\n          \"path\": \"app/(dashboard)/actions.ts\",\n          \"sha\": \"fe026711c19ac3ee4589c86a738f59b84e611559\",\n          \"start\": 4,\n          \"end\": 8,\n          \"quote\": \"import { revalidatePath } from 'next/cache';\\n\\nexport async function deleteProduct(formData: FormData) {\\n  // let id = Number(formData.get('id'));\\n  // await deleteProductById(id);\"\n        }\n      ]\n    }\n  ],\n  \"insufficientEvidence\": false\n}\n```"
+    },
+    {
+      "id": "held-delete",
+      "dataset": "held-out",
+      "condition": "baseline",
+      "question": "Does the deleteProduct server action currently delete a database row and revalidate the page? Distinguish active code from comments.",
+      "context": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"next dev --turbopack\",\n    \"build\": \"next build\",\n    \"start\": \"next start\"\n  },\n  \"dependencies\": {\n    \"@neondatabase/serverless\": \"^0.9.5\",\n    \"@radix-ui/react-dialog\": \"^1.1.4\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.4\",\n    \"@radix-ui/react-slot\": \"^1.1.1\",\n    \"@radix-ui/react-tabs\": \"^1.1.2\",\n    \"@radix-ui/react-tooltip\": \"^1.1.6\",\n    \"@types/node\": \"20.17.6\",\n    \"@types/react\": \"19.0.0\",\n    \"@types/react-dom\": \"19.0.0\",\n    \"@vercel/analytics\": \"^1.4.1\",\n    \"autoprefixer\": \"^10.4.20\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"drizzle-kit\": \"^0.22.8\",\n    \"drizzle-orm\": \"^0.31.4\",\n    \"drizzle-zod\": \"^0.5.1\",\n    \"lucide-react\": \"^0.400.0\",\n    \"next\": \"^15.1.9\",\n    \"next-auth\": \"5.0.0-beta.25\",\n    \"postcss\": \"^8.4.49\",\n    \"prettier\": \"^3.4.2\",\n    \"prop-types\": \"^15.8.1\",\n    \"react\": \"19.0.0\",\n    \"react-dom\": \"19.0.0\",\n    \"server-only\": \"^0.0.1\",\n    \"tailwind-merge\": \"^2.6.0\",\n    \"tailwindcss\": \"^3.4.17\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"typescript\": \"5.7.2\",\n    \"zod\": \"^3.24.1\"\n  },\n  \"prettier\": {\n    \"arrowParens\": \"always\",\n    \"singleQuote\": true,\n    \"tabWidth\": 2,\n    \"trailingComma\": \"none\"\n  }\n}\n"
+        },
+        {
+          "path": "app/(dashboard)/customers/page.tsx",
+          "content": "import {\n  Card,\n  CardContent,\n  CardDescription,\n  CardHeader,\n  CardTitle\n} from '@/components/ui/card';\n\nexport default function CustomersPage() {\n  return (\n    <Card>\n      <CardHeader>\n        <CardTitle>Customers</CardTitle>\n        <CardDescription>View all customers and their orders.</CardDescription>\n      </CardHeader>\n      <CardContent></CardContent>\n    </Card>\n  );\n}\n"
+        }
+      ],
+      "sourceSha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+      "humanScores": null,
+      "answer": {
+        "answer": "The provided evidence does not contain any implementation of a deleteProduct server action or related database code.",
+        "claims": [
+          {
+            "text": "There is insufficient evidence in the provided repository files to determine whether a deleteProduct server action exists or what it does.",
+            "kind": "unknown",
+            "citations": []
+          }
+        ],
+        "insufficientEvidence": true,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 1323,
+          "output": 70
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 4199,
+          "usage": {
+            "input": 1323,
+            "output": 70
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.000124,
+            "counterfactualCostUsd": 0.000124,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "789aacfc-be3f-4a52-866e-12d7da2a8fa6",
+            "receiptSignature": "5dmAF2xgpMxlR+DOVNNWom8csk2TinMl0hbtmEZPhDupkRi0tgPlXtV34UiFuFXpf0EZcV0PfIW7Dap3dY50CQ==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:34:39.768185+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 4199,
+      "httpStatus": 200,
+      "rawModelText": "```json\n{\"answer\":\"The provided evidence does not contain any implementation of a deleteProduct server action or related database code.\",\"claims\":[{\"text\":\"There is insufficient evidence in the provided repository files to determine whether a deleteProduct server action exists or what it does.\",\"kind\":\"unknown\",\"citations\":[]}],\"insufficientEvidence\":true}\n```"
+    },
+    {
+      "id": "held-pagination",
+      "dataset": "held-out",
+      "condition": "baseline",
+      "question": "How does getProducts in lib/db.ts handle a nonempty search versus pagination without a search?",
+      "context": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"next dev --turbopack\",\n    \"build\": \"next build\",\n    \"start\": \"next start\"\n  },\n  \"dependencies\": {\n    \"@neondatabase/serverless\": \"^0.9.5\",\n    \"@radix-ui/react-dialog\": \"^1.1.4\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.4\",\n    \"@radix-ui/react-slot\": \"^1.1.1\",\n    \"@radix-ui/react-tabs\": \"^1.1.2\",\n    \"@radix-ui/react-tooltip\": \"^1.1.6\",\n    \"@types/node\": \"20.17.6\",\n    \"@types/react\": \"19.0.0\",\n    \"@types/react-dom\": \"19.0.0\",\n    \"@vercel/analytics\": \"^1.4.1\",\n    \"autoprefixer\": \"^10.4.20\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"drizzle-kit\": \"^0.22.8\",\n    \"drizzle-orm\": \"^0.31.4\",\n    \"drizzle-zod\": \"^0.5.1\",\n    \"lucide-react\": \"^0.400.0\",\n    \"next\": \"^15.1.9\",\n    \"next-auth\": \"5.0.0-beta.25\",\n    \"postcss\": \"^8.4.49\",\n    \"prettier\": \"^3.4.2\",\n    \"prop-types\": \"^15.8.1\",\n    \"react\": \"19.0.0\",\n    \"react-dom\": \"19.0.0\",\n    \"server-only\": \"^0.0.1\",\n    \"tailwind-merge\": \"^2.6.0\",\n    \"tailwindcss\": \"^3.4.17\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"typescript\": \"5.7.2\",\n    \"zod\": \"^3.24.1\"\n  },\n  \"prettier\": {\n    \"arrowParens\": \"always\",\n    \"singleQuote\": true,\n    \"tabWidth\": 2,\n    \"trailingComma\": \"none\"\n  }\n}\n"
+        },
+        {
+          "path": "app/(dashboard)/customers/page.tsx",
+          "content": "import {\n  Card,\n  CardContent,\n  CardDescription,\n  CardHeader,\n  CardTitle\n} from '@/components/ui/card';\n\nexport default function CustomersPage() {\n  return (\n    <Card>\n      <CardHeader>\n        <CardTitle>Customers</CardTitle>\n        <CardDescription>View all customers and their orders.</CardDescription>\n      </CardHeader>\n      <CardContent></CardContent>\n    </Card>\n  );\n}\n"
+        }
+      ],
+      "sourceSha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+      "humanScores": null,
+      "answer": {
+        "answer": "Database query functions such as getProducts in lib/db.ts are not present in the provided evidence.",
+        "claims": [],
+        "insufficientEvidence": true,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 1317,
+          "output": 49
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 1274,
+          "usage": {
+            "input": 1317,
+            "output": 49
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.000115,
+            "counterfactualCostUsd": 0.000115,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "641f31fa-b17f-4a21-b6d2-bb5a15726989",
+            "receiptSignature": "emrrGm5PAQgg0/bqcWvVIRO0wNBJ6OZsTokzSCxC/+oxCE/6VBfq1hc5+fan0pVp+i2NE5nXOIdPnzmYpXVoCw==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:34:46.129375+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 1274,
+      "httpStatus": 200,
+      "rawModelText": "```json\n{\n  \"answer\": \"Database query functions such as getProducts in lib/db.ts are not present in the provided evidence.\",\n  \"claims\": [],\n  \"insufficientEvidence\": true\n}\n```"
+    },
+    {
+      "id": "held-pagination",
+      "dataset": "held-out",
+      "condition": "synapse",
+      "question": "How does getProducts in lib/db.ts handle a nonempty search versus pagination without a search?",
+      "context": [
+        {
+          "path": "app/(dashboard)/search.tsx",
+          "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+          "start": 7,
+          "end": 14,
+          "quote": "import { Search } from 'lucide-react';\n\nexport function SearchInput() {\n  const router = useRouter();\n  const [isPending, startTransition] = useTransition();\n\n  function searchAction(formData: FormData) {\n    let value = formData.get('q') as string;"
+        },
+        {
+          "path": "app/(dashboard)/product.tsx",
+          "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+          "start": 13,
+          "end": 20,
+          "quote": "import { SelectProduct } from '@/lib/db';\nimport { deleteProduct } from './actions';\n\nexport function Product({ product }: { product: SelectProduct }) {\n  return (\n    <TableRow>\n      <TableCell className=\"hidden sm:table-cell\">\n        <Image"
+        },
+        {
+          "path": "app/(dashboard)/products-table.tsx",
+          "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+          "start": 18,
+          "end": 25,
+          "quote": "import { Product } from './product';\nimport { SelectProduct } from '@/lib/db';\nimport { useRouter } from 'next/navigation';\nimport { ChevronLeft, ChevronRight } from 'lucide-react';\nimport { Button } from '@/components/ui/button';\n\nexport function ProductsTable({\n  products,"
+        }
+      ],
+      "sourceSha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+      "humanScores": null,
+      "answer": {
+        "answer": "The provided evidence does not contain the implementation of getProducts in lib/db.ts, so the behavior handling search versus pagination cannot be verified from the given snippets.",
+        "claims": [
+          {
+            "text": "The provided evidence lacks the source code for getProducts in lib/db.ts.",
+            "kind": "unknown",
+            "citations": []
+          }
+        ],
+        "insufficientEvidence": true,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 787,
+          "output": 107
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 1434,
+          "usage": {
+            "input": 787,
+            "output": 107
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.000098,
+            "counterfactualCostUsd": 0.000098,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "0a9a5082-1199-4718-a46b-d1cacd8c64e6",
+            "receiptSignature": "amjGZdquW8HC2ZIy8OpqFYPTv8j3jY1CQg9QhdP0Cd01Q/b/OaR0YiFRXBHqjDmzpxtPyOq1J1eNtVFlzkonAQ==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:34:55.664392+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 1434,
+      "httpStatus": 200,
+      "rawModelText": "```json\n{\n  \"answer\": \"The provided evidence does not contain the implementation of getProducts in lib/db.ts, so the behavior handling search versus pagination cannot be verified from the given snippets.\",\n  \"claims\": [\n    {\n      \"text\": \"The provided evidence lacks the source code for getProducts in lib/db.ts.\",\n      \"kind\": \"unknown\",\n      \"citations\": []\n    }\n  ],\n  \"insufficientEvidence\": true\n}\n```"
+    },
+    {
+      "id": "held-unknown",
+      "dataset": "held-out",
+      "condition": "synapse",
+      "question": "What production availability SLA and deployment region are guaranteed by this repository?",
+      "context": [
+        {
+          "path": "app/(dashboard)/error.tsx",
+          "sha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+          "start": 25,
+          "end": 32,
+          "quote": "          schema defined in this repository.\n        </p>\n        <pre className=\"my-4 px-3 py-4 bg-black text-white rounded-lg max-w-2xl overflow-scroll flex text-wrap\">\n          <code>\n            {`CREATE TABLE users (\n  id SERIAL PRIMARY KEY,\n  email VARCHAR(255) NOT NULL,\n  name VARCHAR(255),"
+        }
+      ],
+      "sourceSha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+      "humanScores": null,
+      "valid": false,
+      "error": "The AI provider rejected this request. Check its configured endpoint, key, and model.",
+      "ms": 1781,
+      "httpStatus": 503,
+      "rawModelText": null
+    },
+    {
+      "id": "held-unknown",
+      "dataset": "held-out",
+      "condition": "baseline",
+      "question": "What production availability SLA and deployment region are guaranteed by this repository?",
+      "context": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"next dev --turbopack\",\n    \"build\": \"next build\",\n    \"start\": \"next start\"\n  },\n  \"dependencies\": {\n    \"@neondatabase/serverless\": \"^0.9.5\",\n    \"@radix-ui/react-dialog\": \"^1.1.4\",\n    \"@radix-ui/react-dropdown-menu\": \"^2.1.4\",\n    \"@radix-ui/react-slot\": \"^1.1.1\",\n    \"@radix-ui/react-tabs\": \"^1.1.2\",\n    \"@radix-ui/react-tooltip\": \"^1.1.6\",\n    \"@types/node\": \"20.17.6\",\n    \"@types/react\": \"19.0.0\",\n    \"@types/react-dom\": \"19.0.0\",\n    \"@vercel/analytics\": \"^1.4.1\",\n    \"autoprefixer\": \"^10.4.20\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"clsx\": \"^2.1.1\",\n    \"drizzle-kit\": \"^0.22.8\",\n    \"drizzle-orm\": \"^0.31.4\",\n    \"drizzle-zod\": \"^0.5.1\",\n    \"lucide-react\": \"^0.400.0\",\n    \"next\": \"^15.1.9\",\n    \"next-auth\": \"5.0.0-beta.25\",\n    \"postcss\": \"^8.4.49\",\n    \"prettier\": \"^3.4.2\",\n    \"prop-types\": \"^15.8.1\",\n    \"react\": \"19.0.0\",\n    \"react-dom\": \"19.0.0\",\n    \"server-only\": \"^0.0.1\",\n    \"tailwind-merge\": \"^2.6.0\",\n    \"tailwindcss\": \"^3.4.17\",\n    \"tailwindcss-animate\": \"^1.0.7\",\n    \"typescript\": \"5.7.2\",\n    \"zod\": \"^3.24.1\"\n  },\n  \"prettier\": {\n    \"arrowParens\": \"always\",\n    \"singleQuote\": true,\n    \"tabWidth\": 2,\n    \"trailingComma\": \"none\"\n  }\n}\n"
+        },
+        {
+          "path": "app/(dashboard)/customers/page.tsx",
+          "content": "import {\n  Card,\n  CardContent,\n  CardDescription,\n  CardHeader,\n  CardTitle\n} from '@/components/ui/card';\n\nexport default function CustomersPage() {\n  return (\n    <Card>\n      <CardHeader>\n        <CardTitle>Customers</CardTitle>\n        <CardDescription>View all customers and their orders.</CardDescription>\n      </CardHeader>\n      <CardContent></CardContent>\n    </Card>\n  );\n}\n"
+        }
+      ],
+      "sourceSha": "fe026711c19ac3ee4589c86a738f59b84e611559",
+      "humanScores": null,
+      "answer": {
+        "answer": "The provided repository evidence does not contain information about production availability SLAs or deployment regions.",
+        "claims": [
+          {
+            "text": "The provided repository files do not mention any production availability SLA or deployment region.",
+            "kind": "unknown",
+            "citations": []
+          }
+        ],
+        "insufficientEvidence": true,
+        "mode": "live-model",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "input": 1312,
+          "output": 88
+        },
+        "telemetry": {
+          "requestedModel": "gemini/gemini-flash-lite-latest",
+          "servedModel": "gemini-3.5-flash-lite",
+          "latencyMs": 3107,
+          "usage": {
+            "input": 1312,
+            "output": 88
+          },
+          "prune": {
+            "provider": "gemini",
+            "cacheHit": false,
+            "cacheType": "miss",
+            "routeApplied": false,
+            "originalModel": "gemini-flash-lite-latest",
+            "routeReason": "routing_disabled",
+            "fallbackUsed": false,
+            "pipelineMode": "auto",
+            "estimatedCostUsd": 0.000132,
+            "counterfactualCostUsd": 0.000132,
+            "optimizations": [
+              "template_hoist_skip:provider_prefix_cache_preferred",
+              "token_budget_analyze",
+              "output_cap:json_exempt",
+              "prefix_broker_skip:prefix_cache_unsupported:gemini"
+            ],
+            "requestId": "c2d5f80a-2b6a-44a6-9747-043bd7a0c199",
+            "receiptSignature": "yFfhbtoSh8BsdJXK9Wl6E39KN7oYcF9r/OTtfokC6zKEFzeLoMIojFq5ESEOBDh8jXXLH3Z5ae6ymqfiCCfHCA==",
+            "receiptVersion": "v2",
+            "receiptSignedAt": "2026-11-26T04:35:16.028865+00:00",
+            "receiptVerified": false
+          }
+        }
+      },
+      "valid": true,
+      "ms": 3108,
+      "httpStatus": 200,
+      "rawModelText": "```json\n{\n  \"answer\": \"The provided repository evidence does not contain information about production availability SLAs or deployment regions.\",\n  \"claims\": [\n    {\n      \"text\": \"The provided repository files do not mention any production availability SLA or deployment region.\",\n      \"kind\": \"unknown\",\n      \"citations\": []\n    }\n  ],\n  \"insufficientEvidence\": true\n}\n```"
+    }
+  ],
+  "humanScores": null,
+  "complete": true
+}

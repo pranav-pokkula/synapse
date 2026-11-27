@@ -1,0 +1,449 @@
+{
+  "recordedAt": "2026-11-26T04:23:15.805Z",
+  "baseURL": "http://127.0.0.1:3000",
+  "checks": [
+    {
+      "name": "App creates a real hosted guest session",
+      "passed": true
+    },
+    {
+      "name": "Session response cannot be cached",
+      "passed": true
+    },
+    {
+      "name": "Real generated beginner lesson",
+      "passed": true
+    },
+    {
+      "name": "beginner exact citations",
+      "passed": true
+    },
+    {
+      "name": "Real generated intermediate lesson",
+      "passed": true
+    },
+    {
+      "name": "intermediate exact citations",
+      "passed": true
+    },
+    {
+      "name": "Real generated advanced lesson",
+      "passed": true
+    },
+    {
+      "name": "advanced exact citations",
+      "passed": true
+    },
+    {
+      "name": "Generated lesson reloads from hosted cache",
+      "passed": true
+    }
+  ],
+  "lessons": [
+    {
+      "conceptId": "modules",
+      "level": "beginner",
+      "title": "How the pieces connect",
+      "summary": "Web applications connect different parts together like a restaurant: the customer interface asks for data, the server handles requests, and the results are displayed back to the user.",
+      "analogy": "Like a restaurant where the dining room (frontend) takes orders, the kitchen (backend/server) prepares the food, and the service window delivers the meal to the table. The limit is that code runs deterministically rather than improvising like human staff.",
+      "details": [
+        "Trace a module dependency and explain what crosses that boundary.",
+        "The HomePage component imports note-composer and listNotes to render the main page layout and list of notes."
+      ],
+      "tradeoffs": [
+        "These excerpts show module imports and function calls, but do not prove the full runtime environment configuration or deployment targets."
+      ],
+      "citations": [
+        {
+          "path": "app/page.tsx",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 1,
+          "end": 8,
+          "quote": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;"
+        }
+      ],
+      "board": {
+        "nodes": [
+          {
+            "id": "input",
+            "label": "Client Component",
+            "kind": "client"
+          },
+          {
+            "id": "process",
+            "label": "Server Process",
+            "kind": "server"
+          },
+          {
+            "id": "output",
+            "label": "Rendered Page",
+            "kind": "output"
+          }
+        ],
+        "steps": [
+          {
+            "id": "one",
+            "title": "Load Home Page",
+            "caption": "The HomePage component imports note-composer and listNotes to render the main page layout and list of notes.",
+            "active": [
+              "input"
+            ],
+            "state": "working",
+            "citationIndex": 0
+          },
+          {
+            "id": "two",
+            "title": "Fetch Notes",
+            "caption": "The HomePage component imports note-composer and listNotes to render the main page layout and list of notes.",
+            "active": [
+              "process"
+            ],
+            "state": "working",
+            "citationIndex": 0
+          },
+          {
+            "id": "three",
+            "title": "Render Notes",
+            "caption": "The HomePage component imports note-composer and listNotes to render the main page layout and list of notes.",
+            "active": [
+              "process",
+              "output"
+            ],
+            "state": "working",
+            "citationIndex": 0
+          },
+          {
+            "id": "four",
+            "title": "Complete",
+            "caption": "The HomePage component imports note-composer and listNotes to render the main page layout and list of notes.",
+            "active": [
+              "output"
+            ],
+            "state": "success",
+            "citationIndex": 0
+          }
+        ]
+      },
+      "claims": [
+        {
+          "text": "The HomePage component imports note-composer and listNotes to render the main page layout and list of notes.",
+          "kind": "verified",
+          "citations": [
+            {
+              "path": "app/page.tsx",
+              "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+              "start": 1,
+              "end": 8,
+              "quote": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;"
+            }
+          ]
+        }
+      ],
+      "mode": "live-model",
+      "model": "gemini-3.5-flash-lite",
+      "telemetry": {
+        "requestedModel": "gemini/gemini-flash-lite-latest",
+        "servedModel": "gemini-3.5-flash-lite",
+        "latencyMs": 37384,
+        "usage": {
+          "input": 1167,
+          "output": 533
+        },
+        "prune": {
+          "provider": "gemini",
+          "cacheHit": false,
+          "cacheType": "miss",
+          "routeApplied": false,
+          "originalModel": "gemini-flash-lite-latest",
+          "routeReason": "routing_disabled",
+          "fallbackUsed": false,
+          "pipelineMode": "auto",
+          "estimatedCostUsd": 0.000318,
+          "counterfactualCostUsd": 0.000318,
+          "optimizations": [
+            "template_hoist_skip:provider_prefix_cache_preferred",
+            "token_budget_analyze",
+            "output_cap:json_exempt",
+            "prefix_broker_skip:prefix_cache_unsupported:gemini"
+          ],
+          "requestId": "5d82872f-421d-40fa-b58f-acaa05d6506a",
+          "receiptSignature": "IzK2GQhlzM8kRYuvyV340VV1N1RuU7+nWm2XhBxc7dtjUpCSmzRdui17nvRMt9/RYufQNX986BdTlL5HwrW0BA==",
+          "receiptVersion": "v2",
+          "receiptSignedAt": "2026-11-26T04:23:55.036350+00:00",
+          "receiptVerified": false
+        }
+      },
+      "generatedAt": "2026-11-26T04:23:55.063Z"
+    },
+    {
+      "conceptId": "modules",
+      "level": "intermediate",
+      "title": "How the pieces connect",
+      "summary": "Module boundaries define how different parts of an application communicate, separating client-side components from server-side data fetching and API routes.",
+      "analogy": "Like a restaurant kitchen pass window where waiters (client) submit orders to chefs (server), separated by a clear boundary where requests and dishes cross.",
+      "details": [
+        "Trace a module dependency and explain what crosses that boundary.",
+        "The home page component imports listNotes and NoteComposer to render notes on the server side."
+      ],
+      "tradeoffs": [
+        "Source excerpts show module imports and function calls, but do not prove runtime network latency or physical deployment topology."
+      ],
+      "citations": [
+        {
+          "path": "app/page.tsx",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 1,
+          "end": 8,
+          "quote": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;"
+        }
+      ],
+      "board": {
+        "nodes": [
+          {
+            "id": "client",
+            "label": "Client Module",
+            "kind": "client"
+          },
+          {
+            "id": "boundary",
+            "label": "Module Boundary",
+            "kind": "server"
+          },
+          {
+            "id": "output",
+            "label": "Server & Data",
+            "kind": "output"
+          }
+        ],
+        "steps": [
+          {
+            "id": "one",
+            "title": "Import Module",
+            "caption": "The home page component imports listNotes and NoteComposer to render notes on the server side.",
+            "active": [
+              "client"
+            ],
+            "state": "working",
+            "citationIndex": 0
+          },
+          {
+            "id": "two",
+            "title": "Cross Boundary",
+            "caption": "Data requests cross the module boundary from client components to server APIs.",
+            "active": [
+              "client",
+              "boundary"
+            ],
+            "state": "working"
+          },
+          {
+            "id": "three",
+            "title": "Server Process",
+            "caption": "The server processes database queries and authentication checks.",
+            "active": [
+              "boundary",
+              "output"
+            ],
+            "state": "working"
+          },
+          {
+            "id": "four",
+            "title": "Render Result",
+            "caption": "Rendered content and responses are returned back across the boundary.",
+            "active": [
+              "output"
+            ],
+            "state": "success"
+          }
+        ]
+      },
+      "claims": [
+        {
+          "text": "The home page component imports listNotes and NoteComposer to render notes on the server side.",
+          "kind": "verified",
+          "citations": [
+            {
+              "path": "app/page.tsx",
+              "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+              "start": 1,
+              "end": 8,
+              "quote": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;"
+            }
+          ]
+        }
+      ],
+      "mode": "live-model",
+      "model": "gemini-3.5-flash-lite",
+      "telemetry": {
+        "requestedModel": "gemini/gemini-flash-lite-latest",
+        "servedModel": "gemini-3.5-flash-lite",
+        "latencyMs": 4157,
+        "usage": {
+          "input": 1167,
+          "output": 735
+        },
+        "prune": {
+          "provider": "gemini",
+          "cacheHit": false,
+          "cacheType": "miss",
+          "routeApplied": false,
+          "originalModel": "gemini-flash-lite-latest",
+          "routeReason": "routing_disabled",
+          "fallbackUsed": false,
+          "pipelineMode": "auto",
+          "estimatedCostUsd": 0.000409,
+          "counterfactualCostUsd": 0.000409,
+          "optimizations": [
+            "template_hoist_skip:provider_prefix_cache_preferred",
+            "token_budget_analyze",
+            "output_cap:json_exempt",
+            "prefix_broker_skip:prefix_cache_unsupported:gemini"
+          ],
+          "requestId": "30b9846c-15d4-42ad-ab15-22922dc05d9a",
+          "receiptSignature": "d47L34rcWeKGI5zln2/DH5mkUkM2dWmuUyjKsFCv6a7LKWIKWbyVKe4xTKbLpkiNkiIq7OaOYMKfd4ocdPs1Aw==",
+          "receiptVersion": "v2",
+          "receiptSignedAt": "2026-11-26T04:24:00.281433+00:00",
+          "receiptVerified": false
+        }
+      },
+      "generatedAt": "2026-11-26T04:24:00.292Z"
+    },
+    {
+      "conceptId": "modules",
+      "level": "advanced",
+      "title": "How the pieces connect",
+      "summary": "At an advanced level, module dependency boundaries separate server-side data fetching and API routing from client-side interactive components, establishing clear serialization and execution contexts across the application boundary.",
+      "analogy": "Like a restaurant kitchen where patrons place orders at the counter (client) while chefs prepare ingredients in the back (server); the order ticket crosses the boundary between front and back of house. Its limit is that physical restaurants have real physical distance, whereas web modules share a runtime boundary optimized by bundlers.",
+      "details": [
+        "Trace a module dependency and explain what crosses that boundary.",
+        "HomePage calls listNotes asynchronously on the server before rendering the main element and mapping notes."
+      ],
+      "tradeoffs": [
+        "Source excerpts cannot prove how listNotes or getDatabase are implemented underneath or how runtime configuration is deployed."
+      ],
+      "citations": [
+        {
+          "path": "app/page.tsx",
+          "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+          "start": 1,
+          "end": 8,
+          "quote": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;"
+        }
+      ],
+      "board": {
+        "nodes": [
+          {
+            "id": "input",
+            "label": "Client Component",
+            "kind": "client"
+          },
+          {
+            "id": "process",
+            "label": "Server Boundary",
+            "kind": "server"
+          },
+          {
+            "id": "output",
+            "label": "Database Storage",
+            "kind": "output"
+          }
+        ],
+        "steps": [
+          {
+            "id": "one",
+            "title": "Client Input",
+            "caption": "At an advanced level, module dependency boundaries separate server-side data fetching and API routing from client-side interactive components, establishing clear serialization and execution contexts across the application boundary.",
+            "active": [
+              "input"
+            ],
+            "state": "working",
+            "citationIndex": 0
+          },
+          {
+            "id": "two",
+            "title": "Server Execution",
+            "caption": "At an advanced level, module dependency boundaries separate server-side data fetching and API routing from client-side interactive components, establishing clear serialization and execution contexts across the application boundary.",
+            "active": [
+              "process"
+            ],
+            "state": "success",
+            "citationIndex": 0
+          },
+          {
+            "id": "three",
+            "title": "Data Persistence",
+            "caption": "At an advanced level, module dependency boundaries separate server-side data fetching and API routing from client-side interactive components, establishing clear serialization and execution contexts across the application boundary.",
+            "active": [
+              "output"
+            ],
+            "state": "working",
+            "citationIndex": 0
+          },
+          {
+            "id": "four",
+            "title": "Result Rendering",
+            "caption": "At an advanced level, module dependency boundaries separate server-side data fetching and API routing from client-side interactive components, establishing clear serialization and execution contexts across the application boundary.",
+            "active": [
+              "input",
+              "process"
+            ],
+            "state": "success",
+            "citationIndex": 0
+          }
+        ]
+      },
+      "claims": [
+        {
+          "text": "HomePage calls listNotes asynchronously on the server before rendering the main element and mapping notes.",
+          "kind": "verified",
+          "citations": [
+            {
+              "path": "app/page.tsx",
+              "sha": "8aefd6113809f700adc03f3d4f29e6a030165cea",
+              "start": 1,
+              "end": 8,
+              "quote": "import { NoteComposer } from '../components/note-composer';\nimport { listNotes } from '../lib/notes';\n\nexport default async function HomePage() {\n  const notes = await listNotes();\n  return <main><h1>Fieldnotes</h1><NoteComposer />\n    {notes.map(note => <article key={note.id}>{note.body}</article>)}\n  </main>;"
+            }
+          ]
+        }
+      ],
+      "mode": "live-model",
+      "model": "gemini-3.5-flash-lite",
+      "telemetry": {
+        "requestedModel": "gemini/gemini-flash-lite-latest",
+        "servedModel": "gemini-3.5-flash-lite",
+        "latencyMs": 3594,
+        "usage": {
+          "input": 1163,
+          "output": 594
+        },
+        "prune": {
+          "provider": "gemini",
+          "cacheHit": false,
+          "cacheType": "miss",
+          "routeApplied": false,
+          "originalModel": "gemini-flash-lite-latest",
+          "routeReason": "routing_disabled",
+          "fallbackUsed": false,
+          "pipelineMode": "auto",
+          "estimatedCostUsd": 0.000345,
+          "counterfactualCostUsd": 0.000345,
+          "optimizations": [
+            "template_hoist_skip:provider_prefix_cache_preferred",
+            "token_budget_analyze",
+            "output_cap:json_exempt",
+            "prefix_broker_skip:prefix_cache_unsupported:gemini"
+          ],
+          "requestId": "ba9d7447-086b-4b81-8ae4-63f6392a236e",
+          "receiptSignature": "nTYKVhULEnxYBFwryMfw24e/ep3d7M1V6l5JvFZgyv/Gh+bniGPuyiuLmAvQr4YHPYjP6cm5PELuRJNWfxplBw==",
+          "receiptVersion": "v2",
+          "receiptSignedAt": "2026-11-26T04:24:04.560721+00:00",
+          "receiptVerified": false
+        }
+      },
+      "generatedAt": "2026-11-26T04:24:04.573Z"
+    }
+  ],
+  "complete": false,
+  "error": "/api/tutor: 502 INVALID_CITATION"
+}

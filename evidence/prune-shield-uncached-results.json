@@ -1,0 +1,110 @@
+{
+  "recordedAt": "2026-11-26T04:30:03.358Z",
+  "scope": "Actual configured SYNAPSE Prune key; at most 11 requests, at most 16 requested output tokens each",
+  "attempted": 11,
+  "cacheMode": "off",
+  "elapsedMs": 48343,
+  "outcomes": [
+    {
+      "status": 200,
+      "ms": 3326,
+      "shieldCode": null,
+      "cacheHit": "false",
+      "errorCode": null,
+      "estimatedCostUsd": 0.000003,
+      "requestId": "dec0029e-5d1a-47b6-88b2-1caea3f275f1"
+    },
+    {
+      "status": 200,
+      "ms": 5524,
+      "shieldCode": null,
+      "cacheHit": "false",
+      "errorCode": null,
+      "estimatedCostUsd": 0.000003,
+      "requestId": "36b6daea-2c69-4cb8-ae47-eed9e202cae1"
+    },
+    {
+      "status": 200,
+      "ms": 4722,
+      "shieldCode": null,
+      "cacheHit": "false",
+      "errorCode": null,
+      "estimatedCostUsd": 0.000003,
+      "requestId": "f4860874-d415-4ae8-889f-6e2f5d547649"
+    },
+    {
+      "status": 200,
+      "ms": 5931,
+      "shieldCode": null,
+      "cacheHit": "false",
+      "errorCode": null,
+      "estimatedCostUsd": 0.000003,
+      "requestId": "205bda09-b278-4fa4-aca9-82ee3c2ecbd0"
+    },
+    {
+      "status": 200,
+      "ms": 5931,
+      "shieldCode": null,
+      "cacheHit": "false",
+      "errorCode": null,
+      "estimatedCostUsd": 0.000003,
+      "requestId": "1fa20413-3884-42f1-8cc4-4ecc724ec204"
+    },
+    {
+      "status": 200,
+      "ms": 6123,
+      "shieldCode": null,
+      "cacheHit": "false",
+      "errorCode": null,
+      "estimatedCostUsd": 0.000003,
+      "requestId": "cc5ffa9d-18d7-4ad0-9edb-186850afe869"
+    },
+    {
+      "status": 429,
+      "ms": 6323,
+      "shieldCode": "rate_limit",
+      "cacheHit": null,
+      "errorCode": "rate_limit",
+      "estimatedCostUsd": null,
+      "requestId": null
+    },
+    {
+      "status": 200,
+      "ms": 6123,
+      "shieldCode": null,
+      "cacheHit": "false",
+      "errorCode": null,
+      "estimatedCostUsd": 0.000003,
+      "requestId": "d77b8665-c0ed-4cbd-beca-ff30573e2248"
+    },
+    {
+      "status": 0,
+      "error": "TimeoutError",
+      "ms": 45009
+    },
+    {
+      "status": 200,
+      "ms": 14680,
+      "shieldCode": null,
+      "cacheHit": "false",
+      "errorCode": null,
+      "estimatedCostUsd": 0.000003,
+      "requestId": "70b9e6fa-91e6-4816-8d2e-b60b9fb4e90a"
+    },
+    {
+      "status": 200,
+      "ms": 6120,
+      "shieldCode": null,
+      "cacheHit": "false",
+      "errorCode": null,
+      "estimatedCostUsd": 0.000003,
+      "requestId": "60fd7991-d4ea-42bc-9fc7-a8343c740fe3"
+    }
+  ],
+  "rateLimitObserved": true,
+  "spendCap": "$1 per UTC day and anomaly detection personally confirmed by user in saved Shield settings; not exhausted as a test",
+  "limitations": [
+    "A rate denial alone does not independently establish the precise dollar cap.",
+    "Reported cost is an estimate, not an independently reconciled bill."
+  ]
+}

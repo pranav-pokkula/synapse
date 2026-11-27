@@ -1,0 +1,33 @@
+{
+  "recordedAt": "2026-11-26T04:30:56.129Z",
+  "sourceRequestValidation": {
+    "passed": true,
+    "claims": 2,
+    "insufficientEvidence": false,
+    "usage": {
+      "input": 721,
+      "output": 209
+    }
+  },
+  "receipt": {
+    "receipt_request_id": "e31c8055-d45b-40e4-b510-35416b8ae0dc",
+    "receipt_fields_version": "v2",
+    "receipt_signature": "LbMQz2IiL2codlxxflDO1HRV5dWuD0GWoXP+O/Gck7JU/XxcwkkWVqBSlw/7wplr7b/P19k3vOnCAWL0drzPBg==",
+    "receipt_signed_at": "2026-11-25T20:25:28.561207+00:00",
+    "provider": "gemini",
+    "original_model": "gemini-flash-lite-latest",
+    "cache_hit": false,
+    "cache_type": "miss",
+    "route_applied": false,
+    "route_reason": "routing_disabled",
+    "cost_with_prune_usd": 0.000142,
+    "cost_without_prune_usd": 0.000142
+  },
+  "verification": {
+    "valid": true,
+    "reason": "valid",
+    "key_id": "d4c5e8e9",
+    "signed_at": "2026-11-25T20:25:28.561207+00:00"
+  },
+  "limitation": "Redacted receipt excerpt; the gateway verified the complete private envelope. This file is not sufficient for offline signature verification. Costs are gateway estimates."
+}

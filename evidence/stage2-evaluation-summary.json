@@ -1,0 +1,44 @@
+{
+  "recordedAt": "2026-11-26T04:37:36.705Z",
+  "complete": true,
+  "results": [
+    {
+      "condition": "baseline",
+      "attempted": 10,
+      "accepted": 9,
+      "abstained": 9,
+      "nonAbstaining": 0,
+      "upstream503": 1,
+      "citationRejected": 0,
+      "medianWallMs": 2876.5,
+      "acceptedInputTokens": 8108,
+      "acceptedOutputTokens": 1025,
+      "acceptedEstimatedCostUsd": 0.001026,
+      "observedModels": [
+        "gemini-3.5-flash-lite"
+      ]
+    },
+    {
+      "condition": "synapse",
+      "attempted": 10,
+      "accepted": 7,
+      "abstained": 2,
+      "nonAbstaining": 5,
+      "upstream503": 2,
+      "citationRejected": 1,
+      "medianWallMs": 2790,
+      "acceptedInputTokens": 5630,
+      "acceptedOutputTokens": 1751,
+      "acceptedEstimatedCostUsd": 0.00115,
+      "observedModels": [
+        "gemini-3.5-flash-lite"
+      ]
+    }
+  ],
+  "limitations": [
+    "Accepted means schema and exact citations validated, not semantic accuracy",
+    "Token and estimated cost totals cover accepted responses only; rejected/raw calls may incur additional cost",
+    "No retries, human scores or learning outcomes",
+    "Not a direct-Gemini versus Prune cost comparison"
+  ]
+}

@@ -12,7 +12,7 @@ import {
   getRecord,
   identity,
   putRecord,
-  serialized,
+  withLease,
 } from "@/lib/store";
 import { project } from "@/lib/project";
 import type { Progress } from "@/lib/types";
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
     if (b.answer >= (q.options?.length ?? 0))
       throw new AppError("Choose an available answer.");
     const score = scoreChoice(q, b.answer);
-    return await serialized(`${user.id}:progress:${b.projectId}`, async () => {
+    return await withLease(user, `progress:${b.projectId}`, async (lease) => {
       const progress =
         (await getRecord<Progress>(user, "progress", b.projectId)) ??
         emptyProgress();
@@ -76,8 +76,8 @@ export async function POST(request: Request) {
       };
       progress.attempts = [...progress.attempts, attempt].slice(-200);
       progress.updatedAt = new Date().toISOString();
-      await putRecord(user, "attempt", attempt.id, attempt);
-      await putRecord(user, "progress", b.projectId, progress);
+      await putRecord(user, "attempt", attempt.id, attempt, lease);
+      await putRecord(user, "progress", b.projectId, progress, lease);
       return NextResponse.json({
         score,
         correct: score === 1,

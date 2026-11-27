@@ -27,3 +27,13 @@ After configuration, opt in with `RUN_LLM_EVAL=1 npm run evaluate`. This request
 - Turbopack production worker failed even after permitted retry: supported webpack build succeeded.
 - Supabase quoted $0 but rejected creation due to account-wide active-project quota. Existing projects were left untouched; SQL semantics were checked in PGlite instead. Hosted authentication remains untested.
 - Native Chrome speech emitted start and end events; human listening review remains pending.
+
+## Stage 2 protocol and measured failures — November 25, 2026
+
+Protocol committed as `8dbde47` before paired execution. Ten questions (six prior development fixture questions, four real-repository questions held out from retrieval tuning), two conditions, same model alias/prompt/schema/level/temperature/output cap. Condition order alternates. Baseline supplies the first two files; SYNAPSE supplies three retrieved excerpts. App and gateway caches are bypassed and routing is off. Calls are paced at least nine seconds apart and consume hosted daily/minute quotas. No retries or model self-grading. Source was inspected by the building agent; this is not independently authored or adjudicated evaluation.
+
+Raw final model text, excerpts, validation outcomes and per-call telemetry are retained in `stage2-evaluation-results.json`; full native envelopes remain ignored locally because they may contain hidden signatures and tenant identifiers. Direct Gemini-versus-Prune is not run because the Gemini credential is held in Prune Vault and no direct credential is configured. Gateway estimates are not reconciled bills. Do not infer learning gains or accuracy from valid citations.
+
+Failures observed before the benchmark: initial 25-second connectivity/lesson timeouts; Prune native Gemini envelope rejected by the old OpenAI-only parser (fixed); one actual tutor response rejected for invalid citation; four repeated generated narration captions (prompt/contract corrected). The exact-cache rate probe had ten cache hits and no 429. The separate uncached probe produced nine 200s, one Shield 429 (`rate_limit`) and one 45-second timeout. No dollar cap was deliberately exhausted. User review confirms saved $1/day, 10/minute and anomaly settings for the actual key.
+
+The configured 45-second timeout allowed three source-validated lesson levels: observed response latencies 37,384 / 4,157 / 3,594 ms and candidate output tokens 533 / 735 / 594. These are individual observations, not a statistically controlled level comparison. The first result may include startup/network variance; its cause is unproven. Independent human ratings and audible narration review remain pending.

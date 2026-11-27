@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { levelSchema } from "@/lib/types";
-import { makeLesson } from "@/lib/learning";
-import { identity, putRecord } from "@/lib/store";
+import { generateLesson } from "@/lib/lesson-provider";
+import { identity } from "@/lib/store";
 import { project } from "@/lib/project";
 import { failure, readBody } from "@/lib/http";
 import { AppError } from "@/lib/errors";
+export const maxDuration = 60;
 export async function POST(request: Request) {
   try {
     const body = z
@@ -20,13 +21,7 @@ export async function POST(request: Request) {
     const snapshot = await project(user, body.projectId);
     const concept = snapshot.concepts.find((c) => c.id === body.conceptId);
     if (!concept) throw new AppError("Concept not found.", 404);
-    const lesson = makeLesson(snapshot, concept, body.level);
-    await putRecord(
-      user,
-      "lesson",
-      `${snapshot.id}-${concept.id}-${body.level}`,
-      lesson,
-    );
+    const lesson = await generateLesson(user, snapshot, concept, body.level);
     return NextResponse.json(lesson);
   } catch (e) {
     return failure(e);

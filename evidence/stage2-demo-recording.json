@@ -1,0 +1,57 @@
+{
+  "recordedAt": "2026-11-26T18:14:10.727Z",
+  "complete": true,
+  "durationSeconds": 185,
+  "audio": "Silent actual screen recording with captions; no captured narration",
+  "source": "Actual local production build with real Prune-generated saved lessons and hosted Supabase records; imported repository was previously indexed",
+  "scenes": [
+    {
+      "title": "You built it. Now understand it.",
+      "seconds": 10
+    },
+    {
+      "title": "A real repository, saved in the cloud",
+      "seconds": 12
+    },
+    {
+      "title": "Understand the static relationships",
+      "seconds": 10
+    },
+    {
+      "title": "Inspect the evidence",
+      "seconds": 10
+    },
+    {
+      "title": "Real Gemini teaching through Prune",
+      "seconds": 12
+    },
+    {
+      "title": "Step through the concept",
+      "seconds": 14
+    },
+    {
+      "title": "Read, watch, or listen",
+      "seconds": 10
+    },
+    {
+      "title": "Claims stay beside their source trail",
+      "seconds": 12
+    },
+    {
+      "title": "A contextual tutor with limits",
+      "seconds": 14
+    },
+    {
+      "title": "Check understanding, then choose what to revisit",
+      "seconds": 12
+    },
+    {
+      "title": "Progress persisted with Supabase",
+      "seconds": 10
+    },
+    {
+      "title": "Built to be inspected",
+      "seconds": 14
+    }
+  ]
+}

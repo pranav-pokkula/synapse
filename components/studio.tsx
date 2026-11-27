@@ -33,6 +33,8 @@ import {
   TrendingUp,
   X,
 } from "lucide-react";
+import { publicSample } from "@/lib/deployment-mode";
+import { browserSampleRequest } from "@/lib/browser-sample";
 import { Brand } from "./brand";
 import { rankConcepts } from "@/lib/ranking";
 import { Architecture } from "./architecture";
@@ -42,6 +44,7 @@ import type {
   Citation,
   Concept,
   Level,
+  Lesson,
   Progress,
   Snapshot,
   TutorAnswer,
@@ -74,7 +77,7 @@ type Feedback = {
   note?: string;
   checks?: { criterion: string; met: boolean }[];
 };
-async function api<T>(url: string, body?: unknown): Promise<T> {
+async function requestApi<T>(url: string, body?: unknown): Promise<T> {
   const res = await fetch(
     url,
     body === undefined
@@ -96,6 +99,16 @@ async function api<T>(url: string, body?: unknown): Promise<T> {
   if (!res.ok) throw new Error(data.error ?? "Request failed. Please retry.");
   return data as T;
 }
+function useApi(snapshot: Snapshot) {
+  return useCallback(
+    async <T,>(url: string, body?: unknown): Promise<T> => {
+      if (publicSample)
+        return browserSampleRequest(url, body, snapshot, localStorage) as T;
+      return requestApi<T>(url, body);
+    },
+    [snapshot],
+  );
+}
 function localKey(id: string) {
   return `synapse-progress-v1:${id}`;
 }
@@ -108,6 +121,7 @@ function saveBrowser(id: string, progress: Progress) {
 }
 
 export function Studio({ sample }: { sample: Snapshot }) {
+  const api = useApi(sample);
   const [snapshot, setSnapshot] = useState(sample),
     [view, setView] = useState<View>("overview"),
     [selected, setSelected] = useState(sample.concepts[0]?.id ?? ""),
@@ -159,7 +173,7 @@ export function Studio({ sample }: { sample: Snapshot }) {
     } catch (e) {
       setNotice((e as Error).message);
     }
-  }, []);
+  }, [api]);
   useEffect(() => {
     if (mounted.current) return;
     mounted.current = true;
@@ -172,7 +186,7 @@ export function Studio({ sample }: { sample: Snapshot }) {
         document.documentElement.dataset.theme = "dark";
       }
       const params = new URLSearchParams(location.search);
-      if (params.has("connect")) {
+      if (params.has("connect") && !publicSample) {
         setConnect(true);
         params.delete("connect");
         const query = params.toString();
@@ -188,7 +202,7 @@ export function Studio({ sample }: { sample: Snapshot }) {
         );
       await refreshSession();
       const remembered = localStorage.getItem("synapse-project");
-      if (remembered && remembered !== "sample") {
+      if (!publicSample && remembered && remembered !== "sample") {
         api<Snapshot>(`/api/project/${remembered}`)
           .then((s) => {
             setSnapshot(s);
@@ -197,7 +211,7 @@ export function Studio({ sample }: { sample: Snapshot }) {
           .catch(() => localStorage.removeItem("synapse-project"));
       }
       const pending = localStorage.getItem("synapse-import");
-      if (pending)
+      if (pending && !publicSample)
         api<Job>(`/api/import/${pending}`)
           .then((j) => {
             if (j.status !== "complete") {
@@ -208,7 +222,7 @@ export function Studio({ sample }: { sample: Snapshot }) {
           .catch(() => localStorage.removeItem("synapse-import"));
     };
     void restore();
-  }, [refreshSession]);
+  }, [refreshSession, api]);
   useEffect(() => {
     if (!session) return;
     let active = true;
@@ -232,7 +246,7 @@ export function Studio({ sample }: { sample: Snapshot }) {
     return () => {
       active = false;
     };
-  }, [snapshot.id, session]);
+  }, [snapshot.id, session, api]);
   function navigate(next: View) {
     setView(next);
     setMobileNav(false);
@@ -250,14 +264,11 @@ export function Studio({ sample }: { sample: Snapshot }) {
     setProgress(next);
     saveBrowser(snapshot.id, next);
     try {
-      await Promise.all([
-        api("/api/progress", {
-          projectId: snapshot.id,
-          visited: [c.id],
-          level,
-        }),
-        api("/api/lesson", { projectId: snapshot.id, conceptId: c.id, level }),
-      ]);
+      await api("/api/progress", {
+        projectId: snapshot.id,
+        visited: [c.id],
+        level,
+      });
     } catch {
       setNotice(
         "Progress is saved in this browser. Server sync is currently unavailable.",
@@ -411,9 +422,15 @@ export function Studio({ sample }: { sample: Snapshot }) {
             </button>
           ))}
         </nav>
-        <button className="connect-sidebar" onClick={() => setConnect(true)}>
+        <button
+          className="connect-sidebar"
+          disabled={publicSample}
+          onClick={() => setConnect(true)}
+        >
           <Plus size={17} />
-          Connect repository
+          {publicSample
+            ? "Imports · protected workspace"
+            : "Connect repository"}
         </button>
         <div className="sidebar-spacer" />
         <div className="sidebar-tip">
@@ -438,7 +455,9 @@ export function Studio({ sample }: { sample: Snapshot }) {
               <small>
                 {session?.storage === "cloud"
                   ? "Cloud progress"
-                  : "Local progress"}
+                  : session?.storage === "browser"
+                    ? "Browser-only progress"
+                    : "Local progress"}
               </small>
             </span>
             <Settings2 size={17} />
@@ -481,6 +500,18 @@ export function Studio({ sample }: { sample: Snapshot }) {
           </div>
         </header>
         <main id="studio-main" className="studio-main">
+          {publicSample && (
+            <p className="notice">
+              <span>
+                Public sample · source templates, animation and practice.
+                Progress stays in this browser; live AI and imports are
+                restricted.{" "}
+                <a href="https://github.com/pranav-pokkula/synapse">
+                  GitHub & setup
+                </a>
+              </span>
+            </p>
+          )}
           {notice && (
             <div className="notice" role="status">
               <ShieldCheck size={16} />
@@ -521,10 +552,13 @@ export function Studio({ sample }: { sample: Snapshot }) {
                     </div>
                     <button
                       className="button secondary"
+                      disabled={publicSample}
                       onClick={() => setConnect(true)}
                     >
                       <Plus size={17} />
-                      Connect repository
+                      {publicSample
+                        ? "Imports require protected access"
+                        : "Connect repository"}
                     </button>
                   </div>
                   <div className="project-summary">
@@ -1128,45 +1162,49 @@ export function Studio({ sample }: { sample: Snapshot }) {
         <div className="settings-section">
           <h3>Account & persistence</h3>
           <p>
-            {session?.storage === "cloud"
-              ? "Cloud storage is connected. Email sign-in opens a separate account history; guest progress is not automatically migrated."
-              : "You are using local learning storage. Cloud accounts require a separate Supabase project, which is not configured."}
+            {publicSample
+              ? "Sample progress stays in this browser. Live AI, imports and cloud accounts are available only in the protected workspace or a configured local installation."
+              : session?.storage === "cloud"
+                ? "Cloud storage is connected. Email sign-in opens a separate account history; guest progress is not automatically migrated."
+                : "You are using local learning storage. Cloud accounts require a separate Supabase project, which is not configured."}
           </p>
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              setAuthMessage("");
-              try {
-                const r = await api<{ message: string }>("/api/account", {
-                  action: "sign-in",
-                  email,
-                });
-                setAuthMessage(r.message);
-              } catch (e) {
-                setAuthMessage((e as Error).message);
-              }
-            }}
-          >
-            <label className="field-label" htmlFor="email">
-              Email address
-            </label>
-            <div className="inline-form">
-              <input
-                id="email"
-                type="email"
-                value={email}
-                required
-                placeholder="you@example.com"
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <button className="button secondary">Send sign-in link</button>
-            </div>
-            {authMessage && (
-              <p role="status" className="inline-notice">
-                {authMessage}
-              </p>
-            )}
-          </form>
+          {!publicSample && (
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setAuthMessage("");
+                try {
+                  const r = await api<{ message: string }>("/api/account", {
+                    action: "sign-in",
+                    email,
+                  });
+                  setAuthMessage(r.message);
+                } catch (e) {
+                  setAuthMessage((e as Error).message);
+                }
+              }}
+            >
+              <label className="field-label" htmlFor="email">
+                Email address
+              </label>
+              <div className="inline-form">
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  required
+                  placeholder="you@example.com"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <button className="button secondary">Send sign-in link</button>
+              </div>
+              {authMessage && (
+                <p role="status" className="inline-notice">
+                  {authMessage}
+                </p>
+              )}
+            </form>
+          )}
           {session && !session.user.anonymous && (
             <button
               className="text-button"
@@ -1424,9 +1462,37 @@ function LessonWorkspace({
   onBack: () => void;
   ai: boolean;
 }) {
-  const lesson = makeLesson(snapshot, concept, level);
+  const api = useApi(snapshot);
+  const [lesson, setLesson] = useState<Lesson>(() =>
+    makeLesson(snapshot, concept, level),
+  );
+  const [lessonBusy, setLessonBusy] = useState(false);
+  const [lessonError, setLessonError] = useState("");
   const [step, setStep] = useState(0);
   const onStep = useCallback((i: number) => setStep(i), []);
+  async function personalize() {
+    setLessonBusy(true);
+    setLessonError("");
+    try {
+      const result = await api<Lesson>("/api/lesson", {
+        projectId: snapshot.id,
+        conceptId: concept.id,
+        level,
+      });
+      if (result.fallbackReason) setLessonError(result.fallbackReason);
+      // Retain a previous successful AI lesson if a new request falls back.
+      setLesson((previous) =>
+        result.fallbackReason && previous.mode === "live-model"
+          ? previous
+          : result,
+      );
+      setStep(0);
+    } catch (error) {
+      setLessonError((error as Error).message);
+    } finally {
+      setLessonBusy(false);
+    }
+  }
   return (
     <>
       <button className="back-link" onClick={onBack}>
@@ -1437,9 +1503,11 @@ function LessonWorkspace({
       <div className="lesson-heading">
         <div>
           <span className="eyebrow">
-            {lesson.mode === "reviewed-sample"
-              ? "TEACHING FIXTURE"
-              : "SOURCE-GROUNDED TEMPLATE"}{" "}
+            {lesson.mode === "live-model"
+              ? `${lesson.cached ? "SAVED AI LESSON" : lesson.telemetry?.prune?.cacheHit ? "GATEWAY-CACHED AI LESSON" : "AI-GENERATED LESSON"}`
+              : lesson.mode === "reviewed-sample"
+                ? "TEACHING FIXTURE"
+                : "SOURCE-GROUNDED TEMPLATE"}{" "}
             · {concept.minutes} MIN
           </span>
           <h1>{concept.title}</h1>
@@ -1447,9 +1515,42 @@ function LessonWorkspace({
         </div>
         <LevelSelect value={level} onChange={onLevel} />
       </div>
+      {ai && (
+        <div className="path-toolbar">
+          <button
+            className="button secondary"
+            onClick={() => void personalize()}
+            disabled={lessonBusy}
+          >
+            {lessonBusy ? (
+              <Loader2 size={16} className="spin" />
+            ) : (
+              <Sparkles size={16} />
+            )}
+            {lessonBusy
+              ? "Preparing your lesson…"
+              : lesson.mode === "live-model"
+                ? "Revisit personalized lesson"
+                : "Personalize with AI"}
+          </button>
+          <p className="fine-print">
+            Uses this source snapshot, your level, and recent practice. The
+            visual is a conceptual model.
+          </p>
+        </div>
+      )}
+      {lessonError && (
+        <p role="status" className="notice">
+          {lessonError} Your current lesson remains available.
+        </p>
+      )}
       <div className="lesson-grid">
         <div className="lesson-main">
-          <Player lesson={lesson} onStep={onStep} />
+          <Player
+            key={lesson.generatedAt ?? "source-template"}
+            lesson={lesson}
+            onStep={onStep}
+          />
           <article className="written-lesson">
             <span className="eyebrow">THE IDEA</span>
             <h2>Let’s break it down.</h2>
@@ -1462,7 +1563,18 @@ function LessonWorkspace({
               </div>
             </div>
             <h3>In your project</h3>
-            <p>{lesson.details[1]}</p>
+            {lesson.claims ? (
+              lesson.claims.map((claim, i) => (
+                <div className="claim" key={i}>
+                  <span className={`claim-kind ${claim.kind}`}>
+                    {claim.kind}
+                  </span>
+                  <p>{claim.text}</p>
+                </div>
+              ))
+            ) : (
+              <p>{lesson.details[1]}</p>
+            )}
             {lesson.citations[0] && (
               <div className="inline-source">
                 <button
@@ -1557,6 +1669,7 @@ function Tutor({
   ai: boolean;
   onSource: (c: Citation) => void;
 }) {
+  const api = useApi(snapshot);
   const [input, setInput] = useState(""),
     [messages, setMessages] = useState<
       { question: string; answer: TutorAnswer }[]
@@ -1620,7 +1733,7 @@ function Tutor({
             <div className="assistant-message">
               <span className="answer-mode">
                 {m.answer.mode === "live-model"
-                  ? m.answer.model
+                  ? `${m.answer.model}${m.answer.cached ? " · saved answer" : m.answer.telemetry?.prune?.cacheHit ? " · gateway cache" : " · generated answer"}`
                   : "Source template"}
                 {m.answer.insufficientEvidence
                   ? " · insufficient evidence"
@@ -1718,6 +1831,7 @@ function Assessment({
   onProgress: (p: Progress) => void;
   onSource: (c: Citation) => void;
 }) {
+  const api = useApi(snapshot);
   const qs = questions(concept);
   const previous = progress.attempts.filter((a) => a.conceptId === concept.id);
   const first = previous.length
