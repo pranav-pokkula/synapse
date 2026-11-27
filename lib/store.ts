@@ -1,3 +1,4 @@
+import { publicServerMode } from "./deployment-mode";
 import { cookies } from "next/headers";
 import {
   mkdir,
@@ -22,6 +23,12 @@ const uuid =
 export async function identity(
   options: { createGuest?: boolean } = {},
 ): Promise<Identity> {
+  if (publicServerMode())
+    throw new AppError(
+      "Server features are disabled in the public sample.",
+      403,
+      "PUBLIC_SAMPLE_ONLY",
+    );
   const db = await supabase();
   if (db) {
     const {

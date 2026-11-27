@@ -33,6 +33,8 @@ import {
   TrendingUp,
   X,
 } from "lucide-react";
+import { publicSample } from "@/lib/deployment-mode";
+import { browserSampleRequest } from "@/lib/browser-sample";
 import { Brand } from "./brand";
 import { rankConcepts } from "@/lib/ranking";
 import { Architecture } from "./architecture";
@@ -75,7 +77,7 @@ type Feedback = {
   note?: string;
   checks?: { criterion: string; met: boolean }[];
 };
-async function api<T>(url: string, body?: unknown): Promise<T> {
+async function requestApi<T>(url: string, body?: unknown): Promise<T> {
   const res = await fetch(
     url,
     body === undefined
@@ -97,6 +99,16 @@ async function api<T>(url: string, body?: unknown): Promise<T> {
   if (!res.ok) throw new Error(data.error ?? "Request failed. Please retry.");
   return data as T;
 }
+function useApi(snapshot: Snapshot) {
+  return useCallback(
+    async <T,>(url: string, body?: unknown): Promise<T> => {
+      if (publicSample)
+        return browserSampleRequest(url, body, snapshot, localStorage) as T;
+      return requestApi<T>(url, body);
+    },
+    [snapshot],
+  );
+}
 function localKey(id: string) {
   return `synapse-progress-v1:${id}`;
 }
@@ -109,6 +121,7 @@ function saveBrowser(id: string, progress: Progress) {
 }
 
 export function Studio({ sample }: { sample: Snapshot }) {
+  const api = useApi(sample);
   const [snapshot, setSnapshot] = useState(sample),
     [view, setView] = useState<View>("overview"),
     [selected, setSelected] = useState(sample.concepts[0]?.id ?? ""),
@@ -160,7 +173,7 @@ export function Studio({ sample }: { sample: Snapshot }) {
     } catch (e) {
       setNotice((e as Error).message);
     }
-  }, []);
+  }, [api]);
   useEffect(() => {
     if (mounted.current) return;
     mounted.current = true;
@@ -173,7 +186,7 @@ export function Studio({ sample }: { sample: Snapshot }) {
         document.documentElement.dataset.theme = "dark";
       }
       const params = new URLSearchParams(location.search);
-      if (params.has("connect")) {
+      if (params.has("connect") && !publicSample) {
         setConnect(true);
         params.delete("connect");
         const query = params.toString();
@@ -189,7 +202,7 @@ export function Studio({ sample }: { sample: Snapshot }) {
         );
       await refreshSession();
       const remembered = localStorage.getItem("synapse-project");
-      if (remembered && remembered !== "sample") {
+      if (!publicSample && remembered && remembered !== "sample") {
         api<Snapshot>(`/api/project/${remembered}`)
           .then((s) => {
             setSnapshot(s);
@@ -198,7 +211,7 @@ export function Studio({ sample }: { sample: Snapshot }) {
           .catch(() => localStorage.removeItem("synapse-project"));
       }
       const pending = localStorage.getItem("synapse-import");
-      if (pending)
+      if (pending && !publicSample)
         api<Job>(`/api/import/${pending}`)
           .then((j) => {
             if (j.status !== "complete") {
@@ -209,7 +222,7 @@ export function Studio({ sample }: { sample: Snapshot }) {
           .catch(() => localStorage.removeItem("synapse-import"));
     };
     void restore();
-  }, [refreshSession]);
+  }, [refreshSession, api]);
   useEffect(() => {
     if (!session) return;
     let active = true;
@@ -233,7 +246,7 @@ export function Studio({ sample }: { sample: Snapshot }) {
     return () => {
       active = false;
     };
-  }, [snapshot.id, session]);
+  }, [snapshot.id, session, api]);
   function navigate(next: View) {
     setView(next);
     setMobileNav(false);
@@ -409,9 +422,15 @@ export function Studio({ sample }: { sample: Snapshot }) {
             </button>
           ))}
         </nav>
-        <button className="connect-sidebar" onClick={() => setConnect(true)}>
+        <button
+          className="connect-sidebar"
+          disabled={publicSample}
+          onClick={() => setConnect(true)}
+        >
           <Plus size={17} />
-          Connect repository
+          {publicSample
+            ? "Imports · protected workspace"
+            : "Connect repository"}
         </button>
         <div className="sidebar-spacer" />
         <div className="sidebar-tip">
@@ -436,7 +455,9 @@ export function Studio({ sample }: { sample: Snapshot }) {
               <small>
                 {session?.storage === "cloud"
                   ? "Cloud progress"
-                  : "Local progress"}
+                  : session?.storage === "browser"
+                    ? "Browser-only progress"
+                    : "Local progress"}
               </small>
             </span>
             <Settings2 size={17} />
@@ -479,6 +500,18 @@ export function Studio({ sample }: { sample: Snapshot }) {
           </div>
         </header>
         <main id="studio-main" className="studio-main">
+          {publicSample && (
+            <p className="notice">
+              <span>
+                Public sample · source templates, animation and practice.
+                Progress stays in this browser; live AI and imports are
+                restricted.{" "}
+                <a href="https://github.com/pranav-pokkula/synapse">
+                  GitHub & setup
+                </a>
+              </span>
+            </p>
+          )}
           {notice && (
             <div className="notice" role="status">
               <ShieldCheck size={16} />
@@ -519,10 +552,13 @@ export function Studio({ sample }: { sample: Snapshot }) {
                     </div>
                     <button
                       className="button secondary"
+                      disabled={publicSample}
                       onClick={() => setConnect(true)}
                     >
                       <Plus size={17} />
-                      Connect repository
+                      {publicSample
+                        ? "Imports require protected access"
+                        : "Connect repository"}
                     </button>
                   </div>
                   <div className="project-summary">
@@ -1126,45 +1162,49 @@ export function Studio({ sample }: { sample: Snapshot }) {
         <div className="settings-section">
           <h3>Account & persistence</h3>
           <p>
-            {session?.storage === "cloud"
-              ? "Cloud storage is connected. Email sign-in opens a separate account history; guest progress is not automatically migrated."
-              : "You are using local learning storage. Cloud accounts require a separate Supabase project, which is not configured."}
+            {publicSample
+              ? "Sample progress stays in this browser. Live AI, imports and cloud accounts are available only in the protected workspace or a configured local installation."
+              : session?.storage === "cloud"
+                ? "Cloud storage is connected. Email sign-in opens a separate account history; guest progress is not automatically migrated."
+                : "You are using local learning storage. Cloud accounts require a separate Supabase project, which is not configured."}
           </p>
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              setAuthMessage("");
-              try {
-                const r = await api<{ message: string }>("/api/account", {
-                  action: "sign-in",
-                  email,
-                });
-                setAuthMessage(r.message);
-              } catch (e) {
-                setAuthMessage((e as Error).message);
-              }
-            }}
-          >
-            <label className="field-label" htmlFor="email">
-              Email address
-            </label>
-            <div className="inline-form">
-              <input
-                id="email"
-                type="email"
-                value={email}
-                required
-                placeholder="you@example.com"
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <button className="button secondary">Send sign-in link</button>
-            </div>
-            {authMessage && (
-              <p role="status" className="inline-notice">
-                {authMessage}
-              </p>
-            )}
-          </form>
+          {!publicSample && (
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setAuthMessage("");
+                try {
+                  const r = await api<{ message: string }>("/api/account", {
+                    action: "sign-in",
+                    email,
+                  });
+                  setAuthMessage(r.message);
+                } catch (e) {
+                  setAuthMessage((e as Error).message);
+                }
+              }}
+            >
+              <label className="field-label" htmlFor="email">
+                Email address
+              </label>
+              <div className="inline-form">
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  required
+                  placeholder="you@example.com"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <button className="button secondary">Send sign-in link</button>
+              </div>
+              {authMessage && (
+                <p role="status" className="inline-notice">
+                  {authMessage}
+                </p>
+              )}
+            </form>
+          )}
           {session && !session.user.anonymous && (
             <button
               className="text-button"
@@ -1422,6 +1462,7 @@ function LessonWorkspace({
   onBack: () => void;
   ai: boolean;
 }) {
+  const api = useApi(snapshot);
   const [lesson, setLesson] = useState<Lesson>(() =>
     makeLesson(snapshot, concept, level),
   );
@@ -1628,6 +1669,7 @@ function Tutor({
   ai: boolean;
   onSource: (c: Citation) => void;
 }) {
+  const api = useApi(snapshot);
   const [input, setInput] = useState(""),
     [messages, setMessages] = useState<
       { question: string; answer: TutorAnswer }[]
@@ -1789,6 +1831,7 @@ function Assessment({
   onProgress: (p: Progress) => void;
   onSource: (c: Citation) => void;
 }) {
+  const api = useApi(snapshot);
   const qs = questions(concept);
   const previous = progress.attempts.filter((a) => a.conceptId === concept.id);
   const first = previous.length

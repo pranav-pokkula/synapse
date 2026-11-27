@@ -2,6 +2,8 @@
 
 Plan: about 25 minutes. You do not need to understand every file. Read the quoted explanation, look at the small source excerpt, and write what you actually found. “Unsure” is a useful answer. Nothing below is a completed human review or a score.
 
+Owner-reported checks completed November 26, 2026: browser narration tested and approved; complete 3:03 silent captioned demo watched and approved. The five-explanation and three-code-change reviews below remain uncompleted unless the owner records findings.
+
 Reviewer: ______  Date: ______  Version reviewed: ______
 
 ## Step 1 — Read five real AI explanations (10 minutes)
@@ -214,7 +216,7 @@ For EACH change, fill one row yourself:
 
 If you cannot understand a check, record “unsure” and ask for an explanation. Do not claim a security audit. Your earlier Shield dashboard review is already documented separately and does not substitute for inspecting generated code or explanations.
 
-## Step 3 — Listen in the browser (3 minutes)
+## Step 3 — Browser narration (owner approved November 26)
 
 Open the [protected preview](https://synapse-learning-qr1qac164-pranav-pokkulas-projects.vercel.app) with your authorized Vercel account. Choose **Explore the sample / Start learning**. Source lessons suffice for this check; do not generate extra AI output just to test audio.
 
@@ -228,7 +230,7 @@ What sounded confusing or failed: ______  Keep/change decision: ______
 
 The MP4 is silent. Watching it does not test narration.
 
-## Step 4 — Watch the entire demo (3:03)
+## Step 4 — Demo (owner approved November 26; 3:03)
 
 Open [the local MP4](../evidence/synapse-stage2-demo.mp4). It is intentionally excluded from Git; use the file on your computer.
 
@@ -267,7 +269,7 @@ Optional detailed scores: [blank review sheet](../evidence/human-review-sheet.cs
 - [ ] Read the five final answers in [DEVPOST_SUBMISSION.md](DEVPOST_SUBMISSION.md); add only true human-review findings.
 - [ ] Verify eligibility, list every teammate, and complete each participant’s private contact form.
 - [ ] You upload the approved video to YouTube/Vimeo, enable embedding and test it signed out. Paste the real URL into the placeholder.
-- [ ] Use the Stage 2 branch link, not only the older default branch, while PR #1 remains unmerged.
+- [ ] Use the final main-branch and release links in FINAL_SUBMISSION_HANDOFF.md.
 - [ ] Personally approve the final entry and submit before November 28, 2026, 6 PM Eastern.
 
 Public production hosting, email OTP and merging PR #1 are not prerequisites for this entry. The agent has not uploaded or submitted anything.

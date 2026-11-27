@@ -15,3 +15,7 @@ The historical Stage 1 recording remains `evidence/synapse-demo.mp4` (2:44); it 
 ## Final submission inspection
 
 Full MP4 decoding passed; no audio stream is present. The saved lesson portion visibly shows a temporary sync warning. Keep it visible. The exact smallest clarification, included in the final Devpost answer, is: “During the lesson, a progress sync request temporarily failed and progress remained in the browser; the graded result is saved to Supabase and reloaded later in the recording.” Alternatively add that sentence to the existing caption near 1:20. No new recording, synthetic frame or cinematic edit is needed. Human review of the entire video remains pending.
+
+## Owner approval — November 26, 2026
+
+The owner states that they watched and approved the complete 3:03 silent, captioned Stage 2 recording and separately tested and approved browser narration. This does not establish completion of the five-explanation or three-code-change review. The existing video is retained unchanged. Its temporary sync warning is explained in the submission; public production is a browser-only sample while this recording shows the full protected experience.

@@ -50,3 +50,15 @@ The MP4 exists: H.264 video, 1440 × 1000, 182.80 seconds, 3,068,348 bytes, no a
 Prepared a genuine gallery image at `evidence/devpost-gallery.png`, copied without modification from the actual generated-lesson screenshot. It is suitable as a gallery image; it is not labeled a 3:2 thumbnail. No synthetic UI or claims were inserted.
 
 Entry-material blockers: an accessible embedded video URL (user upload), verified participant eligibility/roster/private forms, final truthful copy review and submission approval. Human content/code/audio review remains a requested review action and scoring limitation, not an invented entry requirement. Public production hosting, email OTP and merging PR #1 are not entry blockers. PR remains draft and unmerged; it can be marked ready for code review without authorizing merge or promotion.
+
+## Public release verification — November 26, 2026
+
+Owner explicitly authorized marking PR #1 ready, merging after passing gates, and a safely restricted public deployment. Owner also confirmed browser narration and the complete 3:03 silent demo approved on November 26. Separate teaching/code review remains unrecorded.
+
+Implemented option B: browser-only Fieldnotes sample using the existing deterministic lessons/scoring. No public server storage or AI is used. Proxy rejects all production API/auth routes; identity and model-configuration checks additionally fail closed in production. Preview environment values remain unchanged. Vercel team plan is active Hobby; production contains only the nonsecret public-sample switch. No production Prune/Supabase credentials are configured.
+
+Executed npm ci; typecheck; clean ESLint; 98 passing unit/SQL/security/public-mode tests; full and public webpack builds; zero-vulnerability npm audit; 12 full-studio browser regressions; 22 public-mode browser/security checks; deterministic retrieval/order evaluation; and exact configured-secret/client-chunk scan with zero findings. Public checks verify sample animation, source template guidance, grading/reload, browser separation, mobile accessibility, no application API calls, and direct server API denial. They do not claim audible speech.
+
+The first deterministic evaluation command hit the sandbox's local IPC restriction and succeeded when rerun with approved execution permissions. npm reports the existing ESLint 9 deprecation; this is not a vulnerability finding. No failing test was removed. Historical screenshots and experiment records were preserved; fresh verification outputs have separate release filenames. No tracked files were deleted; the exact inventory/retention record is in REPOSITORY_INVENTORY.md. Both Supabase migrations remain unchanged.
+
+Production deployment and merged-main verification are recorded in FINAL_SUBMISSION_HANDOFF.md after completion; this paragraph does not preclaim those gates.

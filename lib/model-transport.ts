@@ -1,9 +1,11 @@
+import { publicServerMode } from "./deployment-mode";
 import { createHash } from "node:crypto";
 import { AppError } from "./errors";
 import type { ModelTelemetry } from "./types";
 
 export const PROMPT_VERSION = "synapse-2026-11-25-v1";
 export function providerConfigured() {
+  if (publicServerMode()) return false;
   return Boolean(
     process.env.LLM_BASE_URL &&
     process.env.LLM_MODEL &&
